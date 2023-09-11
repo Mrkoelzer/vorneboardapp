@@ -1,0 +1,31 @@
+.mainpage{
+    background-color: #282c34;
+    min-height: 100vh;
+    font-size: calc(10px + 2vmin);
+    color: white;
+  }
+
+  .mainpage-flexbox-container{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .mainpagebutton{
+    font-weight: bold;
+    font-size: large;
+    color:black;
+    background: whitesmoke;
+    padding: 15px 40px;
+    border-radius: 4px;
+    font-weight: normal;
+    text-transform: uppercase;
+    transition: all 0.2s ease-in-out;
+    text-align: center;
+    width: 50%;
+    min-height: 20vh;
+  }
+  .mainpagebutton:hover{
+    color: black;
+    box-shadow: 0 5px 15px white;
+  }

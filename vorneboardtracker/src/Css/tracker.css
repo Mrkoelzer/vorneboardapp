@@ -1,0 +1,50 @@
+.tracker {
+    background-color: #282c34;
+    min-height: 100vh;
+    font-size: calc(10px + 2vmin);
+    color: white;
+}
+
+.table-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.table-container th,
+.table-container td {
+    border: 1px solid #dee2e6;
+    /* Border color for cells */
+    padding: 5px;
+    /* Adjust padding as needed */
+    text-align: center;
+    /* Center-align content */
+    vertical-align: middle;
+    /* Vertically center content */
+    box-shadow: 0 0 0 1px #dee2e6;
+}
+
+.icon-cell {
+    width: 40px;
+    /* Adjust the width for the icon column */
+}
+
+.trackerbutton {
+    font-weight: bold;
+    font-size: large;
+    color: black;
+    background: whitesmoke;
+    padding: 15px 40px;
+    border-radius: 4px;
+    font-weight: normal;
+    text-transform: uppercase;
+    transition: all 0.2s ease-in-out;
+    width: 100%;
+    text-align: center;
+}
+
+.trackerbutton:hover {
+    color: black;
+    box-shadow: 0 5px 15px white;
+}

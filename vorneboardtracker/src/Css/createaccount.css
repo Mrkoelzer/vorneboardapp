@@ -1,0 +1,60 @@
+.createaccountpage{
+    background-color: #282c34;
+    min-height: 100vh;
+    font-size: calc(10px + 2vmin);
+    color: white;
+  }
+
+  .createaccount-flexbox-container{
+    display: flex;
+    justify-content:space-evenly;
+    flex-wrap: wrap;
+  }
+
+  .createaccount-flexbox-item{
+    width: 20%;
+    text-align: center;
+    min-height: 30vh;
+  }
+
+  .createaccount-textinboxes{
+    border: 5px solid white;
+  }
+
+.createaccount-checkbox{
+    width: 25px;
+    height: 25px;
+}
+.createaccount-inputs{
+  font-weight: bold;
+  font-size: large;
+  color:black;
+  background: whitesmoke;
+  padding: 15px 40px;
+  border-radius: 4px;
+  font-weight: normal;
+  transition: all 0.2s ease-in-out;
+  width: 92%;
+  text-align: center;
+  min-height: 2vh;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.createaccountbutton{
+  font-weight: bold;
+  font-size: large;
+  color:black;
+  background: whitesmoke;
+  padding: 15px 40px;
+  border-radius: 4px;
+  font-weight: normal;
+  text-transform: uppercase;
+  transition: all 0.2s ease-in-out;
+  width: 80%;
+  text-align: center;
+}
+  .createaccountbutton:hover{
+    color: black;
+    box-shadow: 0 5px 15px white;
+  }

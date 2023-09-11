@@ -1,0 +1,82 @@
+.toolbar {
+    background-color: #333;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    justify-content: space-between;
+  }
+  
+/* Styling for the left side of the toolbar */
+.toolbar-left {
+    display: flex;
+    align-items: center;
+  }
+
+  /* Styling for the logo image */
+  .logo {
+    width: 40px; /* Adjust the width as needed */
+    height: auto;
+    margin-right: 10px;
+  }
+  
+  /* Styling for the title text */
+  .toolbar p {
+    margin: 0;
+    font-size: 2.5rem;
+  }
+
+  .icon-cell-line {
+    width: 40px; /* Adjust the width for the icon column */
+    padding-left: 10px;
+    padding-right: 5px;
+  }
+
+  .dropdown-container {
+    position: relative;
+  }
+
+  .dropdown {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 2.5rem; /* Adjust the font size as needed */
+    transition: all 0.2s ease-in-out;
+    margin-left: auto;
+    color: white;
+  }
+  
+  /* Styling for the active state of the dropdown button */
+  .dropdown.active {
+    color: black;
+  }
+
+/* Styling for the dropdown menu */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right:0%;
+    background-color: #333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    /* Modify the height of the menu to fit the content */
+    min-height: 100%; /* Adjust as needed */
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    width: 250px;
+    margin-top: 3.5vh;
+    border: none;
+  }
+  
+  /* Styling for dropdown menu items */
+  .dropdown-menu p {
+    margin: 0;
+    padding: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .dropdown-menu p:hover {
+    background-color: #535353;
+  }

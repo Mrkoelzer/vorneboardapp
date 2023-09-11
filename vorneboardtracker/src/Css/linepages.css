@@ -1,0 +1,59 @@
+.linepage{
+    background-color: #282c34;
+    min-height: 100vh;
+    font-size: calc(10px + 2vmin);
+    color: white;
+  }
+
+  .flexbox-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+
+  .flexbox-item{
+    width: 50vh;
+    text-align: center;
+    min-height: 30vh;
+  }
+
+  .textinboxes{
+    border: 5px solid white;
+  }
+
+  .linepagebutton{
+    font-weight: bold;
+    font-size: large;
+    color:black;
+    background: whitesmoke;
+    padding: 15px 40px;
+    border-radius: 4px;
+    font-weight: normal;
+    text-transform: uppercase;
+    transition: all 0.2s ease-in-out;
+    width: 100%;
+    text-align: center;
+  }
+  .linepagebutton:hover{
+    color: black;
+    box-shadow: 0 5px 15px white;
+  }
+
+  .linepagebutton2{
+    font-weight: bold;
+    font-size: large;
+    color:black;
+    background: whitesmoke;
+    padding: 15px 40px;
+    border-radius: 4px;
+    font-weight: normal;
+    text-transform: uppercase;
+    transition: all 0.2s ease-in-out;
+    text-align: center;
+    width: 40%;
+  }
+  .linepagebutton2:hover{
+    color: black;
+    box-shadow: 0 5px 15px white;
+  }
