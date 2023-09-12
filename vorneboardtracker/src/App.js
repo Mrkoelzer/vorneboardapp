@@ -13,6 +13,7 @@ import { partruncontext } from './contexts/partruncontext';
 import { linedatacontext } from './contexts/linedatacontext';
 import { usercontext } from './contexts/usercontext';
 import { linescontext } from './contexts/linescontext';
+import { selectedlinecontext } from './contexts/selectedlinecontext';
 import Line3 from './linepages/Line3';
 import Line4 from './linepages/Line4';
 import Line5 from './linepages/Line5';
@@ -25,6 +26,7 @@ import { line3partdatacontext } from './contexts/linepartdatacontext';
 function App() {
   const [line3items, setline3items] = useState([]);
   const [lines, setlines] = useState([]);
+  const [selectedline, setselectedline] = useState('');
 
   useEffect(() => { 
     // Fetch data when the page opens
@@ -108,6 +110,7 @@ function App() {
   return (
     <BrowserRouter>
       <linescontext.Provider value={{ lines, setlines }}>
+        <selectedlinecontext.Provider value={{ selectedline, setselectedline }}>
         <partruncontext.Provider value={{ partruntable, setpartruntable }}>
           <linedatacontext.Provider value={{ linedatatable, setlinedatatable }}>
             <line3partdatacontext.Provider value={{ line3items, setline3items }}>
@@ -131,6 +134,7 @@ function App() {
             </line3partdatacontext.Provider>
           </linedatacontext.Provider>
         </partruncontext.Provider>
+        </selectedlinecontext.Provider>
       </linescontext.Provider>
     </BrowserRouter>
   );

@@ -4,131 +4,198 @@ import React, { useContext, useEffect, useState } from 'react';
 import * as ReactBootStrap from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircle } from '@fortawesome/free-solid-svg-icons'
-import '../Css/tracker.css'
+import { faCircle } from '@fortawesome/free-solid-svg-icons';
+import '../Css/tracker.css';
 import Trackertoolbar from '../Components/Trackertoolbar';
+import { linescontext } from '../contexts/linescontext';
+import { selectedlinecontext } from '../contexts/selectedlinecontext';
 
 function Tracker() {
   const { partruntable, setpartruntable } = useContext(partruncontext);
+  const { lines } = useContext(linescontext);
+  const { selectedline, setselectedline } = useContext(selectedlinecontext)
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true); // Add isLoading state
 
   const handleNavigate = (index) => {
-    if (index === 0) {
-      navigate('/line3')
-    }
-    else if (index === 1) {
-      navigate('/line4')
-    }
-    else if (index === 2) {
-      navigate('/line5')
-    }
-    else if (index === 3) {
-      navigate('/line7')
-    }
-    else if (index === 4) {
-      navigate('/line8')
-    }
-    else if (index === 5) {
-      navigate('/line9')
-    }
+    setselectedline(lines[index].Linename);
+      navigate('/line3');
   };
 
-  const getpartrun = () => {
-    Axios.get('http://10.144.18.208:1433/getpartrun')
+  const fetchAllLineData = async () => {
+    const lineDataPromises = lines.map(async (line) => {
+      const linename = line.Linename;
+      const partrunData = await getpartrun(line.ipaddress);
+      const processStateDetailsData = await getprocessstatedetails(line.ipaddress);
+      const processStateReasonData = await getprocessstatereason(line.ipaddress);
+
+      // Combine all the data into a single object
+      return {
+        linename,
+        partrunData,
+        processStateDetailsData,
+        processStateReasonData,
+      };
+    });
+
+    // Wait for all promises to resolve
+    const lineData = await Promise.all(lineDataPromises);
+    //console.log(lineData)
+    // Filter out any null values if needed
+    const filteredLineData = lineData.filter((data) => data !== null);
+    return filteredLineData;
+  };
+
+  const getpartrun = (ipaddress) => {
+    const apiUrl = `http://${ipaddress}/api/v0/part_run`;
+
+    return Axios.get(apiUrl)
       .then((response) => {
-        setpartruntable(response.data);
-        getprocessstate(response.data)
+        const data = response.data;
+
+        if (data && data.data.part_id) {
+          return data.data;
+        } else {
+          return { ...data, part_id: 'N/A' };
+        }
       })
       .catch((error) => {
         console.error('Error fetching data:', error);
+        return null;
       });
   };
 
-  const getprocessstate = (partruntableData) => {
-    if (!Array.isArray(partruntableData)) {
-      console.error('Invalid data:', partruntableData);
-      return;
-    }
-    const updatedPartruntable = partruntableData.map(item => {
-      if (item.process_state_break === true) {
-        item.process_state = "Break";
-      } else if (item.process_state_changeover === true) {
-        item.process_state = "changover";
-      } else if (item.process_state_detecting_state === true) {
-        item.process_state = "Detecting State";
-      } else if (item.process_state_down === true) {
-        item.process_state = "Down";
-      } else if (item.process_state_no_production === true) {
-        item.process_state = "No Production";
-      } else if (item.process_state_not_monitored === true) {
-        item.process_state = "Not Monitored";
-      } else if (item.process_state_running === true) {
-        item.process_state = "Running";
-      }
-      return item;
-    });
+  const getprocessstatedetails = (ipaddress) => {
+    const apiUrl = `http://${ipaddress}/api/v0/process_state/details`;
 
-    setpartruntable(updatedPartruntable);
-    console.log(updatedPartruntable);
+    return Axios.get(apiUrl)
+      .then((response) => {
+        const data = response.data;
+        if (data) {
+          let updateddata = getprocessstate(data.data);
+          // Ensure data.part_id exists before accessing it
+          return updateddata;
+        } else {
+          // Handle the case where part_id is missing or undefined
+          return { ...data, part_id: 'N/A' };
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+        return null;
+      });
+  };
+
+  const getprocessstatereason = (ipaddress) => {
+    const apiUrl = `http://${ipaddress}/api/v0/channels/shift/events/current?fields=process_state_reason_display_name`;
+
+    return Axios.get(apiUrl)
+      .then((response) => {
+        const data = response.data;
+        if (data) {
+          // Ensure data.part_id exists before accessing it
+          return data.data.events[0][0];
+        } else {
+          // Handle the case where part_id is missing or undefined
+          return { ...data, part_id: 'N/A' };
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+        return null;
+      });
+  };
+
+  const getprocessstate = (data) => {
+    if (data.break.active === true) {
+      return 'Break';
+    } else if (data.changeover.active === true) {
+      return 'changover';
+    } else if (data.detecting_state.active === true) {
+      return 'Detecting State';
+    } else if (data.down.active === true) {
+      return 'Down';
+    } else if (data.no_production.active === true) {
+      return 'No Production';
+    } else if (data.not_monitored.active === true) {
+      return 'Not Monitored';
+    } else if (data.running.active === true) {
+      return 'Running';
+    }
+    return 'error';
   };
 
   useEffect(() => {
-    // Fetch data when the page opens
-    getpartrun();
+    const fetchDataAndSetState = async () => {
+      const lineData = await fetchAllLineData();
+      if (lineData.every((data) => data !== null)) {
+        // Call the getprocessstate function here
+        setpartruntable(lineData);
+        console.log(lineData);
+        setIsLoading(false); // Data has been loaded, set isLoading to false
+      }
+    };
+  
+    fetchDataAndSetState();
+  
     // Fetch data every 10 seconds
-    const interval = setInterval(getpartrun, 10000);
-
+    const interval = setInterval(fetchDataAndSetState, 10000);
+  
     // Clean up the interval when the component unmounts
     return () => clearInterval(interval);
   }, []);
 
   return (
     <div className="tracker">
-      <Trackertoolbar/>
+      <Trackertoolbar />
       <br />
       <div className="table-container">
-        <ReactBootStrap.Table striped bordered hover>
-          <thead>
-            <tr>
-              <th>X</th>
-              <th>Line Name</th>
-              <th>Part ID</th>
-              <th>Process State</th>
-              <th>More Information</th>
-            </tr>
-          </thead>
-          <tbody>
-            {partruntable.map((rowData, index) => (
-              <tr key={index}>
-                <td className="icon-cell">
-                  {rowData.process_state === 'Running' ? (
-                    <FontAwesomeIcon icon={faCircle} style={{ color: 'green' }} />
-                  ) : rowData.process_state === 'Down' ? (
-                    <FontAwesomeIcon icon={faCircle} style={{ color: 'red' }} />
-                  ) : rowData.process_state === 'No Production' ? (
-                    <FontAwesomeIcon icon={faCircle} style={{ color: 'blue' }} />
-                  ) : rowData.process_state === 'Not Monitored' ? (
-                    <FontAwesomeIcon icon={faCircle} style={{ color: 'lightblue' }} />
-                  ) : rowData.process_state === 'Detecting State' ? (
-                    <FontAwesomeIcon icon={faCircle} style={{ color: 'grey' }} />
-                  ) : rowData.process_state === 'Changeover' ? (
-                    <FontAwesomeIcon icon={faCircle} style={{ color: 'yellow' }} />
-                  ) : rowData.process_state === 'Break' ? (
-                    <FontAwesomeIcon icon={faCircle} style={{ color: 'darkblue' }} />
-                  ) : (
-                    <FontAwesomeIcon icon={faCircle} />
-                  )}
-                </td>
-                <td>{rowData.line_name}</td>
-                <td>{rowData.part_id}</td>
-                <td>{rowData.process_state}</td>
-                <td>
-                  <button className='trackerbutton' onClick={() => handleNavigate(index)}>More</button>
-                </td>
+        {isLoading ? (
+          <p>Loading...</p>
+        ) : (
+          <ReactBootStrap.Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>X</th>
+                <th>Line Name</th>
+                <th>Part ID</th>
+                <th>Process State</th>
+                <th>More Information</th>
               </tr>
-            ))}
-          </tbody>
-        </ReactBootStrap.Table>
+            </thead>
+            <tbody>
+              {partruntable.map((rowData, index) => (
+                <tr key={index}>
+                  <td className="icon-cell">
+                    {rowData.processStateDetailsData === 'Running' ? (
+                      <FontAwesomeIcon icon={faCircle} style={{ color: 'green' }} />
+                    ) : rowData.processStateDetailsData === 'Down' ? (
+                      <FontAwesomeIcon icon={faCircle} style={{ color: 'red' }} />
+                    ) : rowData.processStateDetailsData === 'No Production' ? (
+                      <FontAwesomeIcon icon={faCircle} style={{ color: 'blue' }} />
+                    ) : rowData.processStateDetailsData === 'Not Monitored' ? (
+                      <FontAwesomeIcon icon={faCircle} style={{ color: 'lightblue' }} />
+                    ) : rowData.processStateDetailsData === 'Detecting State' ? (
+                      <FontAwesomeIcon icon={faCircle} style={{ color: 'grey' }} />
+                    ) : rowData.processStateDetailsData === 'Changeover' ? (
+                      <FontAwesomeIcon icon={faCircle} style={{ color: 'yellow' }} />
+                    ) : rowData.processStateDetailsData === 'Break' ? (
+                      <FontAwesomeIcon icon={faCircle} style={{ color: 'darkblue' }} />
+                    ) : (
+                      <FontAwesomeIcon icon={faCircle} />
+                    )}
+                  </td>
+                  <td>{rowData.linename}</td>
+                  <td>{rowData.partrunData.part_id.replace('j', '-')}</td>
+                  <td>{rowData.processStateDetailsData}</td>
+                  <td>
+                    <button className='trackerbutton' onClick={() => handleNavigate(index)}>More</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </ReactBootStrap.Table>
+        )}
       </div>
     </div>
   );

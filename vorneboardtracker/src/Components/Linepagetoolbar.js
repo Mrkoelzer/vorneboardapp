@@ -19,26 +19,26 @@ function Linepagetoolbar({line}) {
         <div className="toolbar">
             <div className="toolbar-left">
                 <img src={logo} className="App-logo-tracker" alt="logo" />
-                <p>Vorne Board Line {line} Editor</p>
+                <p>Vorne Board {line} Editor</p>
                 <p className="icon-cell-line">
-                    {partruntable[0].process_state === 'Running' ? (
+                    {partruntable[0].processStateDetailsData === 'Running' ? (
                         <FontAwesomeIcon icon={faCircle} style={{ color: 'green' }} />
-                    ) : partruntable[0].process_state === 'Down' ? (
+                    ) : partruntable[0].processStateDetailsData === 'Down' ? (
                         <FontAwesomeIcon icon={faCircle} style={{ color: 'red' }} />
-                    ) : partruntable[0].process_state === 'No Production' ? (
+                    ) : partruntable[0].processStateDetailsData === 'No Production' ? (
                         <FontAwesomeIcon icon={faCircle} style={{ color: 'blue' }} />
-                    ) : partruntable[0].process_state === 'Not Monitored' ? (
+                    ) : partruntable[0].processStateDetailsData === 'Not Monitored' ? (
                         <FontAwesomeIcon icon={faCircle} style={{ color: 'lightblue' }} />
-                    ) : partruntable[0].process_state === 'Detecting State' ? (
+                    ) : partruntable[0].processStateDetailsData === 'Detecting State' ? (
                         <FontAwesomeIcon icon={faCircle} style={{ color: 'grey' }} />
-                    ) : partruntable[0].process_state === 'Changeover' ? (
+                    ) : partruntable[0].processStateDetailsData === 'Changeover' ? (
                         <FontAwesomeIcon icon={faCircle} style={{ color: 'yellow' }} />
-                    ) : partruntable[0].process_state === 'Break' ? (
+                    ) : partruntable[0].processStateDetailsData === 'Break' ? (
                         <FontAwesomeIcon icon={faCircle} style={{ color: 'darkblue' }} />
                     ) : (
                         <FontAwesomeIcon icon={faCircle} />
                     )}</p>
-                <p>{partruntable[0].process_state}</p>
+                <p>{partruntable[0].processStateDetailsData}</p>
             </div>
             <button className={`dropdown ${isDropdownOpen ? 'active' : ''}`} onClick={toggleDropdown}>
                 <FontAwesomeIcon icon={faBars} />

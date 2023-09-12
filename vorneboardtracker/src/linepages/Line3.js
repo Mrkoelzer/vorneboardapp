@@ -2,16 +2,21 @@ import Axios from 'axios';
 import { partruncontext } from '../contexts/partruncontext';
 import { linedatacontext } from '../contexts/linedatacontext';
 import { line3partdatacontext } from '../contexts/linepartdatacontext';
-import React, { useContext, useEffect, useState } from 'react';
+import { linescontext } from '../contexts/linescontext';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import * as ReactBootStrap from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import Toolbar from '../Components/Linepagetoolbar';
 import '../Css/linepages.css'
+import { selectedlinecontext } from '../contexts/selectedlinecontext';
 
 function Line3() {
   const { partruntable, setpartruntable } = useContext(partruncontext);
-  const { linedatatable, setlinedatatable } = useContext(linedatacontext);
-  const { line3items, setline3items } = useContext(line3partdatacontext);
+  const [ linedatatable, setlinedatatable ] = useState([]);
+  const [ lineparts, setlineparts ] = useState([]);
+  const { selectedline } = useContext(selectedlinecontext)
+  const [isLoading, setIsLoading] = useState(true); // Add isLoading state
+  const { lines } = useContext(linescontext);
   const [goodcount, setgoodcount] = useState(1);
   const [rejectcount, setrejectcount] = useState(1);
 
@@ -58,25 +63,28 @@ function Line3() {
     return ''; // Default to an empty value if no match is found
   }
 
-  const handleproductionSelect = (selectedAction) => {
+  const handleproductionSelect = async (selectedAction) => {
     const selectedEndpointIdentifier = apiEndpoints[selectedAction];
+    let ipaddress = partruntable[0].lineip
     if (selectedEndpointIdentifier) {
       // Map the endpoint identifier to the full URL
-      const selectedEndpoint = `http://10.144.18.208:1433/${selectedEndpointIdentifier}0`;
-
+      const selectedEndpoint = `http://10.144.18.208:1433/${selectedEndpointIdentifier}`;
+  
       // Construct requestData based on the selected action
       let requestData;
       if (selectedAction === 'action1') {
-        requestData = { value: 'no_orders' };
+        requestData = { value: 'no_orders' }; // Do not include ipaddress here
       } else if (selectedAction === 'action2') {
-        requestData = { value: {} };
+        requestData = { value: {} }; // Do not include ipaddress here
+      } else if (selectedAction === 'action3') {
+        requestData = { value: "changeover" }; // Do not include ipaddress here
       }
-      else if (selectedAction === 'action3') {
-        requestData = { value: "changeover" };
-      }
-
+  
+      // Add ipaddress to the requestData
+      requestData.ipaddress = ipaddress;
+  
       // Make the API call based on selected action and row
-      Axios.post(selectedEndpoint, requestData)
+      await Axios.post(selectedEndpoint, requestData)
         .then((response) => {
           console.log('API call success:', response.data);
         })
@@ -85,28 +93,28 @@ function Line3() {
         });
     }
   };
-  const getpartnumbers = async () => {
+  
+  const getPartNumbers = async (tableName) => {
     try {
-      const response = await fetch('http://10.144.18.208:1434/api/getline3part', {
+      const response = await fetch(`http://10.144.18.208:1434/api/getlinepart/${tableName}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(),
       });
-
+  
       const data = await response.json();
       if (data) {
-        setline3items(data.result.recordset)
+        setlineparts(data.result.recordset);
       } else {
-        console.log("error")
+        console.log('error');
       }
     } catch (error) {
       console.error('Error:', error);
     }
   };
 
-  const handlereasonSelect = (selectedAction) => {
+  const handlereasonSelect = async(selectedAction) => {
     // Map the endpoint identifier to the full URL
     const selectedEndpoint = `http://10.144.18.208:1433/updateprocessstatereason`;
 
@@ -115,30 +123,35 @@ function Line3() {
     if (selectedAction === 'action1') {
       requestData = {
         "enabled": true,
-        "reason": "adjustment"
+        "reason": "adjustment",
+        ipaddress: partruntable[0].lineip
       };
     } else if (selectedAction === 'action2') {
       requestData = {
         "enabled": true,
-        "reason": "autonomous_maintenance"
+        "reason": "autonomous_maintenance",
+        ipaddress: partruntable[0].lineip
       };
     }
     else if (selectedAction === 'action3') {
       requestData = {
         "enabled": true,
-        "reason": "breakdown"
+        "reason": "breakdown",
+        ipaddress: partruntable[0].lineip
       };
     }
     else if (selectedAction === 'action4') {
       requestData = {
         "enabled": true,
-        "reason": "jam"
+        "reason": "jam",
+        ipaddress: partruntable[0].lineip
       };
     }
     else if (selectedAction === 'action5') {
       requestData = {
         "enabled": true,
-        "reason": "no_material"
+        "reason": "no_material",
+        ipaddress: partruntable[0].lineip
       };
     }
     else if (selectedAction === 'action6') {
@@ -149,7 +162,7 @@ function Line3() {
     }
 
     // Make the API call based on selected action and row
-    Axios.post(selectedEndpoint, requestData)
+   await Axios.post(selectedEndpoint, requestData)
       .then((response) => {
         console.log('API call success:', response.data);
       })
@@ -158,9 +171,9 @@ function Line3() {
       });
   };
 
-  const handlepartidSelect = (selectedAction) => {
+  const handlepartidSelect = async(selectedAction) => {
     // Map the endpoint identifier to the full URL
-    const selectedEndpoint = `http://10.144.18.208:1433/updatepartidline3`;
+    const selectedEndpoint = `http://10.144.18.208:1433/updatepartidline`;
 
     // Replace hyphens with "j" globally
     selectedAction = selectedAction.replace(/-/g, 'j');
@@ -168,12 +181,13 @@ function Line3() {
     // Construct requestData based on the selected action
     let requestData;
     requestData = {
-      part_id: selectedAction
+      part_id: selectedAction,
+      ipaddress: partruntable[0].lineip
     }
     console.log(requestData)
 
     // Make the API call based on selected action and row
-    Axios.post(selectedEndpoint, requestData)
+    await Axios.post(selectedEndpoint, requestData)
       .then((response) => {
         console.log('API call success:', response.data);
       })
@@ -182,33 +196,169 @@ function Line3() {
       });
   };
 
-
-  const getpartrun = () => {
-    Axios.get('http://10.144.18.208:1433/getline3partrun')
-      .then((response) => {
-        setpartruntable(response.data);
-        getprocessstate(response.data)
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-      });
-  };
-
-  const getline3data = () => {
-    Axios.get('http://10.144.18.208:1433/getline3data')
-      .then((response) => {
-        setlinedatatable(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-      });
-  };
-
-  const handlegoodcount = () => {
-    let requestData = {
-      count: parseInt(goodcount)
+  function getshiftname(shift){
+    if(shift==="first_shift"){
+      return "First Shift"
     }
-    Axios.post('http://10.144.18.208:1433/updategoodcountline3', requestData)
+    else if(shift==="second_shift"){
+      return "Second Shift"
+    }
+    else if(shift==="third_shift"){
+      return "Third Shift"
+    }
+    else{
+      return "Unkown Shift"
+    }
+  }
+
+  function getsectotime(time){
+    var date = new Date(0);
+    date.setSeconds(time); // specify value for SECONDS here
+    var timeString = date.toISOString().substring(11, 19);
+    return timeString
+  }
+
+  const fetchAllLineData = async () => {
+    const lineDataPromises = lines.map(async (line) => {
+      const linename = line.Linename;
+      const lineip = line.ipaddress;
+      const partrunData = await getpartrun(line.ipaddress);
+      const linedata = await getlinedata(line.ipaddress);
+      const processStateDetailsData = await getprocessstatedetails(line.ipaddress);
+      const shiftData = await getshiftdata(line.ipaddress);
+  
+      // Combine all the data into a single object
+      const lineDataObject = {
+        lineip,
+        linename,
+        partrunData,
+        linedata,
+        processStateDetailsData,
+        shiftData,
+      };
+  
+      // Use map to check for null values and replace them with 0
+      Object.keys(lineDataObject).forEach((key) => {
+        if (lineDataObject[key] === null) {
+          lineDataObject[key] = 0;
+        }
+      });
+  
+      return lineDataObject;
+    });
+  
+    // Wait for all promises to resolve
+    const lineData = await Promise.all(lineDataPromises);
+  
+    // Filter out only the data for the selected line
+    const filteredLineData = lineData.filter((data) => data.linename === selectedline);
+  
+    // Update null values to 0 in the linedata array
+    filteredLineData.forEach((data) => {
+      if (data.linedata) {
+        data.linedata = data.linedata.map((value) => (value === null ? 0 : value));
+      }
+    });
+  
+    // Create an array with the predefined structure
+    const linedatatable = filteredLineData.map((data) => ({
+      shift: getshiftname(data.linedata[0]) || 0, // Replace null with 0
+      start_time: data.linedata[1] || '', // Replace null with an empty string
+      run_time: getsectotime(data.linedata[2]) || 0, // Replace null with 0
+      unplanned_stop_time: getsectotime(data.linedata[3]) || 0, // Replace null with 0
+      in_count: data.linedata[4] || 0, // Replace null with 0
+      good_count: data.linedata[5] || 0, // Replace null with 0
+      reject_count: data.linedata[6] || 0, // Replace null with 0
+      average_cycle_time: (Math.round(data.linedata[7]*100)/100).toFixed(2) || 0, // Replace null with 0
+      ideal_cycle_time: data.linedata[8].toFixed(2) || 0, // Replace null with 0
+      oee: (data.linedata[9]*100).toFixed(1) || 0, // Replace null with 0
+    }));
+    setlinedatatable(linedatatable);
+    return filteredLineData;
+  };
+
+  const getpartrun = async (ipaddress) => {
+    const apiUrl = `http://${ipaddress}/api/v0/part_run`;
+
+    return await Axios.get(apiUrl)
+      .then((response) => {
+        const data = response.data;
+
+        if (data && data.data.part_id) {
+          return data.data;
+        } else {
+          return { ...data, part_id: 'N/A' };
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+        return null;
+      });
+  };
+  const getprocessstatedetails = async (ipaddress) => {
+    const apiUrl = `http://${ipaddress}/api/v0/process_state/details`;
+
+    return await Axios.get(apiUrl)
+      .then((response) => {
+        const data = response.data;
+        if (data) {
+          let updateddata = getprocessstate(data.data);
+          // Ensure data.part_id exists before accessing it
+          return updateddata;
+        } else {
+          // Handle the case where part_id is missing or undefined
+          return { ...data, part_id: 'N/A' };
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+        return null;
+      });
+  };
+  const getshiftdata = async (ipaddress) => {
+    const apiUrl = `http://${ipaddress}/api/v0/channels/shift/events/current?fields=process_state_reason_display_name`;
+
+    return await Axios.get(apiUrl)
+      .then((response) => {
+        const data = response.data;
+
+        if (data) {
+          return data.data;
+        } else {
+          return { ...data, part_id: 'N/A' };
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+        return null;
+      });
+  };
+
+  const getlinedata = async (ipaddress) => {
+    const apiUrl = `http://${ipaddress}/api/v0/channels/shift/events/current?fields=shift,start_time,run_time,unplanned_stop_time,in_count,good_count,reject_count,average_cycle_time,ideal_cycle_time,oee`;
+
+    return await Axios.get(apiUrl)
+      .then((response) => {
+        const data = response.data;
+
+        if (data) {
+          return data.data.events[0];
+        } else {
+          return { ...data, part_id: 'N/A' };
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+        return null;
+      });
+  };
+
+  const handlegoodcount = async () => {
+    let requestData = {
+      count: parseInt(goodcount),
+      ipaddress: partruntable[0].lineip
+    }
+    await Axios.post('http://10.144.18.208:1433/updategoodcount', requestData)
       .then((response) => {
         setgoodcount(1)
       })
@@ -218,9 +368,10 @@ function Line3() {
   };
   const handlerejectcount = () => {
     let requestData = {
-      count: parseInt(rejectcount)
+      count: parseInt(rejectcount),
+      ipaddress: partruntable[0].lineip
     }
-    Axios.post('http://10.144.18.208:1433/updaterejectcountline3', requestData)
+    Axios.post('http://10.144.18.208:1433/updaterejectcount', requestData)
       .then((response) => {
         setrejectcount(1)
       })
@@ -230,32 +381,25 @@ function Line3() {
   };
 
 
-  const getprocessstate = (partruntableData) => {
-    if (!Array.isArray(partruntableData)) {
-      console.error('Invalid data:', partruntableData);
-      return;
+  const getprocessstate = (data) => {
+    if (data.break.active === true) {
+      return 'Break';
+    } else if (data.changeover.active === true) {
+      return 'changover';
+    } else if (data.detecting_state.active === true) {
+      return 'Detecting State';
+    } else if (data.down.active === true) {
+      return 'Down';
+    } else if (data.no_production.active === true) {
+      return 'No Production';
+    } else if (data.not_monitored.active === true) {
+      return 'Not Monitored';
+    } else if (data.running.active === true) {
+      return 'Running';
     }
-    const updatedPartruntable = partruntableData.map(item => {
-      if (item.process_state_break === true) {
-        item.process_state = "Break";
-      } else if (item.process_state_changeover === true) {
-        item.process_state = "changover";
-      } else if (item.process_state_detecting_state === true) {
-        item.process_state = "Detecting State";
-      } else if (item.process_state_down === true) {
-        item.process_state = "Down";
-      } else if (item.process_state_no_production === true) {
-        item.process_state = "No Production";
-      } else if (item.process_state_not_monitored === true) {
-        item.process_state = "Not Monitored";
-      } else if (item.process_state_running === true) {
-        item.process_state = "Running";
-      }
-      return item;
-    });
-
-    setpartruntable(updatedPartruntable);
+    return 'error';
   };
+
 
 
 
@@ -268,156 +412,171 @@ function Line3() {
 
 
   const getpartname = () => {
-    for (let i = 0; i < line3items.length; i++) {
-      if (line3items[i].Part_ID === partruntable[0].part_id) {
-        return line3items[i].Alternate_Part_ID;
+    for (let i = 0; i < lineparts.length; i++) {
+      if (lineparts[i].Part_ID === partruntable[0].partrunData.part_id.replace('j', '-')){
+        return lineparts[i].Alternate_Part_ID;
       }
     }
     return "No Part Name"
   }
 
+  // Initialize an interval reference using a ref
+
+
   useEffect(() => {
-    const fetchData = () => {
-      getpartrun();
-      getline3data();
+    const fetchDataAndSetState = async () => {
+      const lineData = await fetchAllLineData();
+      if (lineData.every((data) => data !== null)) {
+        // Call the getprocessstate function here
+        setpartruntable(lineData);
+        getPartNumbers(selectedline);
+        console.log(lineData);
+        setIsLoading(false); // Data has been loaded, set isLoading to false
+      }
     };
-    getpartnumbers();
-    // Fetch data when the page opens
-    fetchData();
+  
+    fetchDataAndSetState();
   
     // Fetch data every 10 seconds
-    const interval = setInterval(fetchData, 10000);
+    const interval = setInterval(fetchDataAndSetState, 10000);
   
     // Clean up the interval when the component unmounts
     return () => clearInterval(interval);
   }, []);
-
   return (
     <div className="linepage">
-      <Toolbar line="Line 3"  />
-      <br />
-      <div className='flexbox-container'>
-        <div className='flexbox-item'>
-          <p className='textinboxes'>Part ID and Name </p>
-          {partruntable[0].part_id}
-          <p>{getpartname()}</p>
-        </div>
-        <div className='flexbox-item'>
-          <p className='textinboxes'>Change Production State</p>
-          <ReactBootStrap.Form.Control
-            className='linepagebutton'
-            as="select"
-            value={getInitialAction(partruntable[0].process_state)}
-            onChange={(e) => handleproductionSelect(e.target.value)}
-          >
-            <option value="action1">No Orders</option>
-            <option value="action2">Running Production</option>
-            <option value="action3">Changeover</option>
-            {/* Add more options here */}
-          </ReactBootStrap.Form.Control>
-        </div>
-        <div className='flexbox-item'>
-          <p className='textinboxes'>Process State Reason</p>
-          {partruntable[0].process_state_reason}
-        </div>
-        <div className='flexbox-item'>
-          <p className='textinboxes'>Change Part</p>
-          <ReactBootStrap.Form.Control
-            className='linepagebutton'
-            as="select"
-            value={partruntable[0].part_id}
-            onChange={(e) => handlepartidSelect(e.target.value)}
-          >
-            {line3items.map((item) => (
-              <option key={item.Part_ID} value={item.Part_ID}>
-                {item.Part_ID}
-              </option>
-            ))}
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : (
+        <>
+          <Toolbar line={partruntable[0].linename} />
+          <br />
+          <div className='flexbox-container'>
 
-            {/* Add more options here */}
-          </ReactBootStrap.Form.Control>
-        </div>
-        <div className='flexbox-item'>
-          <p className='textinboxes'>Increment Count & Reject</p>
-          <p><button className='linepagebutton2' onClick={handlegoodcount}>+ Good</button>
-            <input
-              className='linepagebutton2'
-              value={goodcount}
-              onChange={(e) => setgoodcount(e.target.value)}
-              onKeyPress={(event) => {
-                if (!/[0-9]/.test(event.key)) {
-                  event.preventDefault();
-                }
-              }}
-            />
-          </p>
-          <p><button className='linepagebutton2' onClick={handlerejectcount}>+ Reject</button>
-            <input
-              className='linepagebutton2'
-              value={rejectcount}
-              onChange={(e) => setrejectcount(e.target.value)}
-              onKeyPress={(event) => {
-                if (!/[0-9]/.test(event.key)) {
-                  event.preventDefault();
-                }
-              }}
-            />
-          </p>
-        </div>
-        <div className='flexbox-item'>
-          <p className='textinboxes'>Change Reason</p>
-          <ReactBootStrap.Form.Control
-            className='linepagebutton'
-            as="select"
-            value={getInitialActionreason(partruntable[0].process_state_reason_down)}
-            onChange={(e) => handlereasonSelect(e.target.value)}
-            disabled={partruntable[0].process_state_reason === "Running Normally" || partruntable[0].process_state_reason === "No Orders" || partruntable[0].process_state_reason === "Lunch"}
-          >
-            <option value="action1">Adjustment</option>
-            <option value="action2">Maintenance</option>
-            <option value="action3">Breakdown</option>
-            <option value="action4">Jam</option>
-            <option value="action5">No Materials</option>
-            <option value="action6">No Operator</option>
-            {/* Add more options here */}
-          </ReactBootStrap.Form.Control>
-        </div>
-        <div className="table-container">
-          <ReactBootStrap.Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>Shift</th>
-                <th>Run Time</th>
-                <th>Down Time</th>
-                <th>OEE</th>
-                <th>In Count</th>
-                <th>Good Count</th>
-                <th>Reject Count</th>
-                <th>Avg. Cycle Time</th>
-                <th>Ideal Cycle Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              {linedatatable.map((rowData, index) => (
-                <tr key={index}>
-                  <td>{rowData.shift}</td>
-                  <td>{rowData.run_time}</td>
-                  <td>{rowData.unplanned_stop_time}</td>
-                  <td style={{ backgroundColor: getColorForOEE(rowData.oee) }}>{rowData.oee}%</td>
-                  <td>{rowData.in_count}</td>
-                  <td>{rowData.good_count}</td>
-                  <td>{rowData.reject_count}</td>
-                  <td>{rowData.average_cycle_time}</td>
-                  <td>{rowData.ideal_cycle_time}</td>
-                </tr>
-              ))}
-            </tbody>
-          </ReactBootStrap.Table>
-        </div>
-      </div>
-      <button className='linepagebutton' onClick={() => navigate('/Tracker')}>
-        Go Back
-      </button>
+            <div className='flexbox-item'>
+              <p className='textinboxes'>Part ID and Name </p>
+              {partruntable[0].partrunData.part_id.replace('j', '-')}
+              <p>{getpartname()}</p>
+            </div>
+            <div className='flexbox-item'>
+              <p className='textinboxes'>Change Production State</p>
+              <ReactBootStrap.Form.Control
+                className='linepagebutton'
+                as="select"
+                value={getInitialAction(partruntable[0].processStateDetailsData)}
+                onChange={(e) => handleproductionSelect(e.target.value)}
+              >
+                <option value="action1">No Orders</option>
+                <option value="action2">Running Production</option>
+                <option value="action3">Changeover</option>
+                {/* Add more options here */}
+              </ReactBootStrap.Form.Control>
+            </div>
+            <div className='flexbox-item'>
+              <p className='textinboxes'>Process State Reason</p>
+              {partruntable[0].shiftData.events[0]}
+            </div>
+            <div className='flexbox-item'>
+              <p className='textinboxes'>Change Part</p>
+              <ReactBootStrap.Form.Control
+                className='linepagebutton'
+                as="select"
+                value={partruntable[0].partrunData.part_id.replace('j', '-')}
+                onChange={(e) => handlepartidSelect(e.target.value)}
+              >
+                {lineparts.map((item) => (
+                  <option key={item.Part_ID} value={item.Part_ID}>
+                    {item.Part_ID}
+                  </option>
+                ))}
+                {/* Add more options here */}
+              </ReactBootStrap.Form.Control>
+            </div>
+            <div className='flexbox-item'>
+              <p className='textinboxes'>Increment Count & Reject</p>
+              <p>
+                <button className='linepagebutton2' onClick={handlegoodcount}>+ Good</button>
+                <input
+                  className='linepagebutton2'
+                  value={goodcount}
+                  onChange={(e) => setgoodcount(e.target.value)}
+                  onKeyPress={(event) => {
+                    if (!/[0-9]/.test(event.key)) {
+                      event.preventDefault();
+                    }
+                  }}
+                />
+              </p>
+              <p>
+                <button className='linepagebutton2' onClick={handlerejectcount}>+ Reject</button>
+                <input
+                  className='linepagebutton2'
+                  value={rejectcount}
+                  onChange={(e) => setrejectcount(e.target.value)}
+                  onKeyPress={(event) => {
+                    if (!/[0-9]/.test(event.key)) {
+                      event.preventDefault();
+                    }
+                  }}
+                />
+              </p>
+            </div>
+            <div className='flexbox-item'>
+              <p className='textinboxes'>Change Reason</p>
+              <ReactBootStrap.Form.Control
+                className='linepagebutton'
+                as="select"
+                value={getInitialActionreason('adjustment')}
+                onChange={(e) => handlereasonSelect(e.target.value)}
+                disabled={partruntable[0].shiftData.events[0] === "Running Normally" || partruntable[0].shiftData.events[0] === "No Orders" || partruntable[0].shiftData.events[0] === "Lunch"}
+              >
+                <option value="action1">Adjustment</option>
+                <option value="action2">Maintenance</option>
+                <option value="action3">Breakdown</option>
+                <option value="action4">Jam</option>
+                <option value="action5">No Materials</option>
+                <option value="action6">No Operator</option>
+                {/* Add more options here */}
+              </ReactBootStrap.Form.Control>
+            </div>
+            <div className="table-container">
+              <ReactBootStrap.Table striped bordered hover>
+                <thead>
+                  <tr>
+                    <th>Shift</th>
+                    <th>Run Time</th>
+                    <th>Down Time</th>
+                    <th>OEE</th>
+                    <th>In Count</th>
+                    <th>Good Count</th>
+                    <th>Reject Count</th>
+                    <th>Avg. Cycle Time</th>
+                    <th>Ideal Cycle Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {linedatatable.map((rowData, index) => (
+                    <tr key={index}>
+                      <td>{rowData.shift}</td>
+                      <td>{rowData.run_time}</td>
+                      <td>{rowData.unplanned_stop_time}</td>
+                      <td style={{ backgroundColor: getColorForOEE(rowData.oee) }}>{rowData.oee}%</td>
+                      <td>{rowData.in_count}</td>
+                      <td>{rowData.good_count}</td>
+                      <td>{rowData.reject_count}</td>
+                      <td>{rowData.average_cycle_time}</td>
+                      <td>{rowData.ideal_cycle_time}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </ReactBootStrap.Table>
+            </div>
+          </div>
+          <button className='linepagebutton' onClick={() => navigate('/Tracker')}>
+            Go Back
+          </button>
+        </>
+      )}
     </div>
   );
 }
