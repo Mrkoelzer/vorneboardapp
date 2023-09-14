@@ -19,7 +19,7 @@ function Tracker() {
 
   const handleNavigate = (index) => {
     setselectedline(lines[index].Linename);
-      navigate('/line3');
+      navigate('/lineeditor');
   };
 
   const fetchAllLineData = async () => {

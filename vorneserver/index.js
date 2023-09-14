@@ -228,6 +228,133 @@ app.post('/api/createaccount', async (req, res) => {
   }
 });
 
+app.post('/api/insertnewline', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const requestData = req.body;
+    const result = await sql.query`INSERT INTO Lines ([Linename],[ipaddress],[packline],[extruder])VALUES(${requestData.Linename},${requestData.ipaddress},${requestData.packline},${requestData.extruder})`;
+    if (result) {
+      res.json({ createdauthenticated: true });
+    } else {
+      res.json({ createdauthenticated: false });
+    }
+
+    sql.close();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.post('/api/deletetable', async (req, res) => {
+  try {
+    const requestData = req.body; // Extract the linename from the request body
+
+    // Validate and sanitize the table name here, for security.
+
+    await sql.connect(config);
+
+    // Use string concatenation to include the table name in the query.
+    const query = `DROP TABLE IF EXISTS [${requestData.Linename.Linename}]`;
+
+    const result = await sql.query(query);
+
+    sql.close();
+
+    if (result.rowsAffected[0] === 1) {
+      res.json({ tableDropped: true });
+    } else {
+      res.json({ tableDropped: false });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
+
+app.post('/api/addnewtable', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const requestData = req.body;
+
+    // Use requestData.Linename directly in the SQL query
+    const result = await sql.query(
+      `CREATE TABLE [dbo].[${requestData.Linename}](
+        [Part_ID] [nvarchar](14) NULL,
+        [Alternate_Part_ID] [nvarchar](62) NULL,
+        [Ideal_Cycle_Time_s] [numeric](4, 2) NULL,
+        [Takt_Time_s] [numeric](4, 2) NULL,
+        [Target_Labor_per_Piece_s] [numeric](4, 2) NULL,
+        [Down_s] [int] NULL,
+        [Count_Multiplier_1] [int] NULL,
+        [Count_Multiplier_2] [int] NULL,
+        [Count_Multiplier_3] [int] NULL,
+        [Count_Multiplier_4] [int] NULL,
+        [Count_Multiplier_5] [int] NULL,
+        [Count_Multiplier_6] [int] NULL,
+        [Count_Multiplier_7] [int] NULL,
+        [Count_Multiplier_8] [int] NULL,
+        [Target_Multiplier] [int] NULL,
+        [Start_with_Changeover] [nvarchar](2) NULL,
+        [The_changeover_reason_is] [nvarchar](11) NULL,
+        [Set_a_target_time_of_s] [nvarchar](4) NULL,
+        [End_event] [nvarchar](21) NULL
+      );`
+    );
+
+    if (result) {
+      res.json({ createdauthenticated: true });
+    } else {
+      res.json({ createdauthenticated: false });
+    }
+
+    sql.close();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.post('/api/updateline', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const requestData = req.body;
+    const result = await sql.query`update [Lines] set [linename]=${requestData.Linename},[ipaddress]=${requestData.ipaddress}, [packline]=${requestData.packline}, [extruder]=${requestData.extruder} where lineid = ${requestData.lineid}`;
+    if (result) {
+      res.json({ createdauthenticated: true });
+    } else {
+      res.json({ createdauthenticated: false });
+    }
+
+    sql.close();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.delete('/api/deleteline/:lineid', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const lineid = req.params.lineid; // Get the lineid from the URL parameter
+    const result = await sql.query`delete from [lines] where [lineid] = ${lineid}`;
+    
+    if (result.rowsAffected[0] === 1) {
+      res.json({ deleted: true });
+    } else {
+      res.json({ deleted: false });
+    }
+
+    sql.close();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
 app.get('/api/getlinepart/:tableName', async (req, res) => {
   const { tableName } = req.params;
 
@@ -239,24 +366,6 @@ app.get('/api/getlinepart/:tableName', async (req, res) => {
     
     const result = await request.query(query);
 
-    if (result) {
-      res.json({ result });
-    } else {
-      res.json({ authenticated: false });
-    }
-
-    sql.close();
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error' });
-  }
-});
-
-app.get('/api/getline4part', async (req, res) => {
-  try {
-    await sql.connect(config);
-
-    const result = await sql.query`select * from Line4part`;
     if (result) {
       res.json({ result });
     } else {

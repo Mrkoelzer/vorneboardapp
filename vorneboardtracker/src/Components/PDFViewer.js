@@ -3,7 +3,7 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 
 
-function PDFViewer() {
+function PDFViewer({partnumber}) {
   useEffect(() => { pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;});
   const [pageNumber, setPageNumber] = useState(1);
 
@@ -13,7 +13,7 @@ function PDFViewer() {
 
   return (
     <div>
-      <Document file="/PDF/112-40019-2.pdf" onLoadSuccess={onDocumentLoadSuccess} >
+      <Document file={`/PDF/${partnumber}.pdf`} onLoadSuccess={onDocumentLoadSuccess} >
         <Page scale={1.5} pageNumber={pageNumber}  renderTextLayer={false} />
       </Document>
     </div>

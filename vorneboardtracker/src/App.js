@@ -3,29 +3,27 @@ import './Css/App.css'
 import MainPage from './Pages/MainPage';
 import Tracker from './Pages/Tracker';
 import Updater from './Pages/Updater';
-import Line3packview from './Pages/Line3packview';
+import Linepackview from './linepages/Linepackview';
 import Line3setup from './Pages/Line3setup'
 import Login from './Pages/Login';
 import Account from './Pages/Account';
 import Createaccount from './Pages/Createaccount';
+import Editlineextruder from './Pages/Editlineextruder'
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { partruncontext } from './contexts/partruncontext';
 import { linedatacontext } from './contexts/linedatacontext';
 import { usercontext } from './contexts/usercontext';
 import { linescontext } from './contexts/linescontext';
 import { selectedlinecontext } from './contexts/selectedlinecontext';
-import Line3 from './linepages/Line3';
-import Line4 from './linepages/Line4';
-import Line5 from './linepages/Line5';
-import Line7 from './linepages/Line7';
-import Line8 from './linepages/Line8';
-import Line9 from './linepages/Line9';
+import { partnumbercontext } from './contexts/partnumbercontext';
+import Lineeditor from './linepages/Lineeditor';
 import { line3partdatacontext } from './contexts/linepartdatacontext';
 
 
 function App() {
   const [line3items, setline3items] = useState([]);
   const [lines, setlines] = useState([]);
+  const [partnumber, setpartnumber] = useState('')
   const [selectedline, setselectedline] = useState('');
 
   useEffect(() => { 
@@ -114,23 +112,21 @@ function App() {
         <partruncontext.Provider value={{ partruntable, setpartruntable }}>
           <linedatacontext.Provider value={{ linedatatable, setlinedatatable }}>
             <line3partdatacontext.Provider value={{ line3items, setline3items }}>
+              <partnumbercontext.Provider value={{partnumber, setpartnumber}}>
               <usercontext.Provider value={{ userdata, setuserdata }}><Routes>
                 <Route path="/" element={<MainPage />} />
                 <Route path="/Tracker" element={<Tracker />} />
                 <Route path="/Updater" element={<Updater />} />
-                <Route path="/Line3" element={<Line3 />} />
-                <Route path="/Line4" element={<Line4 />} />
-                <Route path="/Line5" element={<Line5 />} />
-                <Route path="/Line7" element={<Line7 />} />
-                <Route path="/Line8" element={<Line8 />} />
-                <Route path="/Line9" element={<Line9 />} />
-                <Route path="/Line3packview" element={<Line3packview />} />
+                <Route path="/Lineeditor" element={<Lineeditor />} />
+                <Route path="/Linepackview" element={<Linepackview />} />
                 <Route path="/Line3setup" element={<Line3setup />} />
                 <Route path="/Login" element={<Login />} />
                 <Route path="/Account" element={<Account />} />
                 <Route path="/Createaccount" element={<Createaccount />} />
+                <Route path="/Editlineextruder" element={<Editlineextruder />} />
               </Routes>
               </usercontext.Provider>
+              </partnumbercontext.Provider>
             </line3partdatacontext.Provider>
           </linedatacontext.Provider>
         </partruncontext.Provider>

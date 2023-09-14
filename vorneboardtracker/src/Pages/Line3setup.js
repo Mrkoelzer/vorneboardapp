@@ -10,7 +10,7 @@ function Line3setup() {
   return (
     <div className="linesetuppage">
       <Toolbar/>
-        <button className='mainpagebutton' onClick={() => navigate('/Line3packview')}>
+        <button className='mainpagebutton' onClick={() => navigate('/')}>
         Go Back
       </button>
     </div>
