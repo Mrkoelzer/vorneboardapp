@@ -39,6 +39,11 @@
     text-align: center;
 }
 
+.editlebutton:hover {
+  color: black;
+  box-shadow: 0 5px 15px white;
+}
+
 .modalbutton {
     font-weight: bold;
     font-size: large;
@@ -51,11 +56,6 @@
     transition: all 0.2s ease-in-out;
     width: 50%;
     text-align: center;
-}
-
-.editlebutton:hover {
-    color: black;
-    box-shadow: 0 5px 15px white;
 }
 
 .editle-inputs{

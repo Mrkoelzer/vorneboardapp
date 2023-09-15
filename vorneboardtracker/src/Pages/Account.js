@@ -25,8 +25,8 @@ function Account() {
                 <button className='accountbutton' onClick={() => navigate('/Editlineextruder')}>
                     Edit Lines/Extruders
                 </button>
-                <button className='accountbutton' onClick={() => navigate('/Editlineextruder')}>
-                    Add Part Numbers
+                <button className='accountbutton' onClick={() => navigate('/Addeditpartnumbers')}>
+                    Add/Edit Part Numbers
                 </button>
                 <button className='accountbutton' onClick={() => navigate('/')}>
                     Go Back

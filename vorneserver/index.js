@@ -246,6 +246,76 @@ app.post('/api/insertnewline', async (req, res) => {
   }
 });
 
+app.post('/api/insertnewpart', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const requestData = req.body;
+    const tableName = requestData.Linename; // Extract table name
+
+    // Remove Linename from requestData
+    delete requestData.Linename;
+
+    // Create an array of parameter names and values
+
+    // Construct the parameterized query
+    const query = `
+      INSERT INTO [dbo].[${tableName}]
+      ([Part_ID]
+        ,[Alternate_Part_ID]
+        ,[Ideal_Cycle_Time_s]
+        ,[Takt_Time_s]
+        ,[Target_Labor_per_Piece_s]
+        ,[Down_s]
+        ,[Count_Multiplier_1]
+        ,[Count_Multiplier_2]
+        ,[Count_Multiplier_3]
+        ,[Count_Multiplier_4]
+        ,[Count_Multiplier_5]
+        ,[Count_Multiplier_6]
+        ,[Count_Multiplier_7]
+        ,[Count_Multiplier_8]
+        ,[Target_Multiplier]
+        ,[Start_with_Changeover]
+        ,[The_changeover_reason_is]
+        ,[Set_a_target_time_of_s]
+        ,[End_event])
+      VALUES (
+        '${requestData.Part_ID}',
+        '${requestData.Alternate_Part_ID}',
+        ${requestData.Ideal_Cycle_Time_s},
+        ${requestData.Takt_Time_s},
+        ${requestData.Target_Labor_per_Piece_s},
+        ${requestData.Down_s},
+        ${requestData.Count_Multiplier_1},
+        ${requestData.Count_Multiplier_2},
+        ${requestData.Count_Multiplier_3},
+        ${requestData.Count_Multiplier_4},
+        ${requestData.Count_Multiplier_5},
+        ${requestData.Count_Multiplier_6},
+        ${requestData.Count_Multiplier_7},
+        ${requestData.Count_Multiplier_8},
+        ${requestData.Target_Multiplier},
+        '${requestData.Start_with_Changeover}',
+        '${requestData.The_changeover_Reason_is}',
+        '${requestData.Set_a_target_time_of_s}',
+        '${requestData.End_Event}'
+      )`;
+    // Execute the query with parameters
+    const result = await sql.query(query);
+
+    if (result) {
+      res.json({ createdauthenticated: true });
+    } else {
+      res.json({ createdauthenticated: false });
+    }
+
+    sql.close();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 app.post('/api/deletetable', async (req, res) => {
   try {
     const requestData = req.body; // Extract the linename from the request body
@@ -354,6 +424,27 @@ app.delete('/api/deleteline/:lineid', async (req, res) => {
   }
 });
 
+app.delete('/api/deleteline', async (req, res) => {
+  try {
+      await sql.connect(config);
+      //const part_id = req.params.part_id; // Get the part_id from the URL parameter
+      const { linename, id } = req.body; // Get the linename from the request body
+      const query=`DELETE FROM [${linename}] WHERE [Part_ID] = '${id}'`
+      // Use single quotes for nvarchar values
+      const result = await sql.query(query);
+
+      if (result.rowsAffected[0] === 1) {
+          res.json({ deleted: true });
+      } else {
+          res.json({ deleted: false });
+      }
+
+      sql.close();
+  } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Server error' });
+  }
+});
 
 app.get('/api/getlinepart/:tableName', async (req, res) => {
   const { tableName } = req.params;
@@ -379,11 +470,33 @@ app.get('/api/getlinepart/:tableName', async (req, res) => {
   }
 });
 
+app.post('/api/updatetablename', async (req, res) => {
+  const { oldtablename, tableName } = req.body;
+  console.log(oldtablename + tableName)
+  try {
+    await sql.connect(config);
+
+    const request = new sql.Request();
+    const query = `exec sp_rename [${oldtablename}], [${tableName}]`;
+    const result = await request.query(query);
+
+    if (result) {
+      res.json({ result });
+    } else {
+      res.json({ authenticated: false });
+    }
+    sql.close();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 app.get('/api/getlines', async (req, res) => {
   try {
     await sql.connect(config);
 
-    const result = await sql.query`select * from Lines`;
+    const result = await sql.query`select * from Lines order by Linename asc`;
     if (result) {
       res.json({ result });
     } else {
@@ -391,6 +504,29 @@ app.get('/api/getlines', async (req, res) => {
     }
 
     sql.close();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.get('/api/getlinepartnumbers', async (req, res) => {
+  const { linename } = req.query;
+
+  try {
+    const pool = await sql.connect(config);
+    const request = pool.request(); // Create a request object from the connection pool
+
+    const query = `select * from [${linename}] order by Part_id`;
+    const result = await request.query(query);
+
+    if (result) {
+      res.json({ result });
+    } else {
+      res.json({ authenticated: false });
+    }
+
+    pool.close(); // Close the SQL Server connection
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });

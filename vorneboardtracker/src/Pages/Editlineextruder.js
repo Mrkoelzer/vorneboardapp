@@ -25,6 +25,8 @@ function Editlineextruder() {
     packline: 1,
     extruder: 0,
   });
+  const [addLineMessage, setAddLineMessage] = useState('');
+
   const fetchlines = async () => {
     try {
       const response = await fetch('http://10.144.18.208:1434/api/getlines', {
@@ -108,26 +110,74 @@ function Editlineextruder() {
     }
   };
   
-  function checkaddline() {
-    console.log('Getting here?')
-    console.log(newData.Linename)
-    console.log(lines)
-    const regexExp = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/gi;
-        for(let i = 0; i<lines.length; i++){
-            if(lines[i].Linename = newData.Linename){
-                console.log(newData.Linename + lines[i].Linename)
-                //return "Duplicate Line Name"
-            }
-            if(!regexExp.test(newData.ipaddress)){
-                console.log("Invalid IP Address")
-                //return "Invalid IP Address"
-            }
-            else{
-                console.log('no')
-                handleSaveEdit()
-            }
+  const checkaddline = () => {
+    const regexExp = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+    for (let i = 0; i < lines.length; i++) {
+        if(newData.Linename.trim() === ""){
+            setAddLineMessage('Line Name is blank')
+            return;
         }
-  }
+        if(newData.ipaddress.trim() === ""){
+            setAddLineMessage('IP Address is blank')
+            return
+        }
+      if (lines[i].Linename === newData.Linename) {
+        setAddLineMessage(`${newData.Linename} is a Duplicate Line Name`);
+        return;
+      }
+      if (lines[i].ipaddress === newData.ipaddress) {
+        setAddLineMessage(`${newData.ipaddress} is being used on ${lines[i].Linename}`);
+        return;
+      }
+      if (!regexExp.test(newData.ipaddress)) {
+        setAddLineMessage(`${newData.ipaddress} is an Invalid IP Address`);
+        return;
+      }
+    }
+    handleSaveAdd();
+  };
+
+  const checkeditline = () => {
+    console.log(editedData)
+    const regexExp = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+    for (let i = 0; i < lines.length; i++) {
+      if(i!==editRow){
+        if(editedData.Linename.trim() === ""){
+            setAddLineMessage('Line Name is blank')
+            return;
+        }
+        if(editedData.ipaddress.trim() === ""){
+            setAddLineMessage('IP Address is blank')
+            return
+        }
+        if (lines[i].Linename === editedData.Linename) {
+            setAddLineMessage(`${editedData.Linename} is a Duplicate Line Name`);
+            return;
+          }
+        if (lines[i].ipaddress === editedData.ipaddress) {
+            setAddLineMessage(`${editedData.ipaddress} is being used on ${lines[i].Linename}`);
+            return;
+          }
+        if (!regexExp.test(editedData.ipaddress)) {
+            setAddLineMessage(`${editedData.ipaddress} is an Invalid IP Address`);
+            return;
+          }
+        }
+        if(editedData.Linename.trim() === ""){
+            setAddLineMessage('IP Address is blank')
+            return;
+        }
+        if(editedData.ipaddress.trim() === ""){
+            setAddLineMessage('Line Name is blank')
+            return
+        }
+      if (!regexExp.test(editedData.ipaddress)) {
+        setAddLineMessage(`${editedData.ipaddress} is an Invalid IP Address`);
+        return;
+      }
+    }
+    handleSaveEdit();
+  };
 
   const handleSaveEdit = async () => {
     try {
@@ -140,7 +190,7 @@ function Editlineextruder() {
       });
 
       // Handle response and update the data if needed
-
+      handletablenamechange();
       fetchlines()
 
       // Close the edit pop-up
@@ -150,8 +200,23 @@ function Editlineextruder() {
     }
   };
 
+  const handletablenamechange = async () => {
+    try {
+      const response = await fetch('http://10.144.18.208:1434/api/updatetablename', {
+        method: 'POST', // or 'POST' depending on your API
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ oldtablename: lines[editRow].Linename, tableName: editedData.Linename }),
+      });
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
   const handleAddClick = () => {
     setShowAddModal(true);
+    setAddLineMessage('');
   };
 
   const closeAddModal = () => {
@@ -284,12 +349,13 @@ function Editlineextruder() {
                 <option value="Pack Line">Pack Line</option>
                 <option value="Extruder">Extruder</option>
               </select>
-              <button className="modalbutton" onClick={handleSaveEdit}>
+              <button className="modalbutton" onClick={checkeditline}>
                 Save
               </button>
               <button className="modalbutton" onClick={closeEditModal}>
                 Cancel
               </button>
+              {addLineMessage && <p className="error-message">{addLineMessage}</p>}
             </div>
           </div>
           </div>
@@ -303,47 +369,49 @@ function Editlineextruder() {
       </view>
       {showAddModal && (
         <div className="edit-modal">
-          <div className="edit-popup">
-            <button className="modal-close-button" onClick={closeAddModal}>
-              X
-            </button>
-            <h2>Add Line Data</h2>
-            <input
-              className='editle-inputs'
-              type="text"
-              placeholder="Line Name"
-              value={newData.Linename}
-              onChange={(e) => setNewData({ ...newData, Linename: e.target.value })}
-            />
-            <input
-              className='editle-inputs'
-              type="text"
-              placeholder="IP Address"
-              value={newData.ipaddress}
-              onChange={(e) => setNewData({ ...newData, ipaddress: e.target.value })}
-            />
-              <select
-              className='editle-inputs'
-                value={newData.packline === 1 ? 'Pack Line' : 'Extruder'}
-                onChange={(e) =>
-                setNewData({
-                  ...newData,
-                  packline: e.target.value === 'Pack Line' ? 1 : 0,
-                  extruder: e.target.value === 'Extruder' ? 1 : 0,
-                  })
-                }
-              >
-                <option value="Pack Line">Pack Line</option>
-                <option value="Extruder">Extruder</option>
-              </select>
-            <button className="modalbutton" onClick={checkaddline}>
-              Save
-            </button>
-            <button className="modalbutton" onClick={closeAddModal}>
-              Cancel
-            </button>
-          </div>
+        <div className="edit-popup">
+          <button className="modal-close-button" onClick={closeAddModal}>
+            X
+          </button>
+          <h2>Add Line Data</h2>
+          <input
+            className='editle-inputs'
+            type="text"
+            placeholder="Line Name"
+            value={newData.Linename}
+            onChange={(e) => setNewData({ ...newData, Linename: e.target.value })}
+          />
+          <input
+            className='editle-inputs'
+            type="text"
+            placeholder="IP Address"
+            value={newData.ipaddress}
+            onChange={(e) => setNewData({ ...newData, ipaddress: e.target.value })}
+          />
+          <select
+            className='editle-inputs'
+            value={newData.packline === 1 ? 'Pack Line' : 'Extruder'}
+            onChange={(e) =>
+              setNewData({
+                ...newData,
+                packline: e.target.value === 'Pack Line' ? 1 : 0,
+                extruder: e.target.value === 'Extruder' ? 1 : 0,
+              })
+            }
+          >
+            <option value="Pack Line">Pack Line</option>
+            <option value="Extruder">Extruder</option>
+          </select>
+          <button className="modalbutton" onClick={checkaddline}>
+            Save
+          </button>
+          <button className="modalbutton" onClick={closeAddModal}>
+            Cancel
+          </button>
+          {/* Display the message */}
+          {addLineMessage && <p className="error-message">{addLineMessage}</p>}
         </div>
+      </div>
       )}
     </div>
   );
