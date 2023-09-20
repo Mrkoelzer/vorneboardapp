@@ -178,11 +178,34 @@ function Line3() {
 
     // Replace hyphens with "j" globally
     selectedAction = selectedAction.replace(/-/g, 'j');
-
+    let selectedpart = selectedAction.replace('j', '-')
+    let linedata;
+    lineparts.forEach((line) => {
+        if(line.Part_ID === selectedpart){
+          linedata = line
+        }
+    });
     // Construct requestData based on the selected action
     let requestData;
     requestData = {
-      part_id: selectedAction,
+      part_id: linedata.Part_ID,
+      part_description: linedata.Alternate_Part_ID,
+      ideal_cycle_time: linedata.Ideal_Cycle_Time_s,
+      takt_time: linedata.Takt_Time_s,
+      target_labor_per_piece: linedata.Target_Labor_per_Piece_s,
+      down_threshold: linedata.Down_s,
+      count_multipliers: [
+        linedata.Count_Multiplier_1,
+        linedata.Count_Multiplier_2,
+        linedata.Count_Multiplier_3,
+        linedata.Count_Multiplier_4,
+        linedata.Count_Multiplier_5,
+        linedata.Count_Multiplier_6,
+        linedata.Count_Multiplier_7,
+        linedata.Count_Multiplier_8,
+      ],
+      Target_multipliers: linedata.Target_Multiplier,
+      start_with_changeover: "false",
       ipaddress: partruntable[0].lineip
     }
     console.log(requestData)
@@ -431,7 +454,7 @@ function Line3() {
         // Call the getprocessstate function here
         setpartruntable(lineData);
         getPartNumbers(selectedline);
-        console.log(lineData);
+        console.log(lineparts);
         setIsLoading(false); // Data has been loaded, set isLoading to false
       }
     };

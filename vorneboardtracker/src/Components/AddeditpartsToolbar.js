@@ -30,7 +30,10 @@ function AddeditpartsToobar() {
             <div className="dropdown-menu">
               {/* Dropdown menu items */}
               {userdata.loggedin === 1 ? (
+                <>
                 <p onClick={() => navigate('/')}>Home</p>
+                <p onClick={() => navigate('/Account')}>Account</p>
+                </>
               ) : (
                 <p onClick={() => navigate('/Login')}>Login</p>
               )}

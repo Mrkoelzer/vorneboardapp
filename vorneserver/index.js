@@ -4,7 +4,7 @@ import got  from "got";
 import cors from "cors";
 import express from "express";
 import bodyParser from "body-parser";
-import axios from "axios"
+import axios, { Axios } from "axios"
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import sql from "mssql"
@@ -14,7 +14,7 @@ import { request } from "http";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const app = express()
-
+const cookie = 'sid=session=f7c54c700ed53d1aaa85dd93c2d89b92&user=Administrator&digest=e19e0793cf5713d70f8ece89ec2a1a41dc01ad5c'
 const config = {
  user: 'appuser',
  password: 'Jsix1234',
@@ -107,7 +107,15 @@ app.post('/updatelinechangeover', (req, res) => {
     const { ipaddress } = req.body;
     const apiUrl = `http://${ipaddress}/api/v0/part_run`;
     const requestData = req.body;
-    let updatedrequestData = {part_id: requestData.part_id}
+    let updatedrequestData = {part_id: requestData.part_id,
+      part_description: requestData.part_description,
+      ideal_cycle_time: requestData.ideal_cycle_time,
+      takt_time: requestData.takt_time,
+      target_labor_per_piece: requestData.target_labor_per_piece,
+      down_threshold: requestData.down_threshold,
+      count_multipliers: requestData.count_multipliers,
+      Target_multipliers: requestData.Target_multipliers,
+      start_with_changeover: false}
     axios.post(apiUrl, updatedrequestData)
       .then((response) => {
         console.log('API call success:');
@@ -165,6 +173,36 @@ app.get('/getpartrun', async (req, res) => {
     console.error(error);
     res.status(500).send("An error occurred");
   }
+});
+
+app.post('/insertpartintovorne', (req, res) => {
+  const { ipaddress, ...requestData } = req.body; // Destructure ipaddress and get the rest of the requestData
+  const apiUrl = `http://${ipaddress}/rest/v1/categories/part/values`;
+  // Define your login credentials
+  const username = 'Administrator'; // Replace with your actual username
+  const password = 'aragorn'; // Replace with your actual password
+
+  // Create a base64-encoded credentials string
+  const credentials = Buffer.from(`${username}:${password}`).toString('base64');
+
+  // Define headers with Basic Authentication
+  const headers = {
+    'Authorization': `Basic ${credentials}`, // Adding Basic Authentication header
+    'Content-Type': 'application/json', // Specify the content type
+    'Cookie': cookie
+  };
+  console.log(apiUrl)
+  console.log(requestData)
+  axios
+    .post(apiUrl, requestData, { headers }) // Pass headers in the request
+    .then((response) => {
+      console.log('API call success:');
+      res.json({ message: 'API call successful' });
+    })
+    .catch((error) => {
+      console.error('API call error:', error.message);
+      res.status(500).json({ message: 'API call failed' });
+    });
 });
 
 app.use(express.json());
@@ -530,6 +568,31 @@ app.get('/api/getlinepartnumbers', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.get('/api/getalllinepartnumbers', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const { query } = req.query; // Get the SQL query from the query parameters
+    const result = await sql.query(query);
+
+    if (result) {
+      res.json(result);
+    } else {
+      res.json({ deleted: false });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  } finally {
+    try {
+      if (sql) {
+        await sql.close();
+      }
+    } catch (error) {
+      console.error('Error closing SQL connection:', error);
+    }
   }
 });
 
