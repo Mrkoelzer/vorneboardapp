@@ -58,6 +58,8 @@ function Createaccount() {
             else{
                 superadminstate=0
             }
+            let pinchangestate = 1; 
+
             let pinstate = 1111;
 
             
@@ -66,7 +68,7 @@ function Createaccount() {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ username,password,first_name,last_name,email,gueststate,changepassstate,adminstate,superadminstate,pinstate }),
+            body: JSON.stringify({ username,password,first_name,last_name,email,gueststate,changepassstate,adminstate,superadminstate,pinstate, pinchangestate }),
           });
     
           const data = await response.json();

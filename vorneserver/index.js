@@ -250,9 +250,9 @@ app.post('/api/getpin', async (req, res) => {
 app.post('/api/createaccount', async (req, res) => {
   try {
     await sql.connect(config);
-    const { username,password,first_name,last_name,email,gueststate,changepassstate,adminstate,superadminstate,pinstate } = req.body;
+    const { username,password,first_name,last_name,email,gueststate,changepassstate,adminstate,superadminstate,pinstate, pinchangestate } = req.body;
 
-    const result = await sql.query`INSERT INTO Users ([username],[password],[first_name],[last_name],[pin],[email],[admin],[superadmin],[guest],[passwordchange])VALUES(${username},${password},${first_name},${last_name},${pinstate},${email},${adminstate},${superadminstate},${gueststate},${changepassstate})`;
+    const result = await sql.query`INSERT INTO Users ([username],[password],[first_name],[last_name],[pin],[email],[admin],[superadmin],[guest],[passwordchange],[pinchange])VALUES(${username},${password},${first_name},${last_name},${pinstate},${email},${adminstate},${superadminstate},${gueststate},${changepassstate}, ${pinchangestate})`;
     if (result) {
       res.json({ createdauthenticated: true });
     } else {
@@ -430,6 +430,47 @@ app.post('/api/updateline', async (req, res) => {
     await sql.connect(config);
     const requestData = req.body;
     const result = await sql.query`update [Lines] set [linename]=${requestData.Linename},[ipaddress]=${requestData.ipaddress}, [packline]=${requestData.packline}, [extruder]=${requestData.extruder} where lineid = ${requestData.lineid}`;
+    if (result) {
+      res.json({ createdauthenticated: true });
+    } else {
+      res.json({ createdauthenticated: false });
+    }
+
+    sql.close();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.post('/api/updatepartnumber', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const requestData = req.body;
+    console.log(requestData)
+    const query = `UPDATE [${requestData.Linename}]
+    SET [Part_ID] = '${requestData.Part_ID}'
+       ,[Alternate_Part_ID] = '${requestData.Alternate_Part_ID}'
+       ,[Ideal_Cycle_Time_s] = ${requestData.Ideal_Cycle_Time_s}
+       ,[Takt_Time_s] = ${requestData.Takt_Time_s}
+       ,[Target_Labor_per_Piece_s] = ${requestData.Target_Labor_per_Piece_s}
+       ,[Down_s] = ${requestData.Down_s}
+       ,[Count_Multiplier_1] = ${requestData.Count_Multiplier_1}
+       ,[Count_Multiplier_2] = ${requestData.Count_Multiplier_2}
+       ,[Count_Multiplier_3] = ${requestData.Count_Multiplier_3}
+       ,[Count_Multiplier_4] = ${requestData.Count_Multiplier_4}
+       ,[Count_Multiplier_5] = ${requestData.Count_Multiplier_5}
+       ,[Count_Multiplier_6] = ${requestData.Count_Multiplier_6}
+       ,[Count_Multiplier_7] = ${requestData.Count_Multiplier_7}
+       ,[Count_Multiplier_8] = ${requestData.Count_Multiplier_8}
+       ,[Target_Multiplier] = ${requestData.Target_Multiplier}
+       ,[Start_with_Changeover] = '${requestData.Start_with_Changeover}'
+       ,[The_changeover_reason_is] = '${requestData.The_changeover_reason_is}'
+       ,[Set_a_target_time_of_s] = '${requestData.Set_a_target_time_of_s}'
+       ,[End_event] = '${requestData.End_event}'
+  WHERE [Part_ID] = '${requestData.oldPart_ID}'`;
+    console.log(query)
+  const result = await sql.query(query)
     if (result) {
       res.json({ createdauthenticated: true });
     } else {

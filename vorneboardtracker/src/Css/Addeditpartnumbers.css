@@ -155,3 +155,13 @@
         border: none;
         outline: none;
       }
+
+      .aeeditdeletebutton{
+        background-color: #282c34;
+        color: white;
+        border: none;
+      }
+      .aeeditdeletebutton:hover {
+        color: white;
+        box-shadow: 0 5px 15px white;
+      }

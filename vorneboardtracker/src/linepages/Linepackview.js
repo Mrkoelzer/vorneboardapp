@@ -109,7 +109,7 @@ function Line3packview() {
           ) : (
             <div>
               <div className='page'>
-                <PDFViewer partnumber={partinfo[0].partrunData.part_id.replace('j', '-')} />
+                <PDFViewer partnumber={partinfo[0].partrunData.part_id.replace(/j/g, '-')} />
               </div>
               <br />
               <div className='buttonlayout'>

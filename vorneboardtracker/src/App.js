@@ -10,6 +10,7 @@ import Account from './Pages/Account';
 import Createaccount from './Pages/Createaccount';
 import Editlineextruder from './Pages/Editlineextruder'
 import Addeditpartnumbers from './Pages/Addeditpartnumbers';
+import Changepasswordpin from './Pages/Changepasswordpin'
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { partruncontext } from './contexts/partruncontext';
 import { linedatacontext } from './contexts/linedatacontext';
@@ -126,6 +127,7 @@ function App() {
                 <Route path="/Createaccount" element={<Createaccount />} />
                 <Route path="/Editlineextruder" element={<Editlineextruder />} />
                 <Route path="/Addeditpartnumbers" element={<Addeditpartnumbers />} />
+                <Route path="/Changepasswordpin" element={<Changepasswordpin/>}/>
               </Routes>
               </usercontext.Provider>
               </partnumbercontext.Provider>

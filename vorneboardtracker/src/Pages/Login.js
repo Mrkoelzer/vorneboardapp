@@ -8,10 +8,22 @@ function Login() {
    const navigate = useNavigate(); 
    const [username, setUsername] = useState('');
    const [password, setPassword] = useState('');
-   const [authenticated, setAuthenticated] = useState(false);
+   const [authenticated, setAuthenticated] = useState('');
    const {userdata, setuserdata} = useContext(usercontext);
  
-   const handleLogin = async () => {
+
+  const hangleNavigate=(pass, pin)=>{
+    console.log(pass)
+        if(pass === 1 || pin === 1){
+          navigate('/changepasswordpin')
+        }
+        else{
+          navigate('/')
+        }
+   }
+
+   const handleLogin = async (e) => {
+    e.preventDefault();
      try {
        const response = await fetch('http://10.144.18.208:1434/api/authenticate', {
          method: 'POST',
@@ -24,15 +36,16 @@ function Login() {
        const data = await response.json();
  
        if (data.authenticated) {
+        console.log(data.result.recordset[0])
         setuserdata(data.result.recordset[0])
-         setAuthenticated(true);
+         setAuthenticated("Authenticated");
          setuserdata(prevUserData => ({
             ...prevUserData,
             loggedin: 1
           }));
-          navigate('/')
+          hangleNavigate(data.result.recordset[0].passwordchange, data.result.recordset[0].pinchage)
        } else {
-         setAuthenticated(false);
+         setAuthenticated("Wrong Password or Username");
        }
      } catch (error) {
        console.error('Error:', error);
@@ -42,31 +55,34 @@ function Login() {
 
   return (
     <div className="loginpage">
-      <view>
+      <form onSubmit={handleLogin}>
         <Logintoobar />
         <div className='login-container'>
-        <h1>Login</h1>
-        <p> Username:
-        <input className='login-inputs'         type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-        </p>
-        <p> Password:
-        <input className='login-inputs'         
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-        </p>
-        <button className='loginbutton' onClick={handleLogin}>
-          Sign In
-        </button>
-        {authenticated && <p>Authenticated!</p>}
+          <h1>Login</h1>
+          <p>Username:</p>
+          <input
+            className='login-inputs'
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <p>Password:</p>
+          <input
+            className='login-inputs'
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <br/>
+          <button className='loginbutton' type="submit">
+            Sign In
+          </button>
+          <br/>
+          {authenticated}
         </div>
-      </view>
+      </form>
     </div>
   );
 }

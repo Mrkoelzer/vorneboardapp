@@ -186,7 +186,7 @@ function Tracker() {
                     )}
                   </td>
                   <td>{rowData.linename}</td>
-                  <td>{rowData.partrunData.part_id.replace('j', '-')}</td>
+                  <td>{rowData.partrunData.part_id.replace(/j/g, '-')}</td>
                   <td>{rowData.processStateDetailsData}</td>
                   <td>
                     <button className='trackerbutton' onClick={() => handleNavigate(index)}>More</button>
