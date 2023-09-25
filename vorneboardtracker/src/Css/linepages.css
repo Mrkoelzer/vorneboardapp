@@ -5,20 +5,20 @@
     color: white;
   }
 
-  .flexbox-container{
+  .lineflexbox-container{
     display: flex;
     flex-direction: row;
     justify-content: space-around;
     flex-wrap: wrap;
   }
 
-  .flexbox-item{
-    width: 50vh;
+  .lineflexbox-item{
+    width: 55vh;
     text-align: center;
     min-height: 30vh;
   }
 
-  .textinboxes{
+  .linetextinboxes{
     border: 5px solid white;
   }
 
@@ -57,3 +57,30 @@
     color: black;
     box-shadow: 0 5px 15px white;
   }
+
+  .linetable-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.linetable-container table {
+  width: 90%; /* Adjust the table width as needed */
+  border-collapse: collapse; /* Collapse borders for a cleaner look */
+  font-size: 16px; /* Set the font size to make text smaller */
+}
+
+.linetable-container th,
+.linetable-container td {
+    border: 1px solid #dee2e6;
+    /* Border color for cells */
+    padding: 5px;
+    /* Adjust padding as needed */
+    text-align: center;
+    /* Center-align content */
+    vertical-align: middle;
+    /* Vertically center content */
+    box-shadow: 0 0 0 1px #dee2e6;
+}

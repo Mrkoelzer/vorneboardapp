@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import Toolbar from '../Components/Linepagetoolbar';
 import '../Css/linepages.css'
 import { selectedlinecontext } from '../contexts/selectedlinecontext';
+import { ipaddrcontext } from '../contexts/ipaddrcontext';
 
 function Line3() {
   const { partruntable, setpartruntable } = useContext(partruncontext);
@@ -19,6 +20,7 @@ function Line3() {
   const { lines } = useContext(linescontext);
   const [goodcount, setgoodcount] = useState(1);
   const [rejectcount, setrejectcount] = useState(1);
+  const {localipaddr} = useContext(ipaddrcontext);
 
   const navigate = useNavigate();
   const apiEndpoints = {
@@ -68,7 +70,7 @@ function Line3() {
     let ipaddress = partruntable[0].lineip
     if (selectedEndpointIdentifier) {
       // Map the endpoint identifier to the full URL
-      const selectedEndpoint = `http://10.144.18.208:1433/${selectedEndpointIdentifier}`;
+      const selectedEndpoint = `http://${localipaddr}:1433/${selectedEndpointIdentifier}`;
   
       // Construct requestData based on the selected action
       let requestData;
@@ -96,7 +98,7 @@ function Line3() {
   
   const getPartNumbers = async (tableName) => {
     try {
-      const response = await fetch(`http://10.144.18.208:1434/api/getlinepart/${tableName}`, {
+      const response = await fetch(`http://${localipaddr}:1434/api/getlinepart/${tableName}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -116,7 +118,7 @@ function Line3() {
 
   const handlereasonSelect = async(selectedAction) => {
     // Map the endpoint identifier to the full URL
-    const selectedEndpoint = `http://10.144.18.208:1433/updateprocessstatereason`;
+    const selectedEndpoint = `http://${localipaddr}:1433/updateprocessstatereason`;
 
     // Construct requestData based on the selected action
     let requestData;
@@ -174,7 +176,7 @@ function Line3() {
 
   const handlepartidSelect = async(selectedAction) => {
     // Map the endpoint identifier to the full URL
-    const selectedEndpoint = `http://10.144.18.208:1433/updatepartidline`;
+    const selectedEndpoint = `http://${localipaddr}:1433/updatepartidline`;
 
     // Replace hyphens with "j" globally
     selectedAction = selectedAction.replace(/-/g, 'j');
@@ -382,7 +384,7 @@ function Line3() {
       count: parseInt(goodcount),
       ipaddress: partruntable[0].lineip
     }
-    await Axios.post('http://10.144.18.208:1433/updategoodcount', requestData)
+    await Axios.post(`http://${localipaddr}:1433/updategoodcount`, requestData)
       .then((response) => {
         setgoodcount(1)
       })
@@ -395,7 +397,7 @@ function Line3() {
       count: parseInt(rejectcount),
       ipaddress: partruntable[0].lineip
     }
-    Axios.post('http://10.144.18.208:1433/updaterejectcount', requestData)
+    Axios.post(`http://${localipaddr}:1433/updaterejectcount`, requestData)
       .then((response) => {
         setrejectcount(1)
       })
@@ -430,7 +432,7 @@ function Line3() {
   const getColorForOEE = (oee) => {
     if (oee < 39.9) return 'darkred';
     else if (oee >= 40 && oee <= 64.9) return 'lightcoral';
-    else if (oee >= 65 && oee <= 84.9) return 'yellow';
+    else if (oee >= 65 && oee <= 84.9) return 'orange';
     else return 'green';
   };
 
@@ -475,15 +477,15 @@ function Line3() {
         <>
           <Toolbar line={partruntable[0].linename} />
           <br />
-          <div className='flexbox-container'>
+          <div className='lineflexbox-container'>
 
-            <div className='flexbox-item'>
-              <p className='textinboxes'>Part ID and Name </p>
+            <div className='lineflexbox-item'>
+              <p className='linetextinboxes'>Part ID and Name </p>
               {partruntable[0].partrunData.part_id.replace('j', '-')}
               <p>{getpartname()}</p>
             </div>
-            <div className='flexbox-item'>
-              <p className='textinboxes'>Change Production State</p>
+            <div className='lineflexbox-item'>
+              <p className='linetextinboxes'>Change Production State</p>
               <ReactBootStrap.Form.Control
                 className='linepagebutton'
                 as="select"
@@ -496,12 +498,12 @@ function Line3() {
                 {/* Add more options here */}
               </ReactBootStrap.Form.Control>
             </div>
-            <div className='flexbox-item'>
-              <p className='textinboxes'>Process State Reason</p>
+            <div className='lineflexbox-item'>
+              <p className='linetextinboxes'>Process State Reason</p>
               {partruntable[0].shiftData.events[0]}
             </div>
-            <div className='flexbox-item'>
-              <p className='textinboxes'>Change Part</p>
+            <div className='lineflexbox-item'>
+              <p className='linetextinboxes'>Change Part</p>
               <ReactBootStrap.Form.Control
                 className='linepagebutton'
                 as="select"
@@ -516,8 +518,8 @@ function Line3() {
                 {/* Add more options here */}
               </ReactBootStrap.Form.Control>
             </div>
-            <div className='flexbox-item'>
-              <p className='textinboxes'>Increment Count & Reject</p>
+            <div className='lineflexbox-item'>
+              <p className='linetextinboxes'>Increment Count & Reject</p>
               <p>
                 <button className='linepagebutton2' onClick={handlegoodcount}>+ Good</button>
                 <input
@@ -545,8 +547,8 @@ function Line3() {
                 />
               </p>
             </div>
-            <div className='flexbox-item'>
-              <p className='textinboxes'>Change Reason</p>
+            <div className='lineflexbox-item'>
+              <p className='linetextinboxes'>Change Reason</p>
               <ReactBootStrap.Form.Control
                 className='linepagebutton'
                 as="select"
@@ -563,7 +565,7 @@ function Line3() {
                 {/* Add more options here */}
               </ReactBootStrap.Form.Control>
             </div>
-            <div className="table-container">
+            <div className="linetable-container">
               <ReactBootStrap.Table striped bordered hover>
                 <thead>
                   <tr>

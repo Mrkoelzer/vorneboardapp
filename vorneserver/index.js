@@ -13,7 +13,8 @@ import { request } from "http";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const app = express()
+const appApi = express(); // Create an Express instance for API calls
+const appSql = express(); // Create another Express instance for SQL
 const cookie = 'sid=session=f7c54c700ed53d1aaa85dd93c2d89b92&user=Administrator&digest=e19e0793cf5713d70f8ece89ec2a1a41dc01ad5c'
 const config = {
  user: 'appuser',
@@ -29,17 +30,27 @@ const config = {
   port: 1434 // <-- add your custom port here
 };
 
-app.use(bodyParser.json());
-app.use(cors());
-app.use(express.static(__dirname + "/public"));
+appApi.use(bodyParser.json());
+appApi.use(express.static(__dirname + "/public"));
 
-app.listen(1433, ()=>{
-    console.log("running server")
-})
+appSql.use(bodyParser.json());
+appSql.use(express.static(__dirname + "/public"));
 
+
+appApi.use(cors());
+appSql.use(cors());
+
+appApi.listen(1433, () => {
+  console.log("API server is running on port 1433");
+});
+
+// SQL routes (appSql instance)
+appSql.listen(1434, () => {
+  console.log("SQL server is running on port 1434");
+});
 //fetch data from a specific REST API and prints its body to the terminal
 //this is vorne api calls
-app.post('/updatelinenoorders', (req, res) => {
+appApi.post('/updatelinenoorders', (req, res) => {
   const { ipaddress } = req.body;
   const apiUrl = `http://${ipaddress}/api/v0/process_state/reason`;
   const requestData = {"value": 'no_orders'};
@@ -55,7 +66,7 @@ app.post('/updatelinenoorders', (req, res) => {
     });
 });
 
-app.post('/updatelinestartproduction', (req, res) => {
+appApi.post('/updatelinestartproduction', (req, res) => {
   const { ipaddress } = req.body;
   
   const apiUrl = `http://${ipaddress}/api/v0/process_state/start_production`;
@@ -71,7 +82,7 @@ app.post('/updatelinestartproduction', (req, res) => {
     });
 });
 
-app.post('/updatelinechangeover', (req, res) => {
+appApi.post('/updatelinechangeover', (req, res) => {
   const { ipaddress } = req.body;
   const apiUrl = `http://${ipaddress}/api/v0/process_state/reason`;
   const requestData = {"value": 'changeover'}
@@ -87,7 +98,7 @@ app.post('/updatelinechangeover', (req, res) => {
     });
 });
 
-  app.post('/updateprocessstatereason', (req, res) => {
+  appApi.post('/updateprocessstatereason', (req, res) => {
     const { ipaddress } = req.body;
     const apiUrl = `http://${ipaddress}/api/v0/process_state/details/down`;
     const requestData = req.body;
@@ -103,7 +114,7 @@ app.post('/updatelinechangeover', (req, res) => {
       });
   });
 
-  app.post('/updatepartidline', (req, res) => {
+  appApi.post('/updatepartidline', (req, res) => {
     const { ipaddress } = req.body;
     const apiUrl = `http://${ipaddress}/api/v0/part_run`;
     const requestData = req.body;
@@ -127,7 +138,7 @@ app.post('/updatelinechangeover', (req, res) => {
       });
   });
 
-  app.post('/updategoodcount', (req, res) => {
+  appApi.post('/updategoodcount', (req, res) => {
     const { ipaddress } = req.body;
     const apiUrl = `http://${ipaddress}/api/v0/inputs/1`;
     const requestData = req.body;
@@ -143,7 +154,7 @@ app.post('/updatelinechangeover', (req, res) => {
       });
   });
 
-  app.post('/updaterejectcount', (req, res) => {
+  appApi.post('/updaterejectcount', (req, res) => {
     const { ipaddress } = req.body;
     const apiUrl = `http://${ipaddress}/api/v0/inputs/2`;
     const requestData = req.body;
@@ -160,7 +171,7 @@ app.post('/updatelinechangeover', (req, res) => {
   });
 
 //fetch data from a specific REST API and prints its body to the terminal
-app.get('/getpartrun', async (req, res) => {
+appApi.get('/getpartrun', async (req, res) => {
   try {
     const lineData = await fetchAllLineData();
 
@@ -175,7 +186,7 @@ app.get('/getpartrun', async (req, res) => {
   }
 });
 
-app.post('/insertpartintovorne', (req, res) => {
+appApi.post('/insertpartintovorne', (req, res) => {
   const { ipaddress, ...requestData } = req.body; // Destructure ipaddress and get the rest of the requestData
   const apiUrl = `http://${ipaddress}/rest/v1/categories/part/values`;
   // Define your login credentials
@@ -205,11 +216,11 @@ app.post('/insertpartintovorne', (req, res) => {
     });
 });
 
-app.use(express.json());
+appSql.use(express.json());
 
 
 //This is the sql api calls
-app.post('/api/authenticate', async (req, res) => {
+appSql.post('/api/authenticate', async (req, res) => {
   try {
     await sql.connect(config);
     const { username, password } = req.body;
@@ -228,7 +239,7 @@ app.post('/api/authenticate', async (req, res) => {
   }
 });
 
-app.post('/api/getpin', async (req, res) => {
+appSql.post('/api/getpin', async (req, res) => {
   try {
     await sql.connect(config);
     const { pin } = req.body;
@@ -247,7 +258,7 @@ app.post('/api/getpin', async (req, res) => {
   }
 });
 
-app.post('/api/createaccount', async (req, res) => {
+appSql.post('/api/createaccount', async (req, res) => {
   try {
     await sql.connect(config);
     const { username,password,first_name,last_name,email,gueststate,changepassstate,adminstate,superadminstate,pinstate, pinchangestate } = req.body;
@@ -266,7 +277,7 @@ app.post('/api/createaccount', async (req, res) => {
   }
 });
 
-app.post('/api/insertnewline', async (req, res) => {
+appSql.post('/api/insertnewline', async (req, res) => {
   try {
     await sql.connect(config);
     const requestData = req.body;
@@ -284,7 +295,7 @@ app.post('/api/insertnewline', async (req, res) => {
   }
 });
 
-app.post('/api/insertnewpart', async (req, res) => {
+appSql.post('/api/insertnewpart', async (req, res) => {
   try {
     await sql.connect(config);
     const requestData = req.body;
@@ -354,7 +365,7 @@ app.post('/api/insertnewpart', async (req, res) => {
   }
 });
 
-app.post('/api/deletetable', async (req, res) => {
+appSql.post('/api/deletetable', async (req, res) => {
   try {
     const requestData = req.body; // Extract the linename from the request body
 
@@ -382,7 +393,7 @@ app.post('/api/deletetable', async (req, res) => {
 
 
 
-app.post('/api/addnewtable', async (req, res) => {
+appSql.post('/api/addnewtable', async (req, res) => {
   try {
     await sql.connect(config);
     const requestData = req.body;
@@ -425,7 +436,7 @@ app.post('/api/addnewtable', async (req, res) => {
   }
 });
 
-app.post('/api/updateline', async (req, res) => {
+appSql.post('/api/updateline', async (req, res) => {
   try {
     await sql.connect(config);
     const requestData = req.body;
@@ -443,7 +454,7 @@ app.post('/api/updateline', async (req, res) => {
   }
 });
 
-app.post('/api/updatepartnumber', async (req, res) => {
+appSql.post('/api/updatepartnumber', async (req, res) => {
   try {
     await sql.connect(config);
     const requestData = req.body;
@@ -484,7 +495,7 @@ app.post('/api/updatepartnumber', async (req, res) => {
   }
 });
 
-app.delete('/api/deleteline/:lineid', async (req, res) => {
+appSql.delete('/api/deleteline/:lineid', async (req, res) => {
   try {
     await sql.connect(config);
     const lineid = req.params.lineid; // Get the lineid from the URL parameter
@@ -503,7 +514,7 @@ app.delete('/api/deleteline/:lineid', async (req, res) => {
   }
 });
 
-app.delete('/api/deleteline', async (req, res) => {
+appSql.delete('/api/deleteline', async (req, res) => {
   try {
       await sql.connect(config);
       //const part_id = req.params.part_id; // Get the part_id from the URL parameter
@@ -525,7 +536,7 @@ app.delete('/api/deleteline', async (req, res) => {
   }
 });
 
-app.get('/api/getlinepart/:tableName', async (req, res) => {
+appSql.get('/api/getlinepart/:tableName', async (req, res) => {
   const { tableName } = req.params;
 
   try {
@@ -549,7 +560,7 @@ app.get('/api/getlinepart/:tableName', async (req, res) => {
   }
 });
 
-app.post('/api/updatetablename', async (req, res) => {
+appSql.post('/api/updatetablename', async (req, res) => {
   const { oldtablename, tableName } = req.body;
   console.log(oldtablename + tableName)
   try {
@@ -571,7 +582,7 @@ app.post('/api/updatetablename', async (req, res) => {
   }
 });
 
-app.get('/api/getlines', async (req, res) => {
+appSql.get('/api/getlines', async (req, res) => {
   try {
     await sql.connect(config);
 
@@ -589,7 +600,7 @@ app.get('/api/getlines', async (req, res) => {
   }
 });
 
-app.get('/api/getlinepartnumbers', async (req, res) => {
+appSql.get('/api/getlinepartnumbers', async (req, res) => {
   const { linename } = req.query;
 
   try {
@@ -612,7 +623,7 @@ app.get('/api/getlinepartnumbers', async (req, res) => {
   }
 });
 
-app.get('/api/getalllinepartnumbers', async (req, res) => {
+appSql.get('/api/getalllinepartnumbers', async (req, res) => {
   try {
     await sql.connect(config);
     const { query } = req.query; // Get the SQL query from the query parameters
@@ -635,10 +646,5 @@ app.get('/api/getalllinepartnumbers', async (req, res) => {
       console.error('Error closing SQL connection:', error);
     }
   }
-});
-
-const port = process.env.PORT || 1434;
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
 });
 

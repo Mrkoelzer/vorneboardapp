@@ -5,12 +5,14 @@ import { useNavigate } from 'react-router-dom';
 import { usercontext } from '../contexts/usercontext';
 import Toolbar from '../Components/Editlineextrudertoolbar';
 import { linescontext } from '../contexts/linescontext';
+import { ipaddrcontext } from '../contexts/ipaddrcontext';
 
 function Editlineextruder() {
   const navigate = useNavigate();
   const { userdata } = useContext(usercontext);
   const { lines, setlines } = useContext(linescontext);
   const [editRow, setEditRow] = useState(null);
+  const {localipaddr} = useContext(ipaddrcontext);
   const [editedData, setEditedData] = useState({
     Linename: '',
     ipaddress: '',
@@ -29,7 +31,7 @@ function Editlineextruder() {
 
   const fetchlines = async () => {
     try {
-      const response = await fetch('http://10.144.18.208:1434/api/getlines', {
+      const response = await fetch(`http://${localipaddr}:1434/api/getlines`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -59,7 +61,6 @@ function Editlineextruder() {
   }
 
   useEffect(() => {
-    console.log(lines);
     if (userdata.loggedin !== 1) {
       navigate('/');
     }
@@ -85,14 +86,15 @@ function Editlineextruder() {
   };
 
   const handledelete = async (id) => {
+    console.log(id)
     try {
         let linename;
         for(let i = 0; i<lines.length; i++){
-            if(lines[i].lineid = id){
+            if(lines[i].lineid === id){
                 linename = lines[i]
             }
         }
-      const response = await fetch(`http://10.144.18.208:1434/api/deleteline/${id}`, {
+      const response = await fetch(`http://${localipaddr}:1434/api/deleteline/${id}`, {
         method: 'DELETE',
       });
   
@@ -181,7 +183,7 @@ function Editlineextruder() {
 
   const handleSaveEdit = async () => {
     try {
-      const response = await fetch('http://10.144.18.208:1434/api/updateline', {
+      const response = await fetch(`http://${localipaddr}:1434/api/updateline`, {
         method: 'POST', // or 'POST' depending on your API
         headers: {
           'Content-Type': 'application/json',
@@ -202,7 +204,7 @@ function Editlineextruder() {
 
   const handletablenamechange = async () => {
     try {
-      const response = await fetch('http://10.144.18.208:1434/api/updatetablename', {
+      const response = await fetch(`http://${localipaddr}:1434/api/updatetablename`, {
         method: 'POST', // or 'POST' depending on your API
         headers: {
           'Content-Type': 'application/json',
@@ -231,7 +233,7 @@ function Editlineextruder() {
 
   const handleaddtable = async () => {
     try {
-      const response = await fetch('http://10.144.18.208:1434/api/addnewtable', {
+      const response = await fetch(`http://${localipaddr}:1434/api/addnewtable`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -244,8 +246,9 @@ function Editlineextruder() {
   };
 
   const handledeletetable = async (linename) => {
+    console.log(linename)
     try {
-      const response = await fetch('http://10.144.18.208:1434/api/deletetable', {
+      const response = await fetch(`http://${localipaddr}:1434/api/deletetable`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -259,7 +262,7 @@ function Editlineextruder() {
 
   const handleSaveAdd = async () => {
     try {
-      const response = await fetch('http://10.144.18.208:1434/api/insertnewline', {
+      const response = await fetch(`http://${localipaddr}:1434/api/insertnewline`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -3,6 +3,7 @@ import {useNavigate} from 'react-router-dom';
 import { usercontext } from '../contexts/usercontext';
 import '../Css/login.css'
 import Logintoobar from '../Components/Logintoobar';
+import { ipaddrcontext } from '../contexts/ipaddrcontext';
 
 function Login() {
    const navigate = useNavigate(); 
@@ -10,6 +11,7 @@ function Login() {
    const [password, setPassword] = useState('');
    const [authenticated, setAuthenticated] = useState('');
    const {userdata, setuserdata} = useContext(usercontext);
+   const {localipaddr} = useContext(ipaddrcontext);
  
 
   const hangleNavigate=(pass, pin)=>{
@@ -25,7 +27,7 @@ function Login() {
    const handleLogin = async (e) => {
     e.preventDefault();
      try {
-       const response = await fetch('http://10.144.18.208:1434/api/authenticate', {
+       const response = await fetch(`http://${localipaddr}:1434/api/authenticate`, {
          method: 'POST',
          headers: {
            'Content-Type': 'application/json',

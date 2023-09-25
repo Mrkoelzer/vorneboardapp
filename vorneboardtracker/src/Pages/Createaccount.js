@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { usercontext } from '../contexts/usercontext';
 import '../Css/createaccount.css'
 import Createtoobar from '../Components/Createtoolbar';
+import { ipaddrcontext } from '../contexts/ipaddrcontext';
 
 function Createaccount() {
     const navigate = useNavigate();
@@ -19,6 +20,7 @@ function Createaccount() {
     const [changepass, setChangepass] = useState(false);
     const [admin, setAdmin] = useState(false);
     const [superadmin, setSuperadmin] = useState(false);
+    const {localipaddr} = useContext(ipaddrcontext);
 
     useEffect(() => {
         if (userdata.loggedin === 1 || userdata.superadmin === 1) {
@@ -63,7 +65,7 @@ function Createaccount() {
             let pinstate = 1111;
 
             
-          const response = await fetch('http://10.144.18.208:1434/api/createaccount', {
+          const response = await fetch(`http://${localipaddr}:1434/api/createaccount`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

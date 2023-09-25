@@ -7,6 +7,7 @@ import Accounttoobar from '../Components/Accounttoobar';
 function Account() {
     const navigate = useNavigate();
     const { userdata } = useContext(usercontext);
+    
     useEffect(() => {
         if(userdata.loggedin === 1){
             

@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faG, faGear, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import Axios from 'axios';
 import Select from 'react-select'
+import { ipaddrcontext } from '../contexts/ipaddrcontext';
 
 function Addeditpartnumbers() {
     const navigate = useNavigate();
@@ -22,6 +23,7 @@ function Addeditpartnumbers() {
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setshowEditModal] = useState(false);
     const [addLineMessage, setAddLineMessage] = useState('');
+    const {localipaddr} = useContext(ipaddrcontext);
     const [editlines, seteditlines] = useState([])
     const [newData, setNewData] = useState({
         Linename: '',
@@ -160,7 +162,7 @@ function Addeditpartnumbers() {
     const handledelete = async (id) => {
         let linename = lines[selectedline].Linename
         try {
-            const response = await fetch(`http://10.144.18.208:1434/api/deleteline`, {
+            const response = await fetch(`http://${localipaddr}:1434/api/deleteline`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -222,7 +224,7 @@ function Addeditpartnumbers() {
         }
         try {
             // Send a POST request to insert the new part
-            const response = await fetch('http://10.144.18.208:1434/api/insertnewpart', {
+            const response = await fetch(`http://${localipaddr}:1434/api/insertnewpart`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -257,7 +259,7 @@ function Addeditpartnumbers() {
         }*/
         try {
             // Send a POST request to insert the new part
-            const response = await fetch('http://10.144.18.208:1434/api/updatepartnumber', {
+            const response = await fetch(`http://${localipaddr}:1434/api/updatepartnumber`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -444,7 +446,7 @@ function Addeditpartnumbers() {
         sendquery = sendquery + sendquery2;
         try {
             // Send a GET request to retrieve data
-            const response = await fetch(`http://10.144.18.208:1434/api/getalllinepartnumbers?query=${encodeURIComponent(sendquery)}`, {
+            const response = await fetch(`http://${localipaddr}:1434/api/getalllinepartnumbers?query=${encodeURIComponent(sendquery)}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -464,7 +466,7 @@ function Addeditpartnumbers() {
 
     const getpartnumbers = async () => {
         try {
-            const response = await fetch(`http://10.144.18.208:1434/api/getlinepartnumbers?linename=${encodeURIComponent(lines[selectedline].Linename)}`, {
+            const response = await fetch(`http://${localipaddr}:1434/api/getlinepartnumbers?linename=${encodeURIComponent(lines[selectedline].Linename)}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

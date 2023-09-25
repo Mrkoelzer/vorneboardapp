@@ -23,7 +23,7 @@
     font-weight: normal;
     text-transform: uppercase;
     transition: all 0.2s ease-in-out;
-    width: 20%;
+    width: 40vh;
     text-align: center;
   }
   .accountbutton:hover{

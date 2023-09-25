@@ -20,6 +20,7 @@ import { selectedlinecontext } from './contexts/selectedlinecontext';
 import { partnumbercontext } from './contexts/partnumbercontext';
 import Lineeditor from './linepages/Lineeditor';
 import { line3partdatacontext } from './contexts/linepartdatacontext';
+import { ipaddrcontext } from './contexts/ipaddrcontext';
 
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
   const [lines, setlines] = useState([]);
   const [partnumber, setpartnumber] = useState('')
   const [selectedline, setselectedline] = useState('');
+  const [localipaddr, setlocalipaddr] = useState('10.144.18.208');
 
   useEffect(() => { 
     // Fetch data when the page opens
@@ -41,7 +43,7 @@ function App() {
 
   const fetchlines = async () => {
     try {
-      const response = await fetch('http://10.144.18.208:1434/api/getlines', {
+      const response = await fetch(`http://${localipaddr}:1434/api/getlines`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -115,7 +117,9 @@ function App() {
           <linedatacontext.Provider value={{ linedatatable, setlinedatatable }}>
             <line3partdatacontext.Provider value={{ line3items, setline3items }}>
               <partnumbercontext.Provider value={{partnumber, setpartnumber}}>
-              <usercontext.Provider value={{ userdata, setuserdata }}><Routes>
+              <usercontext.Provider value={{ userdata, setuserdata }}>
+                <ipaddrcontext.Provider value={{localipaddr, setlocalipaddr}}>
+                <Routes>
                 <Route path="/" element={<MainPage />} />
                 <Route path="/Tracker" element={<Tracker />} />
                 <Route path="/Updater" element={<Updater />} />
@@ -129,6 +133,7 @@ function App() {
                 <Route path="/Addeditpartnumbers" element={<Addeditpartnumbers />} />
                 <Route path="/Changepasswordpin" element={<Changepasswordpin/>}/>
               </Routes>
+              </ipaddrcontext.Provider>
               </usercontext.Provider>
               </partnumbercontext.Provider>
             </line3partdatacontext.Provider>
