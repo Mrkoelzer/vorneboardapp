@@ -31,7 +31,7 @@ function Editlineextruder() {
 
   const fetchlines = async () => {
     try {
-      const response = await fetch(`http://${localipaddr}:1434/api/getlines`, {
+      const response = await fetch(`http://${localipaddr}:1435/api/getlines`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -94,7 +94,7 @@ function Editlineextruder() {
                 linename = lines[i]
             }
         }
-      const response = await fetch(`http://${localipaddr}:1434/api/deleteline/${id}`, {
+      const response = await fetch(`http://${localipaddr}:1435/api/deleteline/${id}`, {
         method: 'DELETE',
       });
   
@@ -183,7 +183,7 @@ function Editlineextruder() {
 
   const handleSaveEdit = async () => {
     try {
-      const response = await fetch(`http://${localipaddr}:1434/api/updateline`, {
+      const response = await fetch(`http://${localipaddr}:1435/api/updateline`, {
         method: 'POST', // or 'POST' depending on your API
         headers: {
           'Content-Type': 'application/json',
@@ -204,7 +204,7 @@ function Editlineextruder() {
 
   const handletablenamechange = async () => {
     try {
-      const response = await fetch(`http://${localipaddr}:1434/api/updatetablename`, {
+      const response = await fetch(`http://${localipaddr}:1435/api/updatetablename`, {
         method: 'POST', // or 'POST' depending on your API
         headers: {
           'Content-Type': 'application/json',
@@ -233,7 +233,7 @@ function Editlineextruder() {
 
   const handleaddtable = async () => {
     try {
-      const response = await fetch(`http://${localipaddr}:1434/api/addnewtable`, {
+      const response = await fetch(`http://${localipaddr}:1435/api/addnewtable`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -248,7 +248,7 @@ function Editlineextruder() {
   const handledeletetable = async (linename) => {
     console.log(linename)
     try {
-      const response = await fetch(`http://${localipaddr}:1434/api/deletetable`, {
+      const response = await fetch(`http://${localipaddr}:1435/api/deletetable`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -262,7 +262,7 @@ function Editlineextruder() {
 
   const handleSaveAdd = async () => {
     try {
-      const response = await fetch(`http://${localipaddr}:1434/api/insertnewline`, {
+      const response = await fetch(`http://${localipaddr}:1435/api/insertnewline`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

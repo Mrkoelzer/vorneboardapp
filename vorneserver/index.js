@@ -45,8 +45,8 @@ appApi.listen(1433, () => {
 });
 
 // SQL routes (appSql instance)
-appSql.listen(1434, () => {
-  console.log("SQL server is running on port 1434");
+appSql.listen(1435, () => {
+  console.log("SQL server is running on port 1435");
 });
 //fetch data from a specific REST API and prints its body to the terminal
 //this is vorne api calls

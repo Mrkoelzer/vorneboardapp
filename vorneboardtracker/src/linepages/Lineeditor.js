@@ -98,7 +98,7 @@ function Line3() {
   
   const getPartNumbers = async (tableName) => {
     try {
-      const response = await fetch(`http://${localipaddr}:1434/api/getlinepart/${tableName}`, {
+      const response = await fetch(`http://${localipaddr}:1435/api/getlinepart/${tableName}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

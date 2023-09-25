@@ -43,7 +43,7 @@ function App() {
 
   const fetchlines = async () => {
     try {
-      const response = await fetch(`http://${localipaddr}:1434/api/getlines`, {
+      const response = await fetch(`http://${localipaddr}:1435/api/getlines`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

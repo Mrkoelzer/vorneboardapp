@@ -27,7 +27,7 @@ function Login() {
    const handleLogin = async (e) => {
     e.preventDefault();
      try {
-       const response = await fetch(`http://${localipaddr}:1434/api/authenticate`, {
+       const response = await fetch(`http://${localipaddr}:1435/api/authenticate`, {
          method: 'POST',
          headers: {
            'Content-Type': 'application/json',
