@@ -13,6 +13,7 @@
   .aeflexbox-item{
     width: 100%;
     min-height: 2vh;
+    align-items: center;
   }
 
   .aepartnumbers-inputs{
@@ -65,16 +66,15 @@
     font-size: large;
     color:black;
     background: whitesmoke;
-    padding: 15px 40px;
     border-radius: 4px;
     font-weight: normal;
     transition: all 0.2s ease-in-out;
-    width: 100%;
+    width: 99.5%;
     text-align: center;
     min-height: 2vh;
-    padding: 14px;
     margin-top: 10px;
-    font-size: 16px;
+    font-size: 28px;
+    align-self: center;
   }
 
   .aepartnumberstable-container {
@@ -164,4 +164,22 @@
       .aeeditdeletebutton:hover {
         color: white;
         box-shadow: 0 5px 15px white;
+      }
+      @media (max-width: 767px) {
+        .aepartnumbers-search{
+          font-weight: bold;
+          font-size: large;
+          color:black;
+          background: whitesmoke;
+          border-radius: 4px;
+          font-weight: normal;
+          transition: all 0.2s ease-in-out;
+          width: 99%;
+          text-align: center;
+          min-height: 2vh;
+          margin-top: 10px;
+          font-size: 28px;
+          align-self: center;
+        }
+        /* Additional styles for other elements if needed */
       }

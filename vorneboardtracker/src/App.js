@@ -64,22 +64,7 @@ function App() {
 
   
 
-  const [partruntable, setpartruntable] = useState([{
-    "line_name": String,
-    "part_id": Number,
-    "ideal_cycle_time": Number,
-    "process_state_break": Boolean,
-    "process_state_changeover": Boolean,
-    "process_state_detecting_state": Boolean,
-    "process_state_down": Boolean,
-    "process_state_no_production": Boolean,
-    "process_state_not_monitored": Boolean,
-    "process_state_running": Boolean,
-    "process_state": String,
-    "process_state_reason": String,
-    "process_state_reason_down": String
-  }
-  ])
+  const [partruntable, setpartruntable] = useState([])
 
   const [linedatatable, setlinedatatable] = useState([{
     "shift": String,

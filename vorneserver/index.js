@@ -17,9 +17,9 @@ const appApi = express(); // Create an Express instance for API calls
 const appSql = express(); // Create another Express instance for SQL
 const cookie = 'sid=session=f7c54c700ed53d1aaa85dd93c2d89b92&user=Administrator&digest=e19e0793cf5713d70f8ece89ec2a1a41dc01ad5c'
 const config = {
- user: 'appuser',
+ user: 'vorneuser',
  password: 'Jsix1234',
- server: '10.144.19.26',
+ server: 'CO-LAPTOP48',
  database: 'vorneboardapp',
   options: {
     trustServerCertificate: true,
@@ -68,7 +68,6 @@ appApi.post('/updatelinenoorders', (req, res) => {
 
 appApi.post('/updatelinestartproduction', (req, res) => {
   const { ipaddress } = req.body;
-  
   const apiUrl = `http://${ipaddress}/api/v0/process_state/start_production`;
   const requestData = {"value": {}};
   axios.post(apiUrl, requestData)
@@ -623,11 +622,14 @@ appSql.get('/api/getlinepartnumbers', async (req, res) => {
   }
 });
 
-appSql.get('/api/getalllinepartnumbers', async (req, res) => {
+appSql.post('/api/getalllinepartnumbers', async (req, res) => {
+  let sqlPool; // Define the SQL pool outside the try/catch block
+
   try {
-    await sql.connect(config);
-    const { query } = req.query; // Get the SQL query from the query parameters
-    const result = await sql.query(query);
+    sqlPool = await sql.connect(config); // Connect to the SQL server
+    const { query } = req.body; // Get the SQL query from the request body
+
+    const result = await sqlPool.query(query);
 
     if (result) {
       res.json(result);
@@ -639,8 +641,8 @@ appSql.get('/api/getalllinepartnumbers', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   } finally {
     try {
-      if (sql) {
-        await sql.close();
+      if (sqlPool) {
+        await sqlPool.close(); // Close the SQL pool if it was successfully opened
       }
     } catch (error) {
       console.error('Error closing SQL connection:', error);

@@ -437,32 +437,37 @@ function Addeditpartnumbers() {
     const getallpartnumbers = async () => {
         let sendquery;
         let sendquery2 = '';
+      
         if (lines[0]) {
-            sendquery = `select *, '${lines[0].Linename}' AS Line_Name from [${lines[0].Linename}]`;
+          sendquery = `select *, '${lines[0].Linename}' AS Line_Name from [${lines[0].Linename}]`;
         }
+      
         for (let i = 1; i < lines.length; i++) {
-            sendquery2 = sendquery2 + ` union all select *, '${lines[i].Linename}' AS Line_Name from [${lines[i].Linename}]`;
+          sendquery2 = sendquery2 + ` union all select *, '${lines[i].Linename}' AS Line_Name from [${lines[i].Linename}]`;
         }
+      
         sendquery = sendquery + sendquery2;
+      
         try {
-            // Send a GET request to retrieve data
-            const response = await fetch(`http://${localipaddr}:1435/api/getalllinepartnumbers?query=${encodeURIComponent(sendquery)}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                setallpartnumbers(data.recordset)
-            } else {
-                console.error('Failed to retrieve data');
-            }
+          // Send a POST request to the backend with the query in the request body
+          const response = await fetch(`http://${localipaddr}:1435/api/getalllinepartnumbers`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ query: sendquery }), // Send the query in the request body
+          });
+      
+          if (response.ok) {
+            const data = await response.json();
+            setallpartnumbers(data.recordset);
+          } else {
+            console.error('Failed to retrieve data');
+          }
         } catch (error) {
-            console.error('Error:', error);
+          console.error('Error:', error);
         }
-    };
+      };
 
     const getpartnumbers = async () => {
         try {

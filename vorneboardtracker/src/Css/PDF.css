@@ -3,7 +3,6 @@
     flex-direction: column;
     background-color: #282c34;
     flex-wrap: wrap;
-    min-height: 100vh;
 }
 
 .page {
@@ -200,3 +199,46 @@
     color: white;
     border: none;
   }
+
+  @media (max-width: 767px) {
+    .pdf-container{
+      display: flex;
+      flex-direction: column;
+      background-color: #282c34;
+      flex-wrap: wrap;
+      max-height: 80vh;
+      width: 100vh;
+      min-height: 160vh;
+  }
+  
+  .page {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background-color: hsl(220, 13%, 18%);
+  }
+  
+    /* Additional styles for other elements if needed */
+  }
+
+  /* Styles for medium-sized screens (e.g., tablets) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .pdf-container{
+    display: flex;
+    flex-direction: column;
+    background-color: #282c34;
+    flex-wrap: wrap;
+    max-height: 80vh;
+}
+
+.page {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background-color: hsl(220, 13%, 18%);
+}
+
+  /* Additional styles for other elements if needed */
+}

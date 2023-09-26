@@ -13,11 +13,13 @@ import { ipaddrcontext } from '../contexts/ipaddrcontext';
 
 function Line3() {
   const { partruntable, setpartruntable } = useContext(partruncontext);
+  const [linepagedata, setlinepagedata] = useState([]);
+  const [test, settest] = useState('')
   const [ linedatatable, setlinedatatable ] = useState([]);
   const [ lineparts, setlineparts ] = useState([]);
-  const { selectedline } = useContext(selectedlinecontext)
+  const { selectedline, setselectedline } = useContext(selectedlinecontext)
   const [isLoading, setIsLoading] = useState(true); // Add isLoading state
-  const { lines } = useContext(linescontext);
+  const { lines, setlines } = useContext(linescontext);
   const [goodcount, setgoodcount] = useState(1);
   const [rejectcount, setrejectcount] = useState(1);
   const {localipaddr} = useContext(ipaddrcontext);
@@ -31,22 +33,25 @@ function Line3() {
   };
 
   function getInitialActionreason(processState) {
-    if (processState === 'adjustment') {
+    if (processState === 'Adjustment') {
       return 'action1'; // Assuming 'No Production' and 'Not Monitored' correspond to 'No Orders' action
-    } else if (processState === 'autonomous_maintenance') {
+    } else if (processState === 'Autonomous Maintenance') {
       return 'action2'; // Assuming 'Running', 'Down', 'Detecting State', and 'Break' correspond to 'Start Production' action
     }
-    else if (processState === 'breakdown') {
+    else if (processState === 'Breakdown') {
       return 'action3'; // Assuming 'Running', 'Down', 'Detecting State', and 'Break' correspond to 'Start Production' action
     }
-    else if (processState === 'jam') {
+    else if (processState === 'Jam') {
       return 'action4'; // Assuming 'Running', 'Down', 'Detecting State', and 'Break' correspond to 'Start Production' action
     }
-    else if (processState === 'no_material') {
+    else if (processState === 'No Material') {
       return 'action5'; // Assuming 'Running', 'Down', 'Detecting State', and 'Break' correspond to 'Start Production' action
     }
-    else if (processState === 'no_operator') {
+    else if (processState === 'No Operator') {
       return 'action6'; // Assuming 'Running', 'Down', 'Detecting State', and 'Break' correspond to 'Start Production' action
+    }
+    else if (processState === 'Missing Reason'){
+      return 'action7'
     }
     // Add more conditions as needed for other process states
     return ''; // Default to an empty value if no match is found
@@ -67,7 +72,8 @@ function Line3() {
 
   const handleproductionSelect = async (selectedAction) => {
     const selectedEndpointIdentifier = apiEndpoints[selectedAction];
-    let ipaddress = partruntable[0].lineip
+    let ipaddress = linepagedata[0].lineip
+    console.log(linepagedata)
     if (selectedEndpointIdentifier) {
       // Map the endpoint identifier to the full URL
       const selectedEndpoint = `http://${localipaddr}:1433/${selectedEndpointIdentifier}`;
@@ -126,42 +132,45 @@ function Line3() {
       requestData = {
         "enabled": true,
         "reason": "adjustment",
-        ipaddress: partruntable[0].lineip
+        ipaddress: linepagedata[0].lineip
       };
     } else if (selectedAction === 'action2') {
       requestData = {
         "enabled": true,
         "reason": "autonomous_maintenance",
-        ipaddress: partruntable[0].lineip
+        ipaddress: linepagedata[0].lineip
       };
     }
     else if (selectedAction === 'action3') {
       requestData = {
         "enabled": true,
         "reason": "breakdown",
-        ipaddress: partruntable[0].lineip
+        ipaddress: linepagedata[0].lineip
       };
     }
     else if (selectedAction === 'action4') {
       requestData = {
         "enabled": true,
         "reason": "jam",
-        ipaddress: partruntable[0].lineip
+        ipaddress: linepagedata[0].lineip
       };
     }
     else if (selectedAction === 'action5') {
       requestData = {
         "enabled": true,
         "reason": "no_material",
-        ipaddress: partruntable[0].lineip
+        ipaddress: linepagedata[0].lineip
       };
     }
     else if (selectedAction === 'action6') {
       requestData = {
         "enabled": true,
         "reason": "no_operator",
-        ipaddress: partruntable[0].lineip
+        ipaddress: linepagedata[0].lineip
       };
+    }
+    else if (selectedAction === 'action7') {
+        return
     }
 
     // Make the API call based on selected action and row
@@ -180,7 +189,7 @@ function Line3() {
 
     // Replace hyphens with "j" globally
     selectedAction = selectedAction.replace(/-/g, 'j');
-    let selectedpart = selectedAction.replace('j', '-')
+    let selectedpart = selectedAction.replace(/j/g, '-')
     let linedata;
     lineparts.forEach((line) => {
         if(line.Part_ID === selectedpart){
@@ -208,9 +217,8 @@ function Line3() {
       ],
       Target_multipliers: linedata.Target_Multiplier,
       start_with_changeover: "false",
-      ipaddress: partruntable[0].lineip
+      ipaddress: linepagedata[0].lineip
     }
-    console.log(requestData)
 
     // Make the API call based on selected action and row
     await Axios.post(selectedEndpoint, requestData)
@@ -243,9 +251,29 @@ function Line3() {
     var timeString = date.toISOString().substring(11, 19);
     return timeString
   }
+  const fetchlines = async () => {
+    try {
+      const response = await fetch(`http://${localipaddr}:1435/api/getlines`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(),
+      });
 
-  const fetchAllLineData = async () => {
-    const lineDataPromises = lines.map(async (line) => {
+      const data = await response.json();
+      if (data) {
+        setlines(data.result.recordset)
+        return fetchAllLineData(data.result.recordset)
+      } else {
+        console.log("error")
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+  const fetchAllLineData = async (data) => {
+    const lineDataPromises = data.map(async (line) => {
       const linename = line.Linename;
       const lineip = line.ipaddress;
       const partrunData = await getpartrun(line.ipaddress);
@@ -275,16 +303,14 @@ function Line3() {
   
     // Wait for all promises to resolve
     const lineData = await Promise.all(lineDataPromises);
-  
     // Filter out only the data for the selected line
     const filteredLineData = lineData.filter((data) => data.linename === selectedline);
-  
-    // Update null values to 0 in the linedata array
     filteredLineData.forEach((data) => {
       if (data.linedata) {
         data.linedata = data.linedata.map((value) => (value === null ? 0 : value));
       }
     });
+    console.log(filteredLineData)
   
     // Create an array with the predefined structure
     const linedatatable = filteredLineData.map((data) => ({
@@ -382,7 +408,7 @@ function Line3() {
   const handlegoodcount = async () => {
     let requestData = {
       count: parseInt(goodcount),
-      ipaddress: partruntable[0].lineip
+      ipaddress: linepagedata[0].lineip
     }
     await Axios.post(`http://${localipaddr}:1433/updategoodcount`, requestData)
       .then((response) => {
@@ -395,7 +421,7 @@ function Line3() {
   const handlerejectcount = () => {
     let requestData = {
       count: parseInt(rejectcount),
-      ipaddress: partruntable[0].lineip
+      ipaddress: linepagedata[0].lineip
     }
     Axios.post(`http://${localipaddr}:1433/updaterejectcount`, requestData)
       .then((response) => {
@@ -439,7 +465,7 @@ function Line3() {
 
   const getpartname = () => {
     for (let i = 0; i < lineparts.length; i++) {
-      if (lineparts[i].Part_ID === partruntable[0].partrunData.part_id.replace('j', '-')){
+      if (lineparts[i].Part_ID === linepagedata[0].partrunData.part_id.replace(/j/g, '-')){
         return lineparts[i].Alternate_Part_ID;
       }
     }
@@ -447,41 +473,67 @@ function Line3() {
   }
 
   // Initialize an interval reference using a ref
-
+  const saveDataToLocalStorage = (key, data) => {
+    if (key === 'selectedline') {
+      localStorage.setItem(key, data); // Store as a string without quotes
+    } else {
+      localStorage.setItem(key, JSON.stringify(data)); // Store other data as JSON strings
+    }
+  };
 
   useEffect(() => {
-    const fetchDataAndSetState = async () => {
-      const lineData = await fetchAllLineData();
-      if (lineData.every((data) => data !== null)) {
-        // Call the getprocessstate function here
-        setpartruntable(lineData);
-        getPartNumbers(selectedline);
-        console.log(lineparts);
-        setIsLoading(false); // Data has been loaded, set isLoading to false
-      }
-    };
+    const savedSelectedLine = localStorage.getItem('selectedline');
+    if (savedSelectedLine) {
+      setselectedline(savedSelectedLine);
+      console.log(savedSelectedLine);
+    }
+  }, [localStorage.getItem('selectedline')]);
   
-    fetchDataAndSetState();
+  useEffect(() => {
+    // Ensure selectedline is set before fetching data
+    if (selectedline) {
+      const fetchDataAndSetState = async () => {
+        const lineData = await fetchlines();
+        console.log(lineData)
+        if (lineData) {
+          // Call the getprocessstate function here
+          setlinepagedata(lineData);
+          getPartNumbers(selectedline);
+          saveDataToLocalStorage('selectedline', selectedline)
+        }
+      };
   
-    // Fetch data every 10 seconds
-    const interval = setInterval(fetchDataAndSetState, 10000);
+      fetchDataAndSetState();
   
-    // Clean up the interval when the component unmounts
-    return () => clearInterval(interval);
-  }, []);
+      // Fetch data every 10 seconds
+      const interval = setInterval(fetchDataAndSetState, 10000);
+  
+      // Clean up the interval when the component unmounts
+      return () => clearInterval(interval);
+    }
+  }, [selectedline]);
+
+  useEffect(() => {
+    // This effect will run whenever linepagedata changes
+    if (linepagedata.length !== 0) {
+      setIsLoading(false); // Data has been loaded, set isLoading to false
+      
+    }
+  }, [linepagedata]);
+
   return (
     <div className="linepage">
       {isLoading ? (
         <p>Loading...</p>
       ) : (
         <>
-          <Toolbar line={partruntable[0].linename} />
+          <Toolbar line={linepagedata} />
           <br />
           <div className='lineflexbox-container'>
 
             <div className='lineflexbox-item'>
               <p className='linetextinboxes'>Part ID and Name </p>
-              {partruntable[0].partrunData.part_id.replace('j', '-')}
+              {linepagedata[0].partrunData.part_id.replace(/j/g, '-')}
               <p>{getpartname()}</p>
             </div>
             <div className='lineflexbox-item'>
@@ -489,7 +541,7 @@ function Line3() {
               <ReactBootStrap.Form.Control
                 className='linepagebutton'
                 as="select"
-                value={getInitialAction(partruntable[0].processStateDetailsData)}
+                value={getInitialAction(linepagedata[0].processStateDetailsData)}
                 onChange={(e) => handleproductionSelect(e.target.value)}
               >
                 <option value="action1">No Orders</option>
@@ -500,14 +552,14 @@ function Line3() {
             </div>
             <div className='lineflexbox-item'>
               <p className='linetextinboxes'>Process State Reason</p>
-              {partruntable[0].shiftData.events[0]}
+              {linepagedata[0].shiftData.events[0][0]}
             </div>
             <div className='lineflexbox-item'>
               <p className='linetextinboxes'>Change Part</p>
               <ReactBootStrap.Form.Control
                 className='linepagebutton'
                 as="select"
-                value={partruntable[0].partrunData.part_id.replace('j', '-')}
+                value={linepagedata[0].partrunData.part_id.replace(/j/g, '-')}
                 onChange={(e) => handlepartidSelect(e.target.value)}
               >
                 {lineparts.map((item) => (
@@ -552,9 +604,9 @@ function Line3() {
               <ReactBootStrap.Form.Control
                 className='linepagebutton'
                 as="select"
-                value={getInitialActionreason('adjustment')}
+                value={getInitialActionreason(linepagedata[0].shiftData.events[0][0])}
                 onChange={(e) => handlereasonSelect(e.target.value)}
-                disabled={partruntable[0].shiftData.events[0][0] === "Running Normally" || partruntable[0].shiftData.events[0][0] === "No Orders" || partruntable[0].shiftData.events[0][0] === "Lunch"}
+                disabled={linepagedata[0].shiftData.events[0][0] === "Running Normally" || linepagedata[0].shiftData.events[0][0] === "No Orders" || linepagedata[0].shiftData.events[0][0] === "Lunch"}
               >
                 <option value="action1">Adjustment</option>
                 <option value="action2">Maintenance</option>
@@ -562,6 +614,7 @@ function Line3() {
                 <option value="action4">Jam</option>
                 <option value="action5">No Materials</option>
                 <option value="action6">No Operator</option>
+                <option value="action7">Missing Reason</option>
                 {/* Add more options here */}
               </ReactBootStrap.Form.Control>
             </div>

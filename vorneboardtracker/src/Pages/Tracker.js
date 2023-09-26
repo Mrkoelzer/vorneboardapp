@@ -9,21 +9,52 @@ import '../Css/tracker.css';
 import Trackertoolbar from '../Components/Trackertoolbar';
 import { linescontext } from '../contexts/linescontext';
 import { selectedlinecontext } from '../contexts/selectedlinecontext';
+import { ipaddrcontext } from '../contexts/ipaddrcontext';
 
 function Tracker() {
   const { partruntable, setpartruntable } = useContext(partruncontext);
-  const { lines } = useContext(linescontext);
+  const { lines, setlines } = useContext(linescontext);
   const { selectedline, setselectedline } = useContext(selectedlinecontext)
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true); // Add isLoading state
+  const {localipaddr} = useContext(ipaddrcontext);
 
   const handleNavigate = (index) => {
     setselectedline(lines[index].Linename);
       navigate('/lineeditor');
   };
+  const saveDataToLocalStorage = (key, data) => {
+    if (key === 'selectedline') {
+      localStorage.setItem(key, data); // Store as a string without quotes
+    } 
+  };
+     // Load data from local storage when the component mounts
+     useEffect(() => {
+      saveDataToLocalStorage('selectedline', '')
+    }, []);
+  const fetchlines = async () => {
+    try {
+      const response = await fetch(`http://${localipaddr}:1435/api/getlines`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(),
+      });
 
-  const fetchAllLineData = async () => {
-    const lineDataPromises = lines.map(async (line) => {
+      const data = await response.json();
+      if (data) {
+        setlines(data.result.recordset)
+        return fetchAllLineData(data.result.recordset)
+      } else {
+        console.log("error")
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+  const fetchAllLineData = async (data) => {
+    const lineDataPromises = data.map(async (line) => {
       const linename = line.Linename;
       const partrunData = await getpartrun(line.ipaddress);
       const processStateDetailsData = await getprocessstatedetails(line.ipaddress);
@@ -37,10 +68,8 @@ function Tracker() {
         processStateReasonData,
       };
     });
-
     // Wait for all promises to resolve
     const lineData = await Promise.all(lineDataPromises);
-    //console.log(lineData)
     // Filter out any null values if needed
     const filteredLineData = lineData.filter((data) => data !== null);
     return filteredLineData;
@@ -126,12 +155,12 @@ function Tracker() {
   };
 
   useEffect(() => {
+    
     const fetchDataAndSetState = async () => {
-      const lineData = await fetchAllLineData();
-      if (lineData.every((data) => data !== null)) {
+      const lineData = await fetchlines();
+      if (lineData) {
         // Call the getprocessstate function here
         setpartruntable(lineData);
-        console.log(lineData);
         setIsLoading(false); // Data has been loaded, set isLoading to false
       }
     };
