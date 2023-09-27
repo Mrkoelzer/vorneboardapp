@@ -97,6 +97,24 @@ appApi.post('/updatelinechangeover', (req, res) => {
     });
 });
 
+appApi.post('/updatebreak', (req, res) => {
+  const { ipaddress, enabled, reason } = req.body;
+  const apiUrl = `http://${ipaddress}/api/v0/process_state/details/break`;
+  const requestData = {
+    "enabled": enabled,
+    "reason": reason
+  };
+  axios.post(apiUrl, requestData)
+    .then((response) => {
+      console.log('API call success:');
+      res.json({ message: 'API call successful' });
+    })
+    .catch((error) => {
+      console.error('API call error:', error.message);
+      res.status(500).json({ message: 'API call failed' });
+    });
+});
+
   appApi.post('/updateprocessstatereason', (req, res) => {
     const { ipaddress } = req.body;
     const apiUrl = `http://${ipaddress}/api/v0/process_state/details/down`;
@@ -240,6 +258,7 @@ appSql.post('/api/authenticate', async (req, res) => {
 
 appSql.post('/api/getpin', async (req, res) => {
   try {
+    console.log('getting here')
     await sql.connect(config);
     const { pin } = req.body;
 
@@ -400,8 +419,8 @@ appSql.post('/api/addnewtable', async (req, res) => {
     // Use requestData.Linename directly in the SQL query
     const result = await sql.query(
       `CREATE TABLE [dbo].[${requestData.Linename}](
-        [Part_ID] [nvarchar](14) NULL,
-        [Alternate_Part_ID] [nvarchar](62) NULL,
+        [Part_ID] [nvarchar](25) NULL,
+        [Alternate_Part_ID] [nvarchar](128) NULL,
         [Ideal_Cycle_Time_s] [numeric](4, 2) NULL,
         [Takt_Time_s] [numeric](4, 2) NULL,
         [Target_Labor_per_Piece_s] [numeric](4, 2) NULL,

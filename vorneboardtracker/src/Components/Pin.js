@@ -1,8 +1,8 @@
-import React, { Component } from "react";
+import React, { Component, useContext } from "react";
 import PinInput from "react-pin-input";
 import moment from "moment";
 import swal from "sweetalert";
-
+import { ipaddrcontext } from '../contexts/ipaddrcontext';
 import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
 import "../Css/Pin.css"
@@ -20,7 +20,7 @@ class Pin extends Component {
     });
   };
 
-  onKeyPress = (button) => {
+  onKeyPress = (button, localipaddr) => {
     //console.log("Button pressed", button);
 
     if (button === "{clear}") {
@@ -50,7 +50,8 @@ class Pin extends Component {
     if (this.pin.elements[2].state.value) {
       this.pin.elements[3].state.value = button;
       let input = (this.pin.elements[0].state.value+this.pin.elements[1].state.value+this.pin.elements[2].state.value+this.pin.elements[3].state.value)
-      this.onSubmitHandler(input)
+      console.log(input)
+      this.onSubmitHandler(input, localipaddr)
       return;
     }
     if (this.pin.elements[1].state.value) {
@@ -90,10 +91,10 @@ class Pin extends Component {
     );
   };
 
-  onSubmitHandler = async (pin) => { 
+  onSubmitHandler = async (pin, localipaddr) => { 
     try {
         console.log('getting here')
-         const response = await fetch('http://10.144.18.208:1434/api/getpin', {
+         const response = await fetch(`http://${localipaddr}:1435/api/getpin`, {
            method: 'POST',
            headers: {
              'Content-Type': 'application/json',
@@ -103,7 +104,7 @@ class Pin extends Component {
    
          const data = await response.json();
          if (data.pinauthenticated) {
-            window.location.href = "http://10.144.18.208:3000/Line3setup";
+            window.location.href = `http://${localipaddr}:3000/Lineeditor`;
          } else {
             swal("Invalid PIN!", "Pin you enter didn't match. Try again", "error");
             this.handleClear();
@@ -126,6 +127,10 @@ class Pin extends Component {
   };
 
   render() {
+    return (
+      <ipaddrcontext.Consumer>
+        {(context) => {
+          const { localipaddr } = context;
     return (
       <div className="Pin home-container">
         <div className="text white-text">
@@ -156,11 +161,14 @@ class Pin extends Component {
             "{bksp}": "&#8592"
           }}
           maxLength={4}
-          onKeyPress={(button) => this.onKeyPress(button)}
+          onKeyPress={(button) => this.onKeyPress(button, localipaddr)}
           onChange={(input) => this.onChange(input)}
           
         />
       </div>
+       );
+      }}
+      </ipaddrcontext.Consumer>
     );
   }
 }

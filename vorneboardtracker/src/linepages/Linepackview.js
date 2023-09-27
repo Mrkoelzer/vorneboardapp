@@ -9,6 +9,7 @@ import Axios from 'axios';
 import { selectedlinecontext } from '../contexts/selectedlinecontext';
 import { partnumbercontext } from '../contexts/partnumbercontext';
 import { linescontext } from '../contexts/linescontext';
+import { ipaddrcontext } from '../contexts/ipaddrcontext';
 
 function Line3packview() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -16,9 +17,11 @@ function Line3packview() {
   const { selectedline, setselectedline } = useContext(selectedlinecontext);
   const [processstate, setprocessstate]= useState('No Orders')
   const { lines } = useContext(linescontext);
+  const [ip, setip] = useState('');
   //const [partnumber, setpartnumber] = useContext(partnumbercontext)
   const [partinfo, setpartinfo] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const {localipaddr} = useContext(ipaddrcontext);
   const navigate = useNavigate();
 
   const togglePopup = () => {
@@ -61,6 +64,129 @@ function Line3packview() {
     });
     return filteredLineData;
   };
+  const apiEndpoints = {
+    action1: 'updatelinenoorders',
+    action2: 'updatelinestartproduction',
+    action3: 'updatelinechangeover'
+    // Add more mappings as needed
+  };
+  const handleproductionSelect = async (selectedAction) => {
+    const selectedEndpointIdentifier = apiEndpoints[selectedAction];
+    let ipaddress = ip
+    console.log(selectedEndpointIdentifier)
+    if (selectedEndpointIdentifier) {
+      // Map the endpoint identifier to the full URL
+      const selectedEndpoint = `http://${localipaddr}:1433/${selectedEndpointIdentifier}`;
+  
+      // Construct requestData based on the selected action
+      let requestData;
+      if (selectedAction === 'action1') {
+        requestData = { value: 'no_orders' }; // Do not include ipaddress here
+      } else if (selectedAction === 'action2') {
+        requestData = { value: {} }; // Do not include ipaddress here
+      } else if (selectedAction === 'action3') {
+        requestData = { value: "changeover" }; // Do not include ipaddress here
+      }
+  
+      // Add ipaddress to the requestData
+      requestData.ipaddress = ipaddress;
+  
+      // Make the API call based on selected action and row
+      await Axios.post(selectedEndpoint, requestData)
+        .then((response) => {
+          console.log('API call success:', response.data);
+        })
+        .catch((error) => {
+          console.error('API call error:', error);
+        });
+    }
+  };
+  
+  const handleBreakSelect = async () => {
+    let ipaddress = ip
+      // Map the endpoint identifier to the full URL
+      const selectedEndpoint = `http://${localipaddr}:1433/updatebreak`;
+  
+      // Construct requestData based on the selected action
+      let requestData = {
+        enabled: true,
+        reason: "break"
+      } // Do not include ipaddress here
+  
+      // Add ipaddress to the requestData
+      requestData.ipaddress = ipaddress;
+  
+      // Make the API call based on selected action and row
+      await Axios.post(selectedEndpoint, requestData)
+        .then((response) => {
+          console.log('API call success:', response.data);
+        })
+        .catch((error) => {
+          console.error('API call error:', error);
+        });
+  };
+
+  const handlereasonSelect = async(selectedAction) => {
+    // Map the endpoint identifier to the full URL
+    const selectedEndpoint = `http://${localipaddr}:1433/updateprocessstatereason`;
+    let ipaddress = ip;
+    // Construct requestData based on the selected action
+    let requestData;
+    if (selectedAction === 'action1') {
+      requestData = {
+        "enabled": true,
+        "reason": "adjustment",
+        ipaddress: ipaddress
+      };
+    } else if (selectedAction === 'action2') {
+      requestData = {
+        "enabled": true,
+        "reason": "autonomous_maintenance",
+        ipaddress: ipaddress
+      };
+    }
+    else if (selectedAction === 'action3') {
+      requestData = {
+        "enabled": true,
+        "reason": "breakdown",
+        ipaddress: ipaddress
+      };
+    }
+    else if (selectedAction === 'action4') {
+      requestData = {
+        "enabled": true,
+        "reason": "jam",
+        ipaddress: ipaddress
+      };
+    }
+    else if (selectedAction === 'action5') {
+      requestData = {
+        "enabled": true,
+        "reason": "no_material",
+        ipaddress: ipaddress
+      };
+    }
+    else if (selectedAction === 'action6') {
+      requestData = {
+        "enabled": true,
+        "reason": "no_operator",
+        ipaddress: ipaddress
+      };
+    }
+    else if (selectedAction === 'action7') {
+        return
+    }
+
+    // Make the API call based on selected action and row
+   await Axios.post(selectedEndpoint, requestData)
+      .then((response) => {
+        console.log('API call success:', response.data);
+      })
+      .catch((error) => {
+        console.error('API call error:', error);
+      });
+  };
+
   const getpartrun = (ipaddress) => {
     const apiUrl = `http://${ipaddress}/api/v0/part_run`;
 
@@ -135,6 +261,7 @@ function Line3packview() {
       for (let i = 0; i < lines.length; i++) {
         if (lines[i].Linename === selectedline) {
           ipaddress = lines[i].ipaddress;
+          setip(ipaddress)
         }
       }
       const lineData = await getshiftdata(ipaddress);
@@ -169,6 +296,22 @@ function Line3packview() {
     return () => clearInterval(interval);
   }, [selectedline, lines]);
 
+  const [currentPartId, setCurrentPartId] = useState('');
+
+  // Watch for changes in partinfo[0].partrunData.part_id
+  useEffect(() => {
+    console.log(partinfo)
+    if(partinfo.length !== 0){
+      if (partinfo[0].partrunData.part_id !== currentPartId) {
+        // Update the currentPartId state
+        setCurrentPartId(partinfo[0].partrunData.part_id);
+  
+        // Reload the page
+        //window.location.reload();
+      }
+    }
+  }, [partinfo]);
+
   return (
     <div className='pdf-container'>
       <br />
@@ -185,10 +328,12 @@ function Line3packview() {
           </div>
           <br />
           <div className='buttonlayout'>
-            <button className='pdfbuttonsstartprod'>Start Product</button>
-            <button className='pdfbuttonsnoorders'>No Orders</button>
-            <button className='pdfbuttonsbreak'>Break</button>
-            <button className='pdfbuttonsdown' onClick={togglePopup}>
+            <button className='pdfbuttonsstartprod' onClick={() => handleproductionSelect('action2')}>Start Product</button>
+            <button className='pdfbuttonsnoorders' onClick={() => handleproductionSelect('action1')}>No Orders</button>
+            <button className='pdfbuttonsbreak' onClick={() => handleBreakSelect()}>Break</button>
+            <button className='pdfbuttonsdown' onClick={togglePopup}
+            disabled={processstate === "Running Normally" || processstate === "No Orders" || processstate === "Lunch" || processstate === "Break"}
+            >
               Down Reasons
             </button>
           </div>
@@ -205,15 +350,30 @@ function Line3packview() {
             )}
           </div>
           {isPopupOpen && (
-            <div className='popup'>
-              {/* Rest of your component code */}
-            </div>
-          )}
+                <div className='popup'>
+                  <div className='popup-content'>
+                    <button className='popup-close' onClick={togglePopup}>
+                      X
+                    </button>
+                    <button className='popup-button' onClick={() => handlereasonSelect('action1')}>Adjustment</button>
+                    <button className='popup-button' onClick={() => handlereasonSelect('action2')}>Maintenance</button>
+                    <button className='popup-button' onClick={() => handlereasonSelect('action3')}>Breakdown</button>
+                    <button className='popup-button' onClick={() => handlereasonSelect('action4')}>Jam</button>
+                    <button className='popup-button' onClick={() => handlereasonSelect('action5')}>No Material</button>
+                    <button className='popup-button' onClick={() => handlereasonSelect('action6')}>No Operator</button>
+                  </div>
+                </div>
+              )}
           {isPopupOpen2 && (
-            <div className='popup-form'>
-              {/* Rest of your component code */}
-            </div>
-          )}
+                <div className='popup-form'>
+                  <div className='popup-form-content'>
+                    <button className='popup-close2' onClick={togglePopup2}>
+                      X
+                    </button>
+                    <Pin />
+                  </div>
+                </div>
+              )}
         </div>
       )}
     </div>
