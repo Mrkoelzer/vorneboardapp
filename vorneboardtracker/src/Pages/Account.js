@@ -20,8 +20,8 @@ function Account() {
         <div className="accountpage">
             <view>
                 <Accounttoobar/>
-                <button className='accountbutton' onClick={() => navigate('/Createaccount')}>
-                    Create a User
+                <button className='accountbutton' onClick={() => navigate('/Users')}>
+                    Users
                 </button>
                 <button className='accountbutton' onClick={() => navigate('/Editlineextruder')}>
                     Edit Lines/Extruders

@@ -2,11 +2,12 @@ import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Css/Addeditpartnumbers.css';
 import Toolbar from '../Components/AddeditpartsToolbar';
+import CheckPDFExists from '../Components/CheckPDFExists'
 import { linescontext } from '../contexts/linescontext';
 import { usercontext } from '../contexts/usercontext';
 import * as ReactBootStrap from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faG, faGear, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { faG, faGear, faTrashCan, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 import Axios from 'axios';
 import Select from 'react-select'
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
@@ -23,7 +24,7 @@ function Addeditpartnumbers() {
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setshowEditModal] = useState(false);
     const [addLineMessage, setAddLineMessage] = useState('');
-    const {localipaddr} = useContext(ipaddrcontext);
+    const { localipaddr } = useContext(ipaddrcontext);
     const [editlines, seteditlines] = useState([])
     const [newData, setNewData] = useState({
         Linename: '',
@@ -69,7 +70,7 @@ function Addeditpartnumbers() {
         The_changeover_Reason_is: 'Part Change',
         Set_a_target_time_of_s: '0',
         End_Event: 'By Barcode'
-      });
+    });
     useEffect(() => {
         if (userdata.loggedin !== 1) {
             navigate('/');
@@ -400,33 +401,33 @@ function Addeditpartnumbers() {
             oldPart_ID: partid
         }));
         setshowEditModal(true);
-        
+
     };
     const closeEditModal = () => {
         seteditlines([])
         setshowEditModal(false);
         setEditedData({
-        Linename: '',
-        oldPart_ID: '',
-        Part_ID: '',
-        Alternate_Part_ID: '',
-        Ideal_Cycle_Time_s: 5,
-        Takt_Time_s: 6,
-        Target_Labor_per_Piece_s: 30,
-        Down_s: 60,
-        Count_Multiplier_1: 1,
-        Count_Multiplier_2: 1,
-        Count_Multiplier_3: 1,
-        Count_Multiplier_4: 1,
-        Count_Multiplier_5: 1,
-        Count_Multiplier_6: 1,
-        Count_Multiplier_7: 1,
-        Count_Multiplier_8: 1,
-        Target_Multiplier: 1,
-        Start_with_Changeover: 'No',
-        The_changeover_Reason_is: 'Part Change',
-        Set_a_target_time_of_s: '0',
-        End_Event: 'By Barcode'
+            Linename: '',
+            oldPart_ID: '',
+            Part_ID: '',
+            Alternate_Part_ID: '',
+            Ideal_Cycle_Time_s: 5,
+            Takt_Time_s: 6,
+            Target_Labor_per_Piece_s: 30,
+            Down_s: 60,
+            Count_Multiplier_1: 1,
+            Count_Multiplier_2: 1,
+            Count_Multiplier_3: 1,
+            Count_Multiplier_4: 1,
+            Count_Multiplier_5: 1,
+            Count_Multiplier_6: 1,
+            Count_Multiplier_7: 1,
+            Count_Multiplier_8: 1,
+            Target_Multiplier: 1,
+            Start_with_Changeover: 'No',
+            The_changeover_Reason_is: 'Part Change',
+            Set_a_target_time_of_s: '0',
+            End_Event: 'By Barcode'
         })
     };
 
@@ -437,37 +438,37 @@ function Addeditpartnumbers() {
     const getallpartnumbers = async () => {
         let sendquery;
         let sendquery2 = '';
-      
+
         if (lines[0]) {
-          sendquery = `select *, '${lines[0].Linename}' AS Line_Name from [${lines[0].Linename}]`;
+            sendquery = `select *, '${lines[0].Linename}' AS Line_Name from [${lines[0].Linename}]`;
         }
-      
+
         for (let i = 1; i < lines.length; i++) {
-          sendquery2 = sendquery2 + ` union all select *, '${lines[i].Linename}' AS Line_Name from [${lines[i].Linename}]`;
+            sendquery2 = sendquery2 + ` union all select *, '${lines[i].Linename}' AS Line_Name from [${lines[i].Linename}]`;
         }
-      
+
         sendquery = sendquery + sendquery2;
-      
+
         try {
-          // Send a POST request to the backend with the query in the request body
-          const response = await fetch(`http://${localipaddr}:1435/api/getalllinepartnumbers`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ query: sendquery }), // Send the query in the request body
-          });
-      
-          if (response.ok) {
-            const data = await response.json();
-            setallpartnumbers(data.recordset);
-          } else {
-            console.error('Failed to retrieve data');
-          }
+            // Send a POST request to the backend with the query in the request body
+            const response = await fetch(`http://${localipaddr}:1435/api/getalllinepartnumbers`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ query: sendquery }), // Send the query in the request body
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setallpartnumbers(data.recordset);
+            } else {
+                console.error('Failed to retrieve data');
+            }
         } catch (error) {
-          console.error('Error:', error);
+            console.error('Error:', error);
         }
-      };
+    };
 
     const getpartnumbers = async () => {
         try {
@@ -566,6 +567,7 @@ function Addeditpartnumbers() {
                                             <th>Start with Changeover</th>
                                             <th>Edit</th>
                                             <th>Delete</th>
+                                            <th>PDF</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -588,6 +590,9 @@ function Addeditpartnumbers() {
                                                     <button className='aeeditdeletebutton' onClick={() => handledelete(rowData.Part_ID)}>
                                                         <FontAwesomeIcon icon={faTrashCan} />
                                                     </button>
+                                                </td>
+                                                <td>
+                                                    <CheckPDFExists partId={rowData.Part_ID} />
                                                 </td>
                                             </tr>
                                         ))}

@@ -279,9 +279,57 @@ appSql.post('/api/getpin', async (req, res) => {
 appSql.post('/api/createaccount', async (req, res) => {
   try {
     await sql.connect(config);
-    const { username,password,first_name,last_name,email,gueststate,changepassstate,adminstate,superadminstate,pinstate, pinchangestate } = req.body;
+    const { username,password,first_name,last_name,email,guest,passwordchange,admin,superadmin,pin, pinchange } = req.body;
+    const result = await sql.query`INSERT INTO Users ([username],[password],[first_name],[last_name],[pin],[email],[admin],[superadmin],[guest],[passwordchange],[pinchange])VALUES(${username},${password},${first_name},${last_name},${pin},${email},${admin},${superadmin},${guest},${passwordchange}, ${pinchange})`;
+    if (result) {
+      res.json({ createdauthenticated: true });
+    } else {
+      res.json({ createdauthenticated: false });
+    }
 
-    const result = await sql.query`INSERT INTO Users ([username],[password],[first_name],[last_name],[pin],[email],[admin],[superadmin],[guest],[passwordchange],[pinchange])VALUES(${username},${password},${first_name},${last_name},${pinstate},${email},${adminstate},${superadminstate},${gueststate},${changepassstate}, ${pinchangestate})`;
+    sql.close();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+appSql.delete('/api/deleteuser', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const { userid } = req.body; // Get the lineid from the URL parameter
+    const result = await sql.query`delete from [Users] where [userid] = ${userid}`;
+    
+    if (result.rowsAffected[0] === 1) {
+      res.json({ deleted: true });
+    } else {
+      res.json({ deleted: false });
+    }
+
+    sql.close();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+appSql.post('/api/updateuser', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const requestData = req.body;
+    const result = await sql.query`update [users] set 
+    [username]=${requestData.username}, 
+    [password]=${requestData.password}, 
+    [first_name]=${requestData.first_name},
+    [last_name]=${requestData.last_name}, 
+    [pin]=${requestData.pin},
+    [email]=${requestData.email}, 
+    [admin]=${requestData.admin}, 
+    [superadmin]=${requestData.superadmin}, 
+    [guest]=${requestData.guest}, 
+    [passwordchange]=${requestData.passwordchange}, 
+    [pinchange]=${requestData.pinchange}  
+    where userid = ${requestData.userid}`;
     if (result) {
       res.json({ createdauthenticated: true });
     } else {
@@ -419,7 +467,7 @@ appSql.post('/api/addnewtable', async (req, res) => {
     // Use requestData.Linename directly in the SQL query
     const result = await sql.query(
       `CREATE TABLE [dbo].[${requestData.Linename}](
-        [Part_ID] [nvarchar](25) NULL,
+        [Part_ID] [nvarchar](24) NULL,
         [Alternate_Part_ID] [nvarchar](128) NULL,
         [Ideal_Cycle_Time_s] [numeric](4, 2) NULL,
         [Takt_Time_s] [numeric](4, 2) NULL,
@@ -605,6 +653,24 @@ appSql.get('/api/getlines', async (req, res) => {
     await sql.connect(config);
 
     const result = await sql.query`select * from Lines order by Linename asc`;
+    if (result) {
+      res.json({ result });
+    } else {
+      res.json({ authenticated: false });
+    }
+
+    sql.close();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+appSql.get('/api/getusers', async (req, res) => {
+  try {
+    await sql.connect(config);
+
+    const result = await sql.query`select * from Users order by last_name asc`;
     if (result) {
       res.json({ result });
     } else {

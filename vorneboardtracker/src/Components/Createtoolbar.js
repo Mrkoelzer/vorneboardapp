@@ -19,7 +19,7 @@ function Createtoobar() {
         <div className="toolbar-left">
           <img src={logo} className="App-logo-tracker" alt="logo" />
           <p>
-            User Creation
+            Users
           </p>
         </div>
         <button className={`dropdown ${isDropdownOpen ? 'active' : ''}`} onClick={toggleDropdown}>

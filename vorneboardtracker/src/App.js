@@ -6,6 +6,7 @@ import Updater from './Pages/Updater';
 import Linepackview from './linepages/Linepackview';
 import Line3setup from './Pages/Line3setup'
 import Login from './Pages/Login';
+import Userspage from './Pages/Userspage';
 import Account from './Pages/Account';
 import Createaccount from './Pages/Createaccount';
 import Editlineextruder from './Pages/Editlineextruder'
@@ -117,6 +118,7 @@ function App() {
                 <Route path="/Editlineextruder" element={<Editlineextruder />} />
                 <Route path="/Addeditpartnumbers" element={<Addeditpartnumbers />} />
                 <Route path="/Changepasswordpin" element={<Changepasswordpin/>}/>
+                <Route path="/Users" element={<Userspage/>}/>
               </Routes>
               </ipaddrcontext.Provider>
               </usercontext.Provider>
