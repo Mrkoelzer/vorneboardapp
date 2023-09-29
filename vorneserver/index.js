@@ -524,7 +524,7 @@ appSql.post('/api/updatepartnumber', async (req, res) => {
   try {
     await sql.connect(config);
     const requestData = req.body;
-    console.log(requestData)
+
     const query = `UPDATE [${requestData.Linename}]
     SET [Part_ID] = '${requestData.Part_ID}'
        ,[Alternate_Part_ID] = '${requestData.Alternate_Part_ID}'
@@ -675,6 +675,25 @@ appSql.get('/api/getusers', async (req, res) => {
       res.json({ result });
     } else {
       res.json({ authenticated: false });
+    }
+
+    sql.close();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+appSql.post('/api/checkusername', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const requestData = req.body;
+    const query = `select [username], [first_name], [last_name], [userid] from Users where [username] = '${requestData.username}'`
+    const result = await sql.query(query);
+    if (result) {
+      res.json({ result, checked: true });
+    } else {
+      res.json({ result, checked: false });
     }
 
     sql.close();

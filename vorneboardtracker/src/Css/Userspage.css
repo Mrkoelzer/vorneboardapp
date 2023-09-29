@@ -158,6 +158,9 @@
         background-color: #282c34;
         color: white;
         border: none;
+        scale: 200%;
+        margin: 10%;
+        min-height: 2vh;
       }
       .userpageeditdeletebutton:hover {
         color: white;

@@ -6,6 +6,9 @@ import { usercontext } from '../contexts/usercontext';
 import Toolbar from '../Components/Createtoolbar';
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
 import { linescontext } from '../contexts/linescontext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGear, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+
 
 function Userspage() {
     const navigate = useNavigate();
@@ -22,11 +25,11 @@ function Userspage() {
         last_name: '',
         pin: '',
         email: '',
-        admin: 0,
-        superadmin: 0,
-        guest: 0,
-        passwordchange: 0,
-        pinchange: 0
+        admin: false,
+        superadmin: false,
+        guest: false,
+        passwordchange: true,
+        pinchange: true
     });
     const [showEditModal, setshowEditModal] = useState(false);
     const [showAddModal, setShowAddModal] = useState(false); // State for showing/hiding the add modal
@@ -38,11 +41,11 @@ function Userspage() {
         last_name: '',
         pin: '',
         email: '',
-        admin: 0,
-        superadmin: 0,
-        guest: 0,
-        passwordchange: 0,
-        pinchange: 0
+        admin: false,
+        superadmin: false,
+        guest: false,
+        passwordchange: true,
+        pinchange: true
     });
     const [addLineMessage, setAddLineMessage] = useState('');
 
@@ -72,7 +75,7 @@ function Userspage() {
         setshowEditModal(true);
 
     };
-    
+
     const closeEditModal = () => {
         setshowEditModal(false);
     };
@@ -97,11 +100,11 @@ function Userspage() {
                 },
                 body: JSON.stringify({ userid }), // Pass the id in the request body
             });
-    
+
             // Handle response
             if (response.ok) {
                 // Line deleted successfully
-    
+
                 fetchlines(); // Refresh the line data
             } else {
                 console.error('Delete failed');
@@ -111,73 +114,113 @@ function Userspage() {
         }
     };
 
-    const checkaddline = () => {
-        const regexExp = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-        for (let i = 0; i < lines.length; i++) {
-            if (newData.Linename.trim() === "") {
-                setAddLineMessage('Line Name is blank')
+    const checkusername = async (username, userid, addedit) => {
+        try {
+            const response = await fetch(`http://${localipaddr}:1435/api/checkusername`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username }),
+            });
+
+            const data = await response.json();
+            if (data.result.recordset.length === 0 || data.result.recordset[0].userid === userid) {
+                if (addedit === 1) {
+                    console.log('here')
+                    handleSaveAdd();
+                }
+                else if (addedit === 2) {
+                    handleSaveEdit();
+                }
+            } else {
+                setAddLineMessage(`Username is used by ${data.result.recordset[0].first_name} ${data.result.recordset[0].last_name}`)
                 return;
             }
-            if (newData.ipaddress.trim() === "") {
-                setAddLineMessage('IP Address is blank')
-                return
-            }
-            if (lines[i].Linename === newData.Linename) {
-                setAddLineMessage(`${newData.Linename} is a Duplicate Line Name`);
-                return;
-            }
-            if (lines[i].ipaddress === newData.ipaddress) {
-                setAddLineMessage(`${newData.ipaddress} is being used on ${lines[i].Linename}`);
-                return;
-            }
-            if (!regexExp.test(newData.ipaddress)) {
-                setAddLineMessage(`${newData.ipaddress} is an Invalid IP Address`);
-                return;
-            }
+        } catch (error) {
+            console.error('Error:', error);
         }
-        handleSaveAdd();
+    };
+
+    const checkaddline = () => {
+        if (newData.first_name.trim() === "") {
+            setAddLineMessage('First Name is blank')
+            return;
+        }
+        if (newData.last_name.trim() === "") {
+            setAddLineMessage('Last Name is blank')
+            return
+        }
+        if (newData.username.trim() === "") {
+            setAddLineMessage('Username is blank')
+            return
+        }
+        if (newData.password.trim() === "") {
+            setAddLineMessage('Password is blank')
+            return
+        }
+        if (newData.pin.trim() === "") {
+            setAddLineMessage('Pin is blank')
+            return
+        }
+        if (newData.email.trim() === "") {
+            setAddLineMessage('Email is blank')
+            return
+        }
+        if (newData.pin.length < 4 || newData.pin.length > 4) {
+            setAddLineMessage('Pin needs to be 4 digits')
+            return
+        }
+        if (newData.admin === false && newData.superadmin === false && newData.guest === false) {
+            setAddLineMessage('Access Needs to Be Set')
+            return
+        }
+        checkusername(newData.username, 0, 1)
     };
 
     const checkeditline = () => {
-        console.log(editedData)
-        const regexExp = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-        for (let i = 0; i < lines.length; i++) {
-            if (i !== editRow) {
-                if (editedData.Linename.trim() === "") {
-                    setAddLineMessage('Line Name is blank')
-                    return;
-                }
-                if (editedData.ipaddress.trim() === "") {
-                    setAddLineMessage('IP Address is blank')
-                    return
-                }
-                if (lines[i].Linename === editedData.Linename) {
-                    setAddLineMessage(`${editedData.Linename} is a Duplicate Line Name`);
-                    return;
-                }
-                if (lines[i].ipaddress === editedData.ipaddress) {
-                    setAddLineMessage(`${editedData.ipaddress} is being used on ${lines[i].Linename}`);
-                    return;
-                }
-                if (!regexExp.test(editedData.ipaddress)) {
-                    setAddLineMessage(`${editedData.ipaddress} is an Invalid IP Address`);
-                    return;
-                }
-            }
-            if (editedData.Linename.trim() === "") {
-                setAddLineMessage('IP Address is blank')
-                return;
-            }
-            if (editedData.ipaddress.trim() === "") {
-                setAddLineMessage('Line Name is blank')
-                return
-            }
-            if (!regexExp.test(editedData.ipaddress)) {
-                setAddLineMessage(`${editedData.ipaddress} is an Invalid IP Address`);
-                return;
-            }
+        if (editedData.first_name.trim() === "") {
+            setAddLineMessage('First Name is blank')
+            return;
         }
-        handleSaveEdit();
+        if (editedData.last_name.trim() === "") {
+            setAddLineMessage('Last Name is blank')
+            return
+        }
+        if (editedData.username.trim() === "") {
+            setAddLineMessage('Username is blank')
+            return
+        }
+        if (editedData.password.trim() === "") {
+            setAddLineMessage('Password is blank')
+            return
+        }
+        if (editedData.pin.length === 0) {
+            setAddLineMessage('Pin is blank')
+            return
+        }
+        if (editedData.email.trim() === "") {
+            setAddLineMessage('Email is blank')
+            console.log(editedData.admin)
+            return
+        }
+        if (editedData.pin.length < 4 || editedData.pin.length > 4) {
+            setAddLineMessage('Pin needs to be 4 digits')
+            return
+        }
+        const updatedData = { ...editedData };
+            for (const key in updatedData) {
+                if (typeof updatedData[key] === 'boolean') {
+                    updatedData[key] = updatedData[key] ? 1 : 0;
+                }
+            }
+        if (updatedData.admin === 0
+            && updatedData.superadmin === 0 
+            && updatedData.guest === 0) {
+            setAddLineMessage('Access Needs to Be Set')
+            return
+        }
+        checkusername(editedData.username, editedData.userid, 2)
     };
 
     const handleSaveEdit = async () => {
@@ -197,7 +240,7 @@ function Userspage() {
             });
 
             // Handle response and update the data if needed
-            if(response.ok){
+            if (response.ok) {
                 fetchlines()
 
                 // Close the edit pop-up
@@ -223,11 +266,11 @@ function Userspage() {
             last_name: '',
             pin: '',
             email: '',
-            admin: 0,
-            superadmin: 0,
-            guest: 0,
-            passwordchange: 0,
-            pinchange: 0
+            admin: false,
+            superadmin: false,
+            guest: false,
+            passwordchange: true,
+            pinchange: true
         });
     };
 
@@ -258,18 +301,18 @@ function Userspage() {
                     last_name: '',
                     pin: '',
                     email: '',
-                    admin: 0,
-                    superadmin: 0,
-                    guest: 0,
-                    passwordchange: 0,
-                    pinchange: 0,
+                    admin: false,
+                    superadmin: false,
+                    guest: false,
+                    passwordchange: true,
+                    pinchange: true
                 });
             } else {
                 // Handle the case where the creation was not successful
             }
-            
+
             fetchlines();
-    
+
             // Close the add modal
             closeAddModal();
         } catch (error) {
@@ -319,14 +362,12 @@ function Userspage() {
                                 <td>{getvalues(rowData.superadmin)}</td>
                                 <td>{getvalues(rowData.passwordchange)}</td>
                                 <td>{getvalues(rowData.pinchange)}</td>
-                                <td>
-                                    <button className="userpageeditdeletebutton" onClick={() => handleEditClick(index)}>
-                                        Edit
-                                    </button>
-                                </td>
+                                <td><button className='userpageeditdeletebutton' onClick={() => handleEditClick(index, rowData.Part_ID)}>
+                                    <FontAwesomeIcon icon={faGear} />
+                                </button></td>
                                 <td>
                                     <button className="userpageeditdeletebutton" onClick={() => handledeleteClick(index)}>
-                                        Delete
+                                        <FontAwesomeIcon icon={faTrashCan} />
                                     </button>
                                 </td>
                             </tr>
@@ -448,7 +489,7 @@ function Userspage() {
                             />
                         </div>
                         <br />
-                        <button className="modalbutton" onClick={handleSaveAdd}>
+                        <button className="modalbutton" onClick={checkaddline}>
                             Save
                         </button>
                         <button className="modalbutton" onClick={closeAddModal}>
@@ -572,7 +613,7 @@ function Userspage() {
                             />
                         </div>
                         <br />
-                        <button className="modalbutton" onClick={handleSaveEdit}>
+                        <button className="modalbutton" onClick={checkeditline}>
                             Save
                         </button>
                         <button className="modalbutton" onClick={closeEditModal}>
