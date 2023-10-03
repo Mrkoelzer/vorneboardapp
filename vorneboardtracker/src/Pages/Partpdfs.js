@@ -12,7 +12,7 @@ import Axios from 'axios';
 import Select from 'react-select'
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
 
-function Addeditpartnumbers() {
+function Partpdfs() {
     const navigate = useNavigate();
     const { lines } = useContext(linescontext);
     const { userdata } = useContext(usercontext);
@@ -436,6 +436,19 @@ function Addeditpartnumbers() {
     };
 
     const getallpartnumbers = async () => {
+        let sendquery;
+        let sendquery2 = '';
+
+        if (lines[0]) {
+            sendquery = `select *, '${lines[0].Linename}' AS Line_Name from [${lines[0].Linename}]`;
+        }
+
+        for (let i = 1; i < lines.length; i++) {
+            sendquery2 = sendquery2 + ` union all select *, '${lines[i].Linename}' AS Line_Name from [${lines[i].Linename}]`;
+        }
+
+        sendquery = sendquery + sendquery2;
+
         try {
             // Send a POST request to the backend with the query in the request body
             const response = await fetch(`http://${localipaddr}:1435/api/getalllinepartnumbers`, {
@@ -443,11 +456,12 @@ function Addeditpartnumbers() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                body: JSON.stringify({ query: sendquery }), // Send the query in the request body
             });
 
-            if (response) {
+            if (response.ok) {
                 const data = await response.json();
-                setallpartnumbers(data.result.recordset);
+                setallpartnumbers(data.recordset);
             } else {
                 console.error('Failed to retrieve data');
             }
@@ -510,16 +524,6 @@ function Addeditpartnumbers() {
 
         seteditlines(newEditLines); // Update the state with the new array
     }
-
-    function checkpdf(id) {
-        for (let i = 0; i < allpartnumbers.length; i++) {
-            if (allpartnumbers[i].linename === selectedline && allpartnumbers[i].part_id === id) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     const lineLabels = editlines.map((line, index) => `${line}`).join(', ');
 
     return (
@@ -588,11 +592,7 @@ function Addeditpartnumbers() {
                                                     </button>
                                                 </td>
                                                 <td>
-                                                    {checkpdf(rowData.Part_ID) ? ( // Check if PDF exists
-                                                        <FontAwesomeIcon icon={faCheck} /> // Display checkmark if PDF exists
-                                                    ) : (
-                                                        <FontAwesomeIcon icon={faTimes} /> // Display X if PDF does not exist
-                                                    )}
+                                                    <CheckPDFExists partId={rowData.Part_ID} />
                                                 </td>
                                             </tr>
                                         ))}
@@ -819,4 +819,4 @@ function Addeditpartnumbers() {
     );
 }
 
-export default Addeditpartnumbers;
+export default Partpdfs;

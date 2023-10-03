@@ -15,7 +15,6 @@ function Login() {
  
 
   const hangleNavigate=(pass, pin)=>{
-    console.log(pass)
         if(pass === 1 || pin === 1){
           navigate('/changepasswordpin')
         }

@@ -417,7 +417,7 @@ function Userspage() {
                         <div className='userpageflexbox-item'>
                             <input
                                 className='userpage-add-input'
-                                type="text"
+                                type="password"
                                 placeholder="Password"
                                 value={newData.password}
                                 onChange={(e) => setNewData({ ...newData, password: e.target.value })}

@@ -276,6 +276,69 @@ appSql.post('/api/getpin', async (req, res) => {
   }
 });
 
+appSql.post('/api/updatepin', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const requestData = req.body;
+    const query =`update [Users] set 
+    [pin]=${requestData.pin},
+    [pinchange]=0  
+    where username = '${requestData.username}'`;
+    const result = await sql.query(query)
+    if (result) {
+      res.json({ pinupdated: true });
+    } else {
+      res.json({ pinupdated: false });
+    }
+
+    sql.close();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+appSql.post('/api/updatepassword', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const requestData = req.body;
+    const query =`update [Users] set 
+    [password]='${requestData.passworddata.confimpassword}',
+    [passwordchange]=0  
+    where username = '${requestData.passworddata.username}'`;
+    const result = await sql.query(query)
+    if (result) {
+      res.json({ passupdated: true });
+    } else {
+      res.json({ passupdated: false });
+    }
+
+    sql.close();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+appSql.post('/api/getuserdata', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const { username } = req.body;
+
+    const result = await sql.query`SELECT * FROM Users WHERE username = ${username}`;
+    if (result.recordset.length > 0) {
+      res.json(result);
+    } else {
+      res.json('error');
+    }
+
+    sql.close();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 appSql.post('/api/createaccount', async (req, res) => {
   try {
     await sql.connect(config);
@@ -727,30 +790,20 @@ appSql.get('/api/getlinepartnumbers', async (req, res) => {
 });
 
 appSql.post('/api/getalllinepartnumbers', async (req, res) => {
-  let sqlPool; // Define the SQL pool outside the try/catch block
-
   try {
-    sqlPool = await sql.connect(config); // Connect to the SQL server
-    const { query } = req.body; // Get the SQL query from the request body
-
-    const result = await sqlPool.query(query);
-
+    await sql.connect(config);
+    const query = `select * from partpdf`
+    const result = await sql.query(query);
     if (result) {
-      res.json(result);
+      res.json({ result, checked: true });
     } else {
-      res.json({ deleted: false });
+      res.json({ result, checked: false });
     }
+
+    sql.close();
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
-  } finally {
-    try {
-      if (sqlPool) {
-        await sqlPool.close(); // Close the SQL pool if it was successfully opened
-      }
-    } catch (error) {
-      console.error('Error closing SQL connection:', error);
-    }
   }
 });
 

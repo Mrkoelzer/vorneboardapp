@@ -10,7 +10,9 @@ function Account() {
     
     useEffect(() => {
         if(userdata.loggedin === 1){
-            
+            if(userdata.passwordchange === 1 || userdata.pinchange === 1){
+                navigate('/Changepasswordpin')
+            }
         }
         else{
             navigate('/')
@@ -23,11 +25,17 @@ function Account() {
                 <button className='accountbutton' onClick={() => navigate('/Users')}>
                     Users
                 </button>
+                <button className='accountbutton' onClick={() => navigate('/Changepasswordpin')}>
+                    Change Password/Pin
+                </button>
                 <button className='accountbutton' onClick={() => navigate('/Editlineextruder')}>
                     Edit Lines/Extruders
                 </button>
                 <button className='accountbutton' onClick={() => navigate('/Addeditpartnumbers')}>
                     Add/Edit Part Numbers
+                </button>
+                <button className='accountbutton' onClick={() => navigate('/Partpdfs')}>
+                    Add/Edit PDFs
                 </button>
                 <button className='accountbutton' onClick={() => navigate('/')}>
                     Go Back

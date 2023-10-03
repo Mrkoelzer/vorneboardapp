@@ -8,6 +8,7 @@ import Line3setup from './Pages/Line3setup'
 import Login from './Pages/Login';
 import Userspage from './Pages/Userspage';
 import Account from './Pages/Account';
+import Partpdfs from './Pages/Partpdfs';
 import Createaccount from './Pages/Createaccount';
 import Editlineextruder from './Pages/Editlineextruder'
 import Addeditpartnumbers from './Pages/Addeditpartnumbers';
@@ -119,6 +120,7 @@ function App() {
                 <Route path="/Addeditpartnumbers" element={<Addeditpartnumbers />} />
                 <Route path="/Changepasswordpin" element={<Changepasswordpin/>}/>
                 <Route path="/Users" element={<Userspage/>}/>
+                <Route path="/Partpdfs" element={<Partpdfs/>}/>
               </Routes>
               </ipaddrcontext.Provider>
               </usercontext.Provider>
