@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import '../Css/toolbar.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGear, faUser } from '@fortawesome/free-solid-svg-icons'
+import { faBars } from '@fortawesome/free-solid-svg-icons'
 import logo from '../IMAGES/jsix-brand-logo.png';
 import { useNavigate } from 'react-router-dom';
 import { usercontext } from '../contexts/usercontext';
@@ -23,7 +23,7 @@ function Editlineextrudertoolbar() {
         </p>
       </div>
       <button className={`dropdown ${isDropdownOpen ? 'active' : ''}`} onClick={toggleDropdown}>
-        <FontAwesomeIcon icon={userdata.loggedin === 1 ? faUser : faGear} />
+        <FontAwesomeIcon icon={faBars} />
       </button>
       <div className="dropdown-container">
         {isDropdownOpen && (

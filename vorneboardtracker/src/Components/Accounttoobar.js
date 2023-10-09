@@ -8,12 +8,32 @@ import { usercontext } from '../contexts/usercontext';
 
 function Accounttoobar() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const { userdata } = useContext(usercontext);
+    const { userdata, setuserdata } = useContext(usercontext);
     const navigate = useNavigate();
 
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
       };
+
+      const logout = () => {
+        setuserdata({
+          userid: 0,
+          username: '',
+          password: '',
+          first_name: '',
+          last_name: '',
+          pin: '',
+          email: '',
+          admin: false,
+          superadmin: false,
+          guest: false,
+          passwordchange: false,
+          pinchange: false,
+          loggedin: 0
+        })
+        localStorage.removeItem('userdata');
+        navigate('/')
+      }
     return (
         <div className="toolbar">
         <div className="toolbar-left">
@@ -29,11 +49,9 @@ function Accounttoobar() {
           {isDropdownOpen && (
             <div className="dropdown-menu">
               {/* Dropdown menu items */}
-              {userdata.loggedin === 1 ? (
+              
                 <p onClick={() => navigate('/')}>Home</p>
-              ) : (
-                <p onClick={() => navigate('/Login')}>Login</p>
-              )}
+                <p  onClick={logout}>Logout</p>
               {/* Add more menu items as needed */}
             </div>
           )}

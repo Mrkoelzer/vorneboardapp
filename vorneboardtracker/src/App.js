@@ -13,6 +13,7 @@ import Createaccount from './Pages/Createaccount';
 import Editlineextruder from './Pages/Editlineextruder'
 import Addeditpartnumbers from './Pages/Addeditpartnumbers';
 import Changepasswordpin from './Pages/Changepasswordpin'
+import Pdfs from './Pages/Pdfs';
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { partruncontext } from './contexts/partruncontext';
 import { linedatacontext } from './contexts/linedatacontext';
@@ -83,6 +84,7 @@ function App() {
   ])
 
   const [userdata, setuserdata] = useState([{
+    "userid": Number,
     "admin": Number,
     "email": String,
     "first_name": String,
@@ -90,11 +92,23 @@ function App() {
     "last_name": String,
     "password": String,
     "passwordchange": String,
+    "pinchange":Number,
     "pin": Number,
     "superadmin": Number,
     "username": String,
     "loggedin": Number,
   }])
+
+  const getuserdata = async () => {
+    const userDataFromLocalStorage = localStorage.getItem('userdata');
+    if (userDataFromLocalStorage) {
+      const parsedUserData = JSON.parse(userDataFromLocalStorage);
+      setuserdata(parsedUserData);
+    }
+  }
+  useEffect(() => {
+    getuserdata();
+  }, []);
 
   return (
     <BrowserRouter>
@@ -121,6 +135,7 @@ function App() {
                 <Route path="/Changepasswordpin" element={<Changepasswordpin/>}/>
                 <Route path="/Users" element={<Userspage/>}/>
                 <Route path="/Partpdfs" element={<Partpdfs/>}/>
+                <Route path="/Pdfs" element={<Pdfs/>}/>
               </Routes>
               </ipaddrcontext.Provider>
               </usercontext.Provider>

@@ -40,6 +40,10 @@ function Login() {
         console.log(data.result.recordset[0])
         setuserdata(data.result.recordset[0])
          setAuthenticated("Authenticated");
+         localStorage.setItem('userdata', JSON.stringify({
+          ...data.result.recordset[0],
+          loggedin: 1,
+        }));
          setuserdata(prevUserData => ({
             ...prevUserData,
             loggedin: 1

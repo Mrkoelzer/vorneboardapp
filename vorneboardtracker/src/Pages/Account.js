@@ -6,10 +6,16 @@ import Accounttoobar from '../Components/Accounttoobar';
 
 function Account() {
     const navigate = useNavigate();
-    const { userdata } = useContext(usercontext);
+    const { userdata, setuserdata } = useContext(usercontext);
     
     useEffect(() => {
-        if(userdata.loggedin === 1){
+        const userDataFromLocalStorage = localStorage.getItem('userdata');
+        let parsedUserData;
+        if (userDataFromLocalStorage) {
+          parsedUserData = JSON.parse(userDataFromLocalStorage);
+          setuserdata(parsedUserData);
+        }
+        if(userdata.loggedin === 1 || parsedUserData.loggedin === 1){
             if(userdata.passwordchange === 1 || userdata.pinchange === 1){
                 navigate('/Changepasswordpin')
             }
@@ -17,7 +23,7 @@ function Account() {
         else{
             navigate('/')
         }
-      }, []);
+      }, [userdata]);
     return (
         <div className="accountpage">
             <view>
@@ -34,8 +40,11 @@ function Account() {
                 <button className='accountbutton' onClick={() => navigate('/Addeditpartnumbers')}>
                     Add/Edit Part Numbers
                 </button>
-                <button className='accountbutton' onClick={() => navigate('/Partpdfs')}>
+                <button className='accountbutton' onClick={() => navigate('/Pdfs')}>
                     Add/Edit PDFs
+                </button>
+                <button className='accountbutton' onClick={() => navigate('/Partpdfs')}>
+                    Edit Linked PDFs
                 </button>
                 <button className='accountbutton' onClick={() => navigate('/')}>
                     Go Back

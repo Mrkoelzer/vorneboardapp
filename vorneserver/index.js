@@ -9,6 +9,7 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import sql from "mssql"
 import { request } from "http";
+import fs from "fs";
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -47,6 +48,21 @@ appApi.listen(1433, () => {
 // SQL routes (appSql instance)
 appSql.listen(1435, () => {
   console.log("SQL server is running on port 1435");
+});
+
+// Serve PDF files (appApi instance)
+appApi.post('/api/pdfs', (req, res) => {
+  const { filename } = req.body;
+  const pdfPath = 'C:\\vorneboardapp\\vorneserver\\public\\PDF\\' + filename;
+  console.log(pdfPath);
+  // Check if the file exists
+  if (fs.existsSync(pdfPath)){ 
+    // Stream the file as a response
+    res.sendFile(pdfPath);
+  } else {
+    // Return a 404 error if the file doesn't exist
+    res.status(404).send('File not found');
+  }
 });
 //fetch data from a specific REST API and prints its body to the terminal
 //this is vorne api calls
@@ -789,15 +805,15 @@ appSql.get('/api/getlinepartnumbers', async (req, res) => {
   }
 });
 
-appSql.post('/api/getalllinepartnumbers', async (req, res) => {
+appSql.get('/api/getalllinepartnumbers', async (req, res) => {
   try {
     await sql.connect(config);
-    const query = `select * from partpdf`
+    const query = `select * from partpdf order by linename asc`
     const result = await sql.query(query);
     if (result) {
-      res.json({ result, checked: true });
+      res.json({ result });
     } else {
-      res.json({ result, checked: false });
+      res.json({ result });
     }
 
     sql.close();
@@ -806,4 +822,47 @@ appSql.post('/api/getalllinepartnumbers', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
+appSql.get('/api/getlinepartnumberspdf', async (req, res) => {
+  const { linename } = req.query;
+
+  try {
+    const pool = await sql.connect(config);
+    const request = pool.request(); // Create a request object from the connection pool
+
+    const query = `select * from partpdf where linename = '${linename}' order by Part_id`;
+    const result = await request.query(query);
+
+    if (result) {
+      res.json({ result });
+    } else {
+      res.json({ authenticated: false });
+    }
+
+    pool.close(); // Close the SQL Server connection
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+appSql.get('/api/getpdfs', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const query = `select * from pdfs order by pdfname asc`
+    const result = await sql.query(query);
+    if (result) {
+      res.json({ result });
+    } else {
+      res.json({ result });
+    }
+
+    sql.close();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
 

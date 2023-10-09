@@ -6,7 +6,7 @@ import logo from '../IMAGES/jsix-brand-logo.png';
 import { useNavigate } from 'react-router-dom';
 import { usercontext } from '../contexts/usercontext';
 
-function Createtoobar() {
+function AddeditpartsToobar() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const { userdata } = useContext(usercontext);
     const navigate = useNavigate();
@@ -19,7 +19,7 @@ function Createtoobar() {
         <div className="toolbar-left">
           <img src={logo} className="App-logo-tracker" alt="logo" />
           <p>
-            Users
+            Edit Linked PDFs
           </p>
         </div>
         <button className={`dropdown ${isDropdownOpen ? 'active' : ''}`} onClick={toggleDropdown}>
@@ -29,8 +29,14 @@ function Createtoobar() {
           {isDropdownOpen && (
             <div className="dropdown-menu">
               {/* Dropdown menu items */}
+              {userdata.loggedin === 1 ? (
+                <>
                 <p onClick={() => navigate('/')}>Home</p>
                 <p onClick={() => navigate('/Account')}>Account</p>
+                </>
+              ) : (
+                <p onClick={() => navigate('/Login')}>Login</p>
+              )}
               {/* Add more menu items as needed */}
             </div>
           )}
@@ -39,4 +45,4 @@ function Createtoobar() {
     )
 }
 
-export default Createtoobar;
+export default AddeditpartsToobar;

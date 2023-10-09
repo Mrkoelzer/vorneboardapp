@@ -99,7 +99,18 @@
     position: relative;
     color: black;
   }
-  
+  .eleditdeletebutton{
+    background-color: #282c34;
+    color: white;
+    border: none;
+    scale: 150%;
+    min-height: 25px;
+    margin-bottom: 10px;
+  }
+  .eleditdeletebutton:hover {
+    color: white;
+    box-shadow: 0 5px 15px white;
+  }
   /* Styling for the close button (X) */
   .modal-close-button {
     position: absolute;
