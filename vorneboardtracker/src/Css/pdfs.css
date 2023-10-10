@@ -1,0 +1,140 @@
+.pdfs {
+    background-color: #282c34;
+    min-height: 100vh;
+    font-size: calc(10px + 2vmin);
+    color: white;
+}
+
+.pdfstable-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.pdfstable-container th,
+.pdfstable-container td {
+    border: 1px solid #dee2e6;
+    /* Border color for cells */
+    padding: 5px;
+    /* Adjust padding as needed */
+    text-align: center;
+    /* Center-align content */
+    vertical-align: middle;
+    /* Vertically center content */
+    box-shadow: 0 0 0 1px #dee2e6;
+}
+
+.pdfsbutton {
+    font-weight: bold;
+    font-size: large;
+    color: black;
+    background: whitesmoke;
+    padding: 15px 40px;
+    border-radius: 4px;
+    font-weight: normal;
+    text-transform: uppercase;
+    transition: all 0.2s ease-in-out;
+    width: 50%;
+    text-align: center;
+}
+
+.pdfsbutton:hover {
+  color: black;
+  box-shadow: 0 5px 15px white;
+}
+
+.pdfsmodalbutton {
+    font-weight: bold;
+    font-size: large;
+    color: black;
+    background: whitesmoke;
+    padding: 15px 40px;
+    border-radius: 4px;
+    font-weight: normal;
+    text-transform: uppercase;
+    transition: all 0.2s ease-in-out;
+    width: 50%;
+    text-align: center;
+}
+
+.pdfsaddfile{
+  font-weight: bold;
+  font-size: large;
+  color:black;
+  background: whitesmoke;
+  padding: 15px 40px;
+  border-radius: 4px;
+  font-weight: normal;
+  transition: all 0.2s ease-in-out;
+  width: 100%;
+  text-align: center;
+  min-height: 2vh;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.pdfs-inputs{
+    font-weight: bold;
+    font-size: large;
+    color:black;
+    background: whitesmoke;
+    padding: 15px 40px;
+    border-radius: 4px;
+    font-weight: normal;
+    transition: all 0.2s ease-in-out;
+    width: 30%;
+    text-align: center;
+    min-height: 2vh;
+    padding: 10px;
+    margin-top: 10px;
+  }
+
+/* Editlineextruder.css */
+
+/* Styling for the modal backdrop */
+.pdfsedit-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* Ensure the modal is on top of other elements */
+  }
+  
+  /* Styling for the modal pop-up */
+  .pdfsedit-popup {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    position: relative;
+    color: black;
+  }
+  .pdfseditdeletebutton{
+    background-color: #282c34;
+    color: white;
+    border: none;
+    scale: 150%;
+    min-height: 25px;
+    margin-bottom: 10px;
+  }
+  .pdfseditdeletebutton:hover {
+    color: white;
+    box-shadow: 0 5px 15px white;
+  }
+  /* Styling for the close button (X) */
+  .pdfsmodal-close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 18px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    outline: none;
+  }

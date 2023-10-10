@@ -321,7 +321,7 @@ function Line3packview() {
         <div>
           <div className='page'>
             {partinfo[0] && partinfo[0].partrunData ? (
-              <PDFViewer partnumber={partinfo[0].partrunData.part_id.replace(/j/g, '-')} />
+              <PDFViewer partnumber={partinfo[0].partrunData.part_id.replace(/j/g, '-')} linename={partinfo[0].linename} />
             ) : (
               <p>No part data available.</p>
             )}

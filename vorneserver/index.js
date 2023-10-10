@@ -10,6 +10,7 @@ import { dirname } from "path";
 import sql from "mssql"
 import { request } from "http";
 import fs from "fs";
+import fileUpload from 'express-fileupload';
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -33,6 +34,7 @@ const config = {
 
 appApi.use(bodyParser.json());
 appApi.use(express.static(__dirname + "/public"));
+appApi.use(fileUpload());
 
 appSql.use(bodyParser.json());
 appSql.use(express.static(__dirname + "/public"));
@@ -63,6 +65,28 @@ appApi.post('/api/pdfs', (req, res) => {
     // Return a 404 error if the file doesn't exist
     res.status(404).send('File not found');
   }
+});
+
+appApi.post('/api/upload-pdf', (req, res) => {
+  const uploadedFile = req.files.pdfFile; // Assuming you're using a middleware to handle file uploads
+
+  if (!uploadedFile) {
+    return res.status(400).json({ success: false, message: 'No PDF file uploaded.' });
+  }
+
+  // Define the path where you want to save the PDF file (inside the public/PDF folder)
+  const filePath = `C:\\vorneboardapp\\vorneserver\\public\\PDF\\${uploadedFile.name}`;
+
+  // Move the uploaded file to the specified path
+  uploadedFile.mv(filePath, (err) => {
+    if (err) {
+      console.error('Error saving PDF file:', err);
+      return res.status(500).json({ success: false, message: 'Failed to save the PDF file.' });
+    }
+
+    // File has been successfully uploaded and saved
+    res.status(200).json({ success: true, message: 'PDF file uploaded and saved successfully.' });
+  });
 });
 //fetch data from a specific REST API and prints its body to the terminal
 //this is vorne api calls
@@ -864,5 +888,70 @@ appSql.get('/api/getpdfs', async (req, res) => {
   }
 });
 
+appSql.post('/api/insertpdf', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const requestData = req.body;
+    console.log(requestData)
+    const result = await sql.query`INSERT INTO pdfs ([pdfname])VALUES(${requestData.pdfname})`;
+    if (result) {
+      res.json({ pdfadded: true });
+    } else {
+      res.json({ pdfadded: false });
+    }
+
+    sql.close();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+appSql.delete('/api/delete-pdf/:pdfName', async (req, res) => {
+  try {
+    const pdfNameToDelete = req.params.pdfName;
+    console.log(pdfNameToDelete)
+    await sql.connect(config);
+
+    // First, delete the SQL entry
+    const deleteResult = await sql.query`DELETE FROM pdfs WHERE pdfname = ${pdfNameToDelete}`;
+
+    if (deleteResult.rowsAffected[0] > 0) {
+      // SQL entry deleted successfully
+
+      // Next, delete the file from the server-side folder
+      const filePath = `C:\\vorneboardapp\\vorneserver\\public\\PDF\\${pdfNameToDelete}.pdf`;
+      fs.unlinkSync(filePath); // Delete the file synchronously
+
+      res.json({ deleted: true });
+    } else {
+      res.json({ deleted: false });
+    }
+
+    sql.close();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+appSql.post('/api/changelinkedpdf', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const requestData = req.body;
+    const query = `update partpdf set [pdf_id] =${requestData.pdf_id},[pdfname] = '${requestData.pdfname}' where part_id = '${requestData.part_id}'`;
+    const result = await sql.query(query)
+    if (result) {
+      res.json({ pdfupdated: true });
+    } else {
+      res.json({ pdfupdated: false });
+    }
+
+    sql.close();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
 

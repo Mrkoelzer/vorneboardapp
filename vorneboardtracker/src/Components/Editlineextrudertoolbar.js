@@ -19,7 +19,7 @@ function Editlineextrudertoolbar() {
       <div className="toolbar-left">
         <img src={logo} className="App-logo-tracker" alt="logo" />
         <p>
-          Edit lines or Extruders
+          Edit Lines or Extruders
         </p>
       </div>
       <button className={`dropdown ${isDropdownOpen ? 'active' : ''}`} onClick={toggleDropdown}>

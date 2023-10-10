@@ -1,6 +1,6 @@
 import React, { Component, useContext } from "react";
 import PinInput from "react-pin-input";
-import moment from "moment";
+//import moment from "moment";
 import swal from "sweetalert";
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
 import { usercontext } from '../contexts/usercontext';
@@ -11,7 +11,7 @@ import "../Css/Pin.css"
 class Pin extends Component {
   state = {
     input: "",
-    currentTime: moment().format("LT"),
+    //currentTime: moment().format("LT"),
     layoutName: "default",
     text: "Enter Old Pin",
     oldpin: false,
