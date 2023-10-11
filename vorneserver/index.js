@@ -534,6 +534,32 @@ appSql.post('/api/insertnewpart', async (req, res) => {
   }
 });
 
+appSql.post('/api/insertnewpartpartpdf', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const requestData = req.body;
+    // Create an array of parameter names and values
+
+    // Construct the parameterized query
+    const query = `
+    insert into partpdf (linename, part_id, pdf_id, pdfname) 
+    values ('${requestData.Linename}', '${requestData.Part_ID}', '1', 'No PDF Assigned')`;
+    // Execute the query with parameters
+    const result = await sql.query(query);
+
+    if (result) {
+      res.json({ addedpartpdf: true });
+    } else {
+      res.json({ addedpartpdf: false });
+    }
+
+    sql.close();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 appSql.post('/api/deletetable', async (req, res) => {
   try {
     const requestData = req.body; // Extract the linename from the request body
@@ -649,12 +675,34 @@ appSql.post('/api/updatepartnumber', async (req, res) => {
        ,[Set_a_target_time_of_s] = '${requestData.Set_a_target_time_of_s}'
        ,[End_event] = '${requestData.End_event}'
   WHERE [Part_ID] = '${requestData.oldPart_ID}'`;
-    console.log(query)
   const result = await sql.query(query)
     if (result) {
       res.json({ createdauthenticated: true });
     } else {
       res.json({ createdauthenticated: false });
+    }
+
+    sql.close();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+appSql.post('/api/updatepartpdfpartnumber', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const requestData = req.body;
+
+    const query = `UPDATE [partpdf]
+    SET [Part_ID] = '${requestData.Part_ID}'
+  WHERE [Part_ID] = '${requestData.oldPart_ID}'
+   and [linename] = '${requestData.Linename}'`;
+  const result = await sql.query(query)
+    if (result) {
+      res.json({ success: true });
+    } else {
+      res.json({ success: false });
     }
 
     sql.close();
@@ -683,12 +731,34 @@ appSql.delete('/api/deleteline/:lineid', async (req, res) => {
   }
 });
 
-appSql.delete('/api/deleteline', async (req, res) => {
+appSql.delete('/api/deletepartnumber', async (req, res) => {
   try {
       await sql.connect(config);
       //const part_id = req.params.part_id; // Get the part_id from the URL parameter
       const { linename, id } = req.body; // Get the linename from the request body
       const query=`DELETE FROM [${linename}] WHERE [Part_ID] = '${id}'`
+      // Use single quotes for nvarchar values
+      const result = await sql.query(query);
+
+      if (result.rowsAffected[0] === 1) {
+          res.json({ deleted: true });
+      } else {
+          res.json({ deleted: false });
+      }
+
+      sql.close();
+  } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Server error' });
+  }
+});
+appSql.delete('/api/deletepartpdf', async (req, res) => {
+  try {
+      await sql.connect(config);
+      //const part_id = req.params.part_id; // Get the part_id from the URL parameter
+      const { linename, id } = req.body; // Get the linename from the request body
+      const query=`DELETE FROM [partpdf] WHERE [part_id] = '${id}' 
+      and [linename] = '${linename}'`
       // Use single quotes for nvarchar values
       const result = await sql.query(query);
 

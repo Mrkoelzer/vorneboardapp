@@ -12,9 +12,7 @@ import { selectedlinecontext } from '../contexts/selectedlinecontext';
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
 
 function Line3() {
-  const { partruntable, setpartruntable } = useContext(partruncontext);
   const [linepagedata, setlinepagedata] = useState([]);
-  const [test, settest] = useState('')
   const [ linedatatable, setlinedatatable ] = useState([]);
   const [ lineparts, setlineparts ] = useState([]);
   const { selectedline, setselectedline } = useContext(selectedlinecontext)
@@ -491,6 +489,7 @@ function Line3() {
   
   useEffect(() => {
     // Ensure selectedline is set before fetching data
+    console.log(selectedline)
     if (selectedline) {
       const fetchDataAndSetState = async () => {
         const lineData = await fetchlines();

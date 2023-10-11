@@ -50,9 +50,13 @@ function Partpdfs() {
     function getselectedline(index) {
         setselectedline(index)
     }
-    const handleEditClick = (index, partid) => {
+    const handleEditClick = (linename, partid) => {
         setAddLineMessage('');
-        setEditedData(allpartnumbers[index])
+        for(let i =0; i< allpartnumbers.length; i++){
+            if(linename === allpartnumbers[i].linename && partid === allpartnumbers[i].part_id){
+                setEditedData(allpartnumbers[i])
+            }
+        }
         setshowEditModal(true);
     };
     const closeEditModal = () => {
@@ -229,7 +233,7 @@ function Partpdfs() {
                                                         'Checking...' // Display a loading message while checking
                                                     )}
                                                 </td>
-                                                <td><button className='ppeditdeletebutton' onClick={() => handleEditClick(index, rowData.Part_ID)}>
+                                                <td><button className='ppeditdeletebutton' onClick={() => handleEditClick(rowData.linename, rowData.part_id)}>
                                                     <FontAwesomeIcon icon={faGear} />
                                                 </button></td>
                                             </tr>

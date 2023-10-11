@@ -257,7 +257,7 @@ function Line3packview() {
   useEffect(() => {
     const fetchDataAndSetState = async () => {
       let ipaddress = '';
-
+      console.log(selectedline)
       for (let i = 0; i < lines.length; i++) {
         if (lines[i].Linename === selectedline) {
           ipaddress = lines[i].ipaddress;

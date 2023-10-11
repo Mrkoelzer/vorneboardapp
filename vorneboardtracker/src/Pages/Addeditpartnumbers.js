@@ -163,7 +163,7 @@ function Addeditpartnumbers() {
     const handledelete = async (id) => {
         let linename = lines[selectedline].Linename
         try {
-            const response = await fetch(`http://${localipaddr}:1435/api/deleteline`, {
+            const response = await fetch(`http://${localipaddr}:1435/api/deletepartnumber`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -173,7 +173,29 @@ function Addeditpartnumbers() {
 
             // Handle response
             if (response.ok) {
+                handlepartpdfdelete(id);
                 getpartnumbers()
+            } else {
+                console.error('Delete failed');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    const handlepartpdfdelete = async (id) => {
+        let linename = lines[selectedline].Linename
+        try {
+            const response = await fetch(`http://${localipaddr}:1435/api/deletepartpdf`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ linename, id }), // Send linename in the request body
+            });
+
+            // Handle response
+            if (response.ok) {
                 getallpartnumbers();
             } else {
                 console.error('Delete failed');
@@ -182,6 +204,7 @@ function Addeditpartnumbers() {
             console.error('Error:', error);
         }
     };
+
 
     function addpartreset() {
         setNewData({
@@ -208,6 +231,28 @@ function Addeditpartnumbers() {
         });
         setSelectedLines([])
     }
+
+    const addNewParttopartpdf = async (data) => {
+        try {
+            // Send a POST request to insert the new part
+            const response = await fetch(`http://${localipaddr}:1435/api/insertnewpartpartpdf`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+                console.log('Part added to PartPDF successfully');
+            } else {
+                console.error('Failed to add part');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
     let passed = false;
     const addNewPartWithLine = async (lineSelected) => {
         // Create a copy of newData with the selected line
@@ -216,10 +261,10 @@ function Addeditpartnumbers() {
             Linename: lineSelected,
         };
         for (let i = 0; i < allpartnumbers.length; i++) {
-            if (updatedData.Part_ID === allpartnumbers[i].Part_ID && updatedData.Linename === allpartnumbers[i].Line_Name) {
+            if (updatedData.Part_ID === allpartnumbers[i].part_id && updatedData.Linename === allpartnumbers[i].linename) {
                 console.log(updatedData.Linename)
                 passed = false
-                setAddLineMessage(`Duplicate Part ID in ${allpartnumbers[i].Line_Name}`)
+                setAddLineMessage(`Duplicate Part ID in ${allpartnumbers[i].linename}`)
                 return
             }
         }
@@ -235,6 +280,7 @@ function Addeditpartnumbers() {
 
             if (response.ok) {
                 passed = true
+                addNewParttopartpdf(updatedData);
                 console.log('Part added successfully');
             } else {
                 console.error('Failed to add part');
@@ -245,19 +291,6 @@ function Addeditpartnumbers() {
     };
 
     const updatepartnumbers = async () => {
-        // Create a copy of newData with the selected line
-        /*const updatedData = {
-            ...newData,
-            Linename: lineSelected,
-        };
-        for (let i = 0; i < allpartnumbers.length; i++) {
-            if (updatedData.Part_ID === allpartnumbers[i].Part_ID && updatedData.Linename === allpartnumbers[i].Line_Name) {
-                console.log(updatedData.Linename)
-                passed = false
-                setAddLineMessage(`Duplicate Part ID in ${allpartnumbers[i].Line_Name}`)
-                return
-            }
-        }*/
         try {
             // Send a POST request to insert the new part
             const response = await fetch(`http://${localipaddr}:1435/api/updatepartnumber`, {
@@ -272,8 +305,38 @@ function Addeditpartnumbers() {
                 getpartnumbers();
                 getallpartnumbers();
                 setAddLineMessage('');
+                if(editedData.part_id !== editedData.oldPart_ID){
+                    updatepartpdfpartnumbers();
+                }
                 closeEditModal();
                 console.log('Part Updated successfully');
+            } else {
+                console.error('Failed to Update part');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    
+    const updatepartpdfpartnumbers = async () => {
+        const updatedData = {
+            ...editedData,
+            Linename: lines[selectedline].Linename,
+        };
+        console.log(updatedData)
+        try {
+            // Send a POST request to insert the new part
+            const response = await fetch(`http://${localipaddr}:1435/api/updatepartpdfpartnumber`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedData),
+            });
+
+            if (response.ok) {
+                console.log('PartPDF Updated successfully');
             } else {
                 console.error('Failed to Update part');
             }
@@ -310,79 +373,6 @@ function Addeditpartnumbers() {
         }
     };
 
-
-    /*const insertpartintovorne = async () => {
-        let ipaddress = lines[selectedline].ipaddress
-        // Extract relevant values from newData
-        const {
-            Part_ID,
-            Alternate_Part_ID,
-            Ideal_Cycle_Time_s,
-            Takt_Time_s,
-            Target_Labor_per_Piece_s,
-            Down_s,
-            Count_Multiplier_1,
-            Count_Multiplier_2,
-            Count_Multiplier_3,
-            Count_Multiplier_4,
-            Count_Multiplier_5,
-            Count_Multiplier_6,
-            Count_Multiplier_7,
-            Count_Multiplier_8,
-            Target_Multiplier,
-            Start_with_Changeover,
-            The_changeover_Reason_is,
-            Set_a_target_time_of_s
-        } = newData;
-
-        // Create the requestData object in the desired structure
-        const requestData = {
-            version: '2.18.1.2',
-            ipaddress, // Include ipaddress
-            category_values: [
-                {
-                    display_name: Part_ID,
-                    alternate_id: Alternate_Part_ID,
-                    ideal_cycle_time: Ideal_Cycle_Time_s,
-                    takt_time: Takt_Time_s,
-                    target_labor_per_piece: Target_Labor_per_Piece_s,
-                    down_threshold: Down_s,
-                    count_multipliers: [
-                        Count_Multiplier_1,
-                        Count_Multiplier_2,
-                        Count_Multiplier_3,
-                        Count_Multiplier_4,
-                        Count_Multiplier_5,
-                        Count_Multiplier_6,
-                        Count_Multiplier_7,
-                        Count_Multiplier_8,
-                    ],
-                    target_multiplier: Target_Multiplier,
-                    start_with_changeover: Start_with_Changeover === 'Yes',
-                    changeover_reason: 'part_change',
-                    changeover_target: parseFloat(Set_a_target_time_of_s),
-                    disable_when: {
-                        type: 'metric',
-                        channel: 'production_metric',
-                        metric: 'run_confidence',
-                        at_least: 1,
-                    },
-                    key: '<Generated when saved>',
-                    in_use: [],
-                },
-            ],
-        };
-        console.log(requestData)
-        await Axios.post('http://10.144.18.208:1433/insertpartintovorne', requestData)
-            .then((response) => {
-                // Handle the response if needed
-            })
-            .catch((error) => {
-                console.error('Error fetching data:', error);
-            });
-    };*/
-
-
     function getselectedline(index) {
         setselectedline(index)
     }
@@ -394,12 +384,16 @@ function Addeditpartnumbers() {
     const handleEditClick = (index, partid) => {
         setAddLineMessage('');
         geteditlines(partid)
-        setEditedData(partnumbers[index])
-        setEditedData((prevData) => ({
-            ...prevData,
-            Linename: lines[selectedline].Linename, // Assuming 'selectedline' contains the new value
-            oldPart_ID: partid
-        }));
+        for(let i = 0; i < partnumbers.length; i++){
+            if(partid === partnumbers[i].Part_ID){
+                setEditedData(partnumbers[i])
+                setEditedData((prevData) => ({
+                    ...prevData,
+                    Linename: lines[selectedline].Linename, // Assuming 'selectedline' contains the new value
+                    oldPart_ID: partid
+                }));
+            }
+        }
         setshowEditModal(true);
 
     };
@@ -439,13 +433,13 @@ function Addeditpartnumbers() {
         try {
             // Send a POST request to the backend with the query in the request body
             const response = await fetch(`http://${localipaddr}:1435/api/getalllinepartnumbers`, {
-                method: 'POST',
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },
             });
 
-            if (response) {
+            if (response.ok) {
                 const data = await response.json();
                 setallpartnumbers(data.result.recordset);
             } else {
@@ -501,10 +495,10 @@ function Addeditpartnumbers() {
 
     function geteditlines(id) {
         const newEditLines = [...editlines]; // Create a copy of the existing array
-
+        console.log(lines[selectedline].Linename)
         for (let i = 0; i < allpartnumbers.length; i++) {
-            if (allpartnumbers[i].Part_ID === id) { // Use '===' for comparison, not '='
-                newEditLines.push(allpartnumbers[i].Line_Name); // Add the new value to the copied array
+            if (allpartnumbers[i].part_id === id) {
+                newEditLines.push(allpartnumbers[i].linename); // Add the new value to the copied array
             }
         }
 

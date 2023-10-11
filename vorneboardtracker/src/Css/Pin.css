@@ -27,6 +27,28 @@
     min-height: calc(100vh - 44px);
     text-align: center;
   }
+  .pin-input {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .pin-box {
+    width: 90px; /* Adjust the width as needed */
+    height: 90px; /* Adjust the height as needed */
+    border: 1px solid #000;
+    background-color: #546171;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 64px;
+    margin-right: 10px; /* Adjust the margin as needed */
+    margin-left: 10px; /* Adjust the margin as needed */
+    border-radius: 10px; /* Add border-radius to create rounded corners */
+  }
+  
+
   @media (prefers-reduced-motion: no-preference) {
     .App-logo {
       animation: App-logo-spin infinite 20s linear;
