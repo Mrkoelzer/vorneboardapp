@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import PinInput from "react-pin-input";
 import swal from "sweetalert";
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
 import Keyboard from "react-simple-keyboard";

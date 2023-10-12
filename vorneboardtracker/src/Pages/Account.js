@@ -41,7 +41,7 @@ function Account() {
                     Add/Edit Part Numbers
                 </button>
                 <button className='accountbutton' onClick={() => navigate('/Pdfs')}>
-                    Add/Edit PDFs
+                    Add/Delete PDFs
                 </button>
                 <button className='accountbutton' onClick={() => navigate('/Partpdfs')}>
                     Edit Linked PDFs

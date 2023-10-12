@@ -56,7 +56,6 @@ appSql.listen(1435, () => {
 appApi.post('/api/pdfs', (req, res) => {
   const { filename } = req.body;
   const pdfPath = 'C:\\vorneboardapp\\vorneserver\\public\\PDF\\' + filename;
-  console.log(pdfPath);
   // Check if the file exists
   if (fs.existsSync(pdfPath)){ 
     // Stream the file as a response
@@ -243,36 +242,6 @@ appApi.get('/getpartrun', async (req, res) => {
   }
 });
 
-appApi.post('/insertpartintovorne', (req, res) => {
-  const { ipaddress, ...requestData } = req.body; // Destructure ipaddress and get the rest of the requestData
-  const apiUrl = `http://${ipaddress}/rest/v1/categories/part/values`;
-  // Define your login credentials
-  const username = 'Administrator'; // Replace with your actual username
-  const password = 'aragorn'; // Replace with your actual password
-
-  // Create a base64-encoded credentials string
-  const credentials = Buffer.from(`${username}:${password}`).toString('base64');
-
-  // Define headers with Basic Authentication
-  const headers = {
-    'Authorization': `Basic ${credentials}`, // Adding Basic Authentication header
-    'Content-Type': 'application/json', // Specify the content type
-    'Cookie': cookie
-  };
-  console.log(apiUrl)
-  console.log(requestData)
-  axios
-    .post(apiUrl, requestData, { headers }) // Pass headers in the request
-    .then((response) => {
-      console.log('API call success:');
-      res.json({ message: 'API call successful' });
-    })
-    .catch((error) => {
-      console.error('API call error:', error.message);
-      res.status(500).json({ message: 'API call failed' });
-    });
-});
-
 appSql.use(express.json());
 
 
@@ -298,7 +267,6 @@ appSql.post('/api/authenticate', async (req, res) => {
 
 appSql.post('/api/getpin', async (req, res) => {
   try {
-    console.log('getting here')
     await sql.connect(config);
     const { pin } = req.body;
 
@@ -801,7 +769,6 @@ appSql.get('/api/getlinepart/:tableName', async (req, res) => {
 
 appSql.post('/api/updatetablename', async (req, res) => {
   const { oldtablename, tableName } = req.body;
-  console.log(oldtablename + tableName)
   try {
     await sql.connect(config);
 
@@ -962,7 +929,6 @@ appSql.post('/api/insertpdf', async (req, res) => {
   try {
     await sql.connect(config);
     const requestData = req.body;
-    console.log(requestData)
     const result = await sql.query`INSERT INTO pdfs ([pdfname])VALUES(${requestData.pdfname})`;
     if (result) {
       res.json({ pdfadded: true });
@@ -980,7 +946,6 @@ appSql.post('/api/insertpdf', async (req, res) => {
 appSql.delete('/api/delete-pdf/:pdfName', async (req, res) => {
   try {
     const pdfNameToDelete = req.params.pdfName;
-    console.log(pdfNameToDelete)
     await sql.connect(config);
 
     // First, delete the SQL entry
