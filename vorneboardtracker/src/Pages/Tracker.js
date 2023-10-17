@@ -14,7 +14,7 @@ import { ipaddrcontext } from '../contexts/ipaddrcontext';
 function Tracker() {
   const { partruntable, setpartruntable } = useContext(partruncontext);
   const { lines, setlines } = useContext(linescontext);
-  const { selectedline, setselectedline } = useContext(selectedlinecontext)
+  const { setselectedline } = useContext(selectedlinecontext)
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true); // Add isLoading state
   const {localipaddr} = useContext(ipaddrcontext);
@@ -226,6 +226,8 @@ function Tracker() {
           </ReactBootStrap.Table>
         )}
       </div>
+      <br/>
+      <iframe title="Rhombus Video Wall" allow="fullscreen" frameBorder="0" height="1000px" width="100%" src="https://console.rhombussystems.com/share/videowall/AjNIug9vTb-rQ5inCkrYCw"></iframe>
     </div>
   );
 }

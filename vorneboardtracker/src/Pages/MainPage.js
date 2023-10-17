@@ -40,7 +40,6 @@ function MainPage() {
 
   return (
     <div className='mainpage'>
-      <view>
         <Mainpagetoolbar />
         <div className='mainpage-flexbox-container'>
           <br />
@@ -54,7 +53,6 @@ function MainPage() {
             {lineButtons}
           </div>
         </div>
-      </view>
     </div>
   );
 }

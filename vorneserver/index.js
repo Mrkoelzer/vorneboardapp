@@ -970,7 +970,7 @@ appSql.delete('/api/delete-pdf/:pdfName', async (req, res) => {
   }
 });
 
-appSql.post('/api/changelinkedpdf', async (req, res) => {
+appSql.post('/api/changelinkedpdfAll', async (req, res) => {
   try {
     await sql.connect(config);
     const requestData = req.body;
@@ -988,5 +988,25 @@ appSql.post('/api/changelinkedpdf', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
+appSql.post('/api/changelinkedpdfOne', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const requestData = req.body;
+    const query = `update partpdf set [pdf_id] =${requestData.pdf_id},[pdfname] = '${requestData.pdfname}' where part_id = '${requestData.part_id}' and linename = '${requestData.linename}'`;
+    const result = await sql.query(query)
+    if (result) {
+      res.json({ pdfupdated: true });
+    } else {
+      res.json({ pdfupdated: false });
+    }
+
+    sql.close();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 
 

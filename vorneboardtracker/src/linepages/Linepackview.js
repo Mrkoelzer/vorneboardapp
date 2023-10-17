@@ -257,7 +257,6 @@ function Line3packview() {
   useEffect(() => {
     const fetchDataAndSetState = async () => {
       let ipaddress = '';
-      console.log(selectedline)
       for (let i = 0; i < lines.length; i++) {
         if (lines[i].Linename === selectedline) {
           ipaddress = lines[i].ipaddress;
@@ -300,7 +299,6 @@ function Line3packview() {
 
   // Watch for changes in partinfo[0].partrunData.part_id
   useEffect(() => {
-    console.log(partinfo)
     if(partinfo.length !== 0){
       if (partinfo[0].partrunData.part_id !== currentPartId) {
         // Update the currentPartId state
