@@ -25,6 +25,7 @@ function Partpdfs() {
     const { localipaddr } = useContext(ipaddrcontext);
     const [selectedPdfIndex, setSelectedPdfIndex] = useState(0);
     const [editedData, setEditedData] = useState([]);
+    const [ChangeAll, setChangeAll] = useState(false);
 
     const AllLines = [
         {
@@ -61,6 +62,7 @@ function Partpdfs() {
     };
     const closeEditModal = () => {
         setshowEditModal(false);
+        setChangeAll(false)
     };
 
     function getparts() {
@@ -131,8 +133,15 @@ function Partpdfs() {
             console.error('Error:', error);
         }
     };
-
     const changelinkedpdf = async () => {
+        if(ChangeAll){
+            changelinkedpdfAll()
+        }
+        else{
+            changelinkedpdfOne()
+        }
+    }
+    const changelinkedpdfAll = async () => {
         try {
             const requestData = {
                 pdfname: pdfs[selectedPdfIndex].pdfname,
@@ -140,7 +149,38 @@ function Partpdfs() {
                 part_id: editedData.part_id
             };
             // Send a POST request to the backend with the query in the request body
-            const response = await fetch(`http://${localipaddr}:1435/api/changelinkedpdf`, {
+            const response = await fetch(`http://${localipaddr}:1435/api/changelinkedpdfAll`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.pdfupdated) {
+                    getparts();
+                    closeEditModal()
+                }
+            } else {
+                console.error('Failed to retrieve data');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    const changelinkedpdfOne = async () => {
+        try {
+            const requestData = {
+                pdfname: pdfs[selectedPdfIndex].pdfname,
+                pdf_id: pdfs[selectedPdfIndex].pdf_id,
+                part_id: editedData.part_id,
+                linename: editedData.linename
+            };
+            // Send a POST request to the backend with the query in the request body
+            const response = await fetch(`http://${localipaddr}:1435/api/changelinkedpdfOne`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -267,8 +307,10 @@ function Partpdfs() {
                                         </option>
                                     ))}
                                 </select>
-                            </div>
-
+                            </div> 
+                            <input checked={ChangeAll} className="createaccount-checkbox" type="checkbox" onChange={(e) => setChangeAll(e.target.checked)} />
+                            Change All Parts
+                            <br />
                             <br />
                             <button className="modalbutton" onClick={changelinkedpdf}>
                                 Save

@@ -2,13 +2,12 @@ import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Css/Addeditpartnumbers.css';
 import Toolbar from '../Components/AddeditpartsToolbar';
-import CheckPDFExists from '../Components/CheckPDFExists'
 import { linescontext } from '../contexts/linescontext';
 import { usercontext } from '../contexts/usercontext';
 import * as ReactBootStrap from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faG, faGear, faTrashCan, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
-import Axios from 'axios';
+import { faGear, faTrashCan, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+//import Axios from 'axios';
 import Select from 'react-select'
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
 
@@ -514,6 +513,11 @@ function Addeditpartnumbers() {
         return false;
     }
 
+    const handleAddAllOptions = () => {
+        const allOptionValues = options.map((option) => option.value);
+        setSelectedLines(allOptionValues);
+      };
+
     const lineLabels = editlines.map((line, index) => `${line}`).join(', ');
 
     return (
@@ -613,6 +617,7 @@ function Addeditpartnumbers() {
                                     value={options.filter((option) => selectedLines.includes(option.value))}
                                     options={options}
                                 />
+                                <button onClick={handleAddAllOptions}>Add All Lines</button>
                             </div>
                             <div className='aeflexbox-item'>
                                 Part ID

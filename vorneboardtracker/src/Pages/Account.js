@@ -12,21 +12,19 @@ function Account() {
         const userDataFromLocalStorage = localStorage.getItem('userdata');
         let parsedUserData;
         if (userDataFromLocalStorage) {
-          parsedUserData = JSON.parse(userDataFromLocalStorage);
-          setuserdata(parsedUserData);
+            parsedUserData = JSON.parse(userDataFromLocalStorage);
+            setuserdata(parsedUserData);
         }
-        if(userdata.loggedin === 1 || parsedUserData.loggedin === 1){
-            if(userdata.passwordchange === 1 || userdata.pinchange === 1){
-                navigate('/Changepasswordpin')
+        if ((userdata && userdata.loggedin === 1) || (parsedUserData && parsedUserData.loggedin === 1)) {
+            if ((userdata && userdata.passwordchange === 1) || (parsedUserData && parsedUserData.pinchange === 1)) {
+                navigate('/Changepasswordpin');
             }
+        } else {
+            navigate('/');
         }
-        else{
-            navigate('/')
-        }
-      }, [userdata]);
+    }, [setuserdata, navigate]);
     return (
         <div className="accountpage">
-            <view>
                 <Accounttoobar/>
                 <button className='accountbutton' onClick={() => navigate('/Users')}>
                     Users
@@ -49,7 +47,6 @@ function Account() {
                 <button className='accountbutton' onClick={() => navigate('/')}>
                     Go Back
                 </button>
-            </view>
         </div>
     );
 }

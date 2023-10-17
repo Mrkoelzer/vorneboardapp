@@ -308,7 +308,6 @@ function Line3() {
         data.linedata = data.linedata.map((value) => (value === null ? 0 : value));
       }
     });
-    console.log(filteredLineData)
   
     // Create an array with the predefined structure
     const linedatatable = filteredLineData.map((data) => ({
@@ -483,17 +482,14 @@ function Line3() {
     const savedSelectedLine = localStorage.getItem('selectedline');
     if (savedSelectedLine) {
       setselectedline(savedSelectedLine);
-      console.log(savedSelectedLine);
     }
   }, [localStorage.getItem('selectedline')]);
   
   useEffect(() => {
     // Ensure selectedline is set before fetching data
-    console.log(selectedline)
     if (selectedline) {
       const fetchDataAndSetState = async () => {
         const lineData = await fetchlines();
-        console.log(lineData)
         if (lineData) {
           // Call the getprocessstate function here
           setlinepagedata(lineData);
