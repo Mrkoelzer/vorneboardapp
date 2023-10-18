@@ -1,116 +1,190 @@
-.aepartnumberpage{
-    background-color: #282c34;
-    min-height: 100vh;
-    font-size: calc(10px + 2vmin);
-    color: white;
-  }
-
-  .aepartnumbers-flexbox-container{
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-  }
-  .aeflexbox-item{
-    width: 100%;
-    min-height: 2vh;
-    align-items: center;
-  }
-
-  .aepartnumbers-inputs{
-    font-weight: bold;
-    font-size: large;
-    color:black;
-    background: whitesmoke;
-    padding: 15px 40px;
-    border-radius: 4px;
-    font-weight: normal;
-    transition: all 0.2s ease-in-out;
-    width: 50%;
-    text-align: center;
-    min-height: 2vh;
-    padding: 14px;
-    margin-top: 10px;
-  }
-
-  .aepartnumbers-checkbox{
-    font-weight: bold;
-    font-size: large;
-    color:black;
-    background: whitesmoke;
-    width: 100%;
-    font-weight: normal;
-    transition: all 0.2s ease-in-out;
-    text-align: center;
-    min-height: 2vh;
-    margin-top: 10px;
+.aepartnumberpage {
+  background: linear-gradient(#0f1626, #262d3b);
+  min-height: 100vh;
+  font-size: calc(10px + 1vmin);
+  color: white;
 }
 
-  .aepartnumbers-add-input{
-    font-weight: bold;
-    font-size: large;
-    color:black;
-    background: whitesmoke;
-    padding: 15px 40px;
-    border-radius: 4px;
-    font-weight: normal;
-    transition: all 0.2s ease-in-out;
-    width: 92%;
-    text-align: center;
-    min-height: 2vh;
-    padding: 14px;
-    margin-top: 10px;
-  }
+.aepartnumbers-flexbox-container {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+}
 
-  .aepartnumbers-search{
-    font-weight: bold;
-    font-size: large;
-    color:black;
-    background: whitesmoke;
-    border-radius: 4px;
-    font-weight: normal;
-    transition: all 0.2s ease-in-out;
-    width: 99.5%;
-    text-align: center;
-    min-height: 2vh;
-    margin-top: 10px;
-    font-size: 28px;
-    align-self: center;
-  }
+.aeflexbox-item {
+  width: 100%;
+  min-height: 2vh;
+  align-items: center;
+}
 
-  .aepartnumberstable-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+.aepartnumbers-inputs {
+  font-weight: bold;
+  font-size: large;
+  color: #f5f5f5;
+  background: #3e4451;
+  padding: 15px 40px;
+  border-radius: 4px;
+  font-weight: normal;
+  transition: all 0.2s ease-in-out;
+  width: 49%;
+  text-align: center;
+  min-height: 2vh;
+  padding: 14px;
+  margin-top: 10px;
+}
+
+.aepartnumbers-checkbox {
+  font-weight: bold;
+  font-size: large;
+  color: black;
+  background: whitesmoke;
+  width: 100%;
+  font-weight: normal;
+  transition: all 0.2s ease-in-out;
+  text-align: center;
+  min-height: 2vh;
+  margin-top: 10px;
+}
+
+.aepartnumbers-checkbox:hover {
+  color: black;
+  box-shadow: 0 5px 15px #f5f5f5;
+}
+
+.aepartnumbers-add-input {
+  font-weight: bold;
+  font-size: large;
+  color: black;
+  background: whitesmoke;
+  padding: 15px 40px;
+  border-radius: 4px;
+  font-weight: normal;
+  transition: all 0.2s ease-in-out;
+  width: 92%;
+  text-align: center;
+  min-height: 2vh;
+  padding: 14px;
+  margin-top: 10px;
+}
+
+.aepartnumbers-add-input:hover {
+  color: black;
+  box-shadow: 0 5px 15px #f5f5f5;
+}
+
+.aepartnumbers-search {
+  font-weight: bold;
+  font-size: large;
+  color: #f5f5f5;
+  background: #3e4451;
+  border-radius: 4px;
+  font-weight: normal;
+  transition: all 0.2s ease-in-out;
+  width: 49%;
+  text-align: center;
+  min-height: 5vh;
+  margin-top: 10px;
+  font-size: 28px;
+  align-self: center;
+}
+
+.aepartnumberstable-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .aepartnumberstable-container table {
-    width: 90%; /* Adjust the table width as needed */
-    border-collapse: collapse; /* Collapse borders for a cleaner look */
-    font-size: 12px; /* Set the font size to make text smaller */
+  width: 98%;
+  /* Adjust the table width as needed */
+  border-collapse: collapse;
+  /* Collapse borders for a cleaner look */
+  font-size: 12px;
+  /* Set the font size to make text smaller */
+}
+
+.editleflexbox-item {
+  width: 100%;
+  min-height: 2vh;
+  align-items: center;
 }
 
 .aepartnumberstable-container th,
 .aepartnumberstable-container td {
-    border: 1px solid #dee2e6;
-    padding: 3px; /* Adjust padding as needed */
-    text-align: center;
-    vertical-align: middle;
-    box-shadow: 0 0 0 1px #dee2e6;
+  border: 1px solid #dee2e6;
+  padding: 3px;
+  /* Adjust padding as needed */
+  text-align: center;
+  vertical-align: middle;
+  box-shadow: 0 0 0 1px #dee2e6;
+}
+
+
+.aepartnumberstable-container tr.even {
+  background-color: #262d3b;
+  /* Set the background color for even rows */
+}
+
+.aepartnumberstable-container tr.even:hover {
+  background-color: #0f1626;
+  /* Set the background color for even rows on hover */
+}
+
+.aepartnumberstable-container tr.odd {
+  background-color: #3e4451;
+  /* Set the background color for odd rows */
+}
+
+.aepartnumberstable-container tr.odd:hover {
+  background-color: #0f1626;
+  /* Set the background color for odd rows on hover */
+}
+
+.aepartnumberstable-container .header-row {
+  background-color: #FF533d;
+  /* Set the background color for the header row */
+  color: #f5f5f5;
+  /* Set the font color for the header row */
+}
+
+.aepartnumberstable-container tr.even .aeeditdeletebutton,
+.aepartnumberstable-container tr.odd .aeeditdeletebutton {
+  background-color: inherit;
+  /* Set the background color to inherit from the row */
+  color: #f5f5f5;
+  /* Set the font color for the buttons */
+  border: none;
+  margin: 10px;
+}
+
+.aepartnumberstable-container tr.even .aeeditdeletebutton:hover,
+.aepartnumberstable-container tr.odd .aeeditdeletebutton:hover {
+  color: #FF533d;
+  /* Set the font color for the buttons on row hover */
 }
 
 .aepartnumberbutton {
-    font-weight: bold;
-    font-size: large;
-    color: black;
-    background: whitesmoke;
-    padding: 15px 40px;
-    border-radius: 4px;
-    font-weight: normal;
-    text-transform: uppercase;
-    transition: all 0.2s ease-in-out;
-    width: 50%;
-    text-align: center;
+  font-size: large;
+  color: black;
+  background: #FF533d;
+  padding: 30px;
+  border-radius: 50%;
+  font-weight: normal;
+  text-transform: uppercase;
+  transition: all 0.2s ease-in-out;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .aepartnumberbutton:hover {
@@ -118,68 +192,171 @@
   box-shadow: 0 5px 15px white;
 }
 
+.aepartnumbericon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.aepartnumbericon {
+  color: #f5f5f5;
+  height: 50px;
+  width: 50px;
+}
+
+.aepartnumbertext {
+  font-weight: bold;
+  font-size: medium;
+  color: #f5f5f5;
+}
+
+
+.aepartnumberbutton2 {
+  font-size: large;
+  color: black;
+  background: #FF533d;
+  padding: 30px;
+  border-radius: 50%;
+  font-weight: normal;
+  text-transform: uppercase;
+  transition: all 0.2s ease-in-out;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.aepartnumberbutton2:hover {
+  color: black;
+  box-shadow: 0 5px 15px white;
+}
+
 .aeedit-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000; /* Ensure the modal is on top of other elements */
-    overflow-y: auto; /* Enable vertical scrolling when the content overflows */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Semi-transparent background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  /* Ensure the modal is on top of other elements */
+  overflow-y: auto;
+  /* Enable vertical scrolling when the content overflows */
+}
+
+/* Styling for the modal pop-up */
+.aeedit-popup {
+  background-color: #AB987a;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+  position: relative;
+  color: black;
+  max-height: 80vh;
+  /* Set a maximum height for the modal */
+  overflow-y: auto;
+  /* Enable vertical scrolling within the modal */
+}
+
+/* Styling for the close button (X) */
+.aemodal-close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 36px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  outline: none;
+}
+
+.aemodal-close-button:hover {
+  color: #FF533d;
+}
+
+@media (max-width: 767px) {
+ /* .table td:nth-child(2),
+  .table th:nth-child(2) {
+    display: none;
+  }*/
+  .table td:nth-child(7),
+  .table th:nth-child(7) {
+    display: none;
   }
-  
-  /* Styling for the modal pop-up */
-  .aeedit-popup {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-    position: relative;
-    color: black;
-    max-height: 80vh; /* Set a maximum height for the modal */
-    overflow-y: auto; /* Enable vertical scrolling within the modal */
+  .aepartnumberstable-container table {
+    width: 98%;
+    /* Adjust the table width as needed */
+    border-collapse: collapse;
+    /* Collapse borders for a cleaner look */
+    font-size: 8px;
+    /* Set the font size to make text smaller */
   }
 
-    /* Styling for the close button (X) */
-    .aemodal-close-button {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        font-size: 18px;
-        cursor: pointer;
-        background: none;
-        border: none;
-        outline: none;
-      }
+  .aepartnumberstable-container th,
+  .aepartnumberstable-container td {
+    border: 1px solid #dee2e6;
+    padding: 1px;
+    /* Adjust padding as needed */
+    text-align: center;
+    vertical-align: middle;
+    box-shadow: 0 0 0 1px #dee2e6;
+  }
 
-      .aeeditdeletebutton{
-        background-color: #282c34;
-        color: white;
-        border: none;
-      }
-      .aeeditdeletebutton:hover {
-        color: white;
-        box-shadow: 0 5px 15px white;
-      }
-      @media (max-width: 767px) {
-        .aepartnumbers-search{
-          font-weight: bold;
-          font-size: large;
-          color:black;
-          background: whitesmoke;
-          border-radius: 4px;
-          font-weight: normal;
-          transition: all 0.2s ease-in-out;
-          width: 99%;
-          text-align: center;
-          min-height: 2vh;
-          margin-top: 10px;
-          font-size: 28px;
-          align-self: center;
-        }
-        /* Additional styles for other elements if needed */
-      }
+  .aepartnumberpage {
+    background-color: #0f1626;
+    min-height: 100vh;
+    font-size: 10px;
+    color: white;
+  }
+
+  .aepartnumbers-inputs {
+    font-weight: bold;
+    font-size: large;
+    color: #f5f5f5;
+    background: #3e4451;
+    padding: 15px 40px;
+    border-radius: 4px;
+    font-weight: normal;
+    transition: all 0.2s ease-in-out;
+    width: 49%;
+    text-align: center;
+    min-height: 2vh;
+    padding: 14px;
+    margin-top: 10px;
+    max-height: 7vh;
+  }
+
+  .aepartnumbers-search {
+    font-weight: bold;
+    font-size: large;
+    color: #f5f5f5;
+    background: #3e4451;
+    border-radius: 4px;
+    font-weight: normal;
+    transition: all 0.2s ease-in-out;
+    width: 49%;
+    text-align: center;
+    min-height: 6vh;
+    margin-top: 10px;
+    font-size: 28px;
+    align-self: center;
+  }
+
+  /* Additional styles for other elements if needed */
+}

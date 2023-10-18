@@ -6,6 +6,8 @@ import Toolbar from '../Components/Changetoobar';
 import Changepin from '../Components/Changepin'
 import { usercontext } from '../contexts/usercontext';
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBraille, faUserLock, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 function Changepasswordpin() {
   const navigate = useNavigate();
@@ -26,9 +28,9 @@ function Changepasswordpin() {
     setAddLineMessage('')
     setpassworddata({
       oldpassword: '',
-    newpassword: '',
-    confimpassword: '',
-    username: userdata.username
+      newpassword: '',
+      confimpassword: '',
+      username: userdata.username
     })
   };
 
@@ -37,43 +39,43 @@ function Changepasswordpin() {
   };
 
   const updatepassword = async () => {
-    if(passworddata.oldpassword.trim()===""){
+    if (passworddata.oldpassword.trim() === "") {
       setAddLineMessage('Old Password Is Blank')
       return;
     }
-    if(passworddata.newpassword.trim()===""){
+    if (passworddata.newpassword.trim() === "") {
       setAddLineMessage('New Password Is Blank')
       return;
     }
-    if(passworddata.confimpassword.trim()===""){
+    if (passworddata.confimpassword.trim() === "") {
       setAddLineMessage('Confirm Password Is Blank')
       return;
     }
     if (passworddata.oldpassword === userdata.password) {
-      if(passworddata.newpassword === passworddata.confimpassword){
-      try {
-        const response = await fetch(`http://${localipaddr}:1435/api/updatepassword`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ passworddata }),
-        });
-        const data = await response.json();
-        if (data.passupdated) {
-          getuserdata();
-          handleShowChangePasswordForm()
-          return;
+      if (passworddata.newpassword === passworddata.confimpassword) {
+        try {
+          const response = await fetch(`http://${localipaddr}:1435/api/updatepassword`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ passworddata }),
+          });
+          const data = await response.json();
+          if (data.passupdated) {
+            getuserdata();
+            handleShowChangePasswordForm()
+            return;
+          }
+        } catch (error) {
+          console.error('Error:', error);
         }
-      } catch (error) {
-        console.error('Error:', error);
+      } else {
+        setAddLineMessage('New Passwords Dont Match')
+        return;
       }
-    }else{
-      setAddLineMessage('New Passwords Dont Match')
-      return;
     }
-  }
-    else{
+    else {
       setAddLineMessage('Incorrect Password')
       return;
     }
@@ -110,7 +112,10 @@ function Changepasswordpin() {
         {showChangePasswordForm ? (
           <div className='changepasspinflexbox-item'>
             <button className='changepasspinbutton' onClick={handleHideChangePasswordForm}>
-              Change Password
+              <div className="changepasspinbuttonicon-wrapper">
+                <FontAwesomeIcon icon={faUserLock} className="changepasspinbuttonicon" />
+              </div>
+              <div className="changepasspinbuttontext">Change Password</div>
             </button>
           </div>
         ) : (
@@ -141,16 +146,21 @@ function Changepasswordpin() {
               />
             </div>
             <br />
-            <div className='changepasspinflexbox-item'>
+            <div className='changepasspinflexbox-item' style={{ display: 'flex' }}>
               <button className='changepasspinbutton' onClick={updatepassword}>
-                Update Password
+              <div className="changepasspinbuttonicon-wrapper">
+                <FontAwesomeIcon icon={faUserLock} className="changepasspinbuttonicon" />
+              </div>
+              <div className="changepasspinbuttontext">Update Password</div>
               </button>
-            </div>
-            <div className='changepasspinflexbox-item'>
               <button className='changepasspinbutton' onClick={handleShowChangePasswordForm}>
-                Cancel
+              <div className="changepasspinbuttonicon-wrapper">
+                <FontAwesomeIcon icon={faXmark} className="changepasspinbuttonicon" />
+              </div>
+              <div className="changepasspinbuttontext">Cancel</div>
               </button>
             </div>
+
             {addLineMessage}
           </>
         )}
@@ -158,13 +168,16 @@ function Changepasswordpin() {
         <br />
         <div className='changepasspinflexbox-item'>
           <button className='changepasspinbutton' onClick={togglePopup2}>
-            Change Pin
+            <div className="changepasspinbuttonicon-wrapper">
+              <FontAwesomeIcon icon={faBraille} className="changepasspinbuttonicon" />
+            </div>
+            <div className="changepasspinbuttontext">Change Pin</div>
           </button>
         </div>
         {isPopupOpen2 && (
-          <div className='popup-form'>
-            <div className='popup-form-content'>
-              <button className='popup-close2' onClick={togglePopup2}>
+          <div className='changepopup-form'>
+            <div className='changepopup-form-content'>
+              <button className='changepopup-close2' onClick={togglePopup2}>
                 X
               </button>
               <Changepin closePopup={togglePopup2} />

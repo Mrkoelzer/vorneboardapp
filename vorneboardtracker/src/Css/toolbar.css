@@ -1,12 +1,13 @@
 .toolbar {
-    background-color: #333;
-    color: #fff;
+    background-color: #AB987a;
+    color: #0f1626;
     display: flex;
     align-items: center;
     padding: 10px;
     justify-content: space-between;
+    font-weight: 600;
   }
-  
+
 /* Styling for the left side of the toolbar */
 .toolbar-left {
     display: flex;
@@ -15,7 +16,7 @@
 
   /* Styling for the logo image */
   .logo {
-    width: 40px; /* Adjust the width as needed */
+    width: 100px; /* Adjust the width as needed */
     height: auto;
     margin-right: 10px;
   }
@@ -43,31 +44,35 @@
     font-size: 2.5rem; /* Adjust the font size as needed */
     transition: all 0.2s ease-in-out;
     margin-left: auto;
-    color: white;
+    color: #0f1626;
+  }
+  .dropdown:hover{
+    color: #f5f5f5;
   }
   
   /* Styling for the active state of the dropdown button */
   .dropdown.active {
-    color: black;
+    color: #f5f5f5;
   }
-
+  .dropdown.active:hover{
+    color: #0f1626;
+  }
 /* Styling for the dropdown menu */
 .dropdown-menu {
-    position: absolute;
-    top: 100%;
-    right:0%;
-    background-color: #333;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 10px;
-    /* Modify the height of the menu to fit the content */
-    min-height: 100%; /* Adjust as needed */
-    display: flex;
-    flex-direction: column;
-    z-index: 100;
-    width: 250px;
-    margin-top: 3.5vh;
-    border: none;
-  }
+  position: absolute;
+  top: 100%;
+  margin-top: 21px;
+  right: -10px;
+  background-color: #AB987a;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  min-height: 100%; /* Adjust as needed */
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  width: 220px; /* Adjust the width as needed */
+  border: none !important;
+}
   
   /* Styling for dropdown menu items */
   .dropdown-menu p {
@@ -78,5 +83,43 @@
   }
   
   .dropdown-menu p:hover {
-    background-color: #535353;
+    color: #f5f5f5;
   }
+
+/* Media queries for tablets */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .toolbar {
+      background-color: #AB987a;
+      color: #0f1626;
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      justify-content: space-between;
+      font-weight: 400;
+    }
+  }
+
+  /* Media queries for mobile phones */
+@media (max-width: 767px) {
+  .toolbar {
+    font-size: 1.5rem; /* Adjust the font size for mobile devices */
+    font-weight: 500;
+  }
+  .toolbar p {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+  .logo {
+    width: 80px; /* Adjust the width for mobile devices */
+  }
+
+  .dropdown {
+    font-size: 1.5rem; /* Adjust the font size for mobile devices */
+  }
+
+  .dropdown-menu {
+    width: 135px; /* Adjust the width for mobile devices */
+    border: none;
+    margin-top: 21px;
+  }
+}

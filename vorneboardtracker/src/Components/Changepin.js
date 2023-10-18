@@ -184,10 +184,10 @@ class Pin extends Component {
                   </div>
                   <PinInput
                     length={4}
-                    focus
+                    //focus
                     ref={(p) => (this.pin = p)}
                     type="numeric"
-                    inputMode="number"
+                    inputMode="numeric"
                     pattern="\d*"
                     value={this.state.input}
                     onChange={this.onChange.bind(this)}

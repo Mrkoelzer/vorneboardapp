@@ -7,7 +7,7 @@ import Toolbar from '../Components/Editlineextrudertoolbar';
 import { linescontext } from '../contexts/linescontext';
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGear, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faGear, faTrashCan, faCheck, faXmark, faArrowLeft, faPlus } from '@fortawesome/free-solid-svg-icons';
 
 
 function Editlineextruder() {
@@ -284,91 +284,109 @@ function Editlineextruder() {
 
   return (
     <div className="editle">
-      <view>
-        <Toolbar />
-        <br />
-        <div className="editletable-container">
-          <ReactBootStrap.Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>Line Name</th>
-                <th>IP Address</th>
-                <th>Type</th>
-                <th>Edit</th>
-                <th>Delete</th>
-              </tr>
-            </thead>
-            <tbody>
-              {lines.map((rowData, index) => (
-                <tr key={index}>
-                  <td>{rowData.Linename}</td>
-                  <td>{rowData.ipaddress}</td>
-                  <td>{gettype(rowData.packline, rowData.extruder)}</td>
-                  <td><button className='eleditdeletebutton' onClick={() => handleEditClick(index)}>
-                    <FontAwesomeIcon icon={faGear} />
-                  </button></td>
-                  <td><button className='eleditdeletebutton' onClick={() => handledeleteClick(index)}>
-                    <FontAwesomeIcon icon={faTrash} />
-                  </button></td>
-                </tr>
-              ))}
-            </tbody>
-          </ReactBootStrap.Table>
+      <Toolbar />
+      <br />
+      <div className="editletable-container">
+        <div style={{ display: 'flex' }}>
+          <button className="editlebutton" onClick={handleAddClick}>
+            <div className="editleicon-wrapper">
+              <FontAwesomeIcon icon={faPlus} className="editleicon" />
+            </div>
+            <div className="editletext">Add</div>
+          </button>
+          <button className="editlebutton" onClick={() => navigate('/Account')}>
+            <div className="editleicon-wrapper">
+              <FontAwesomeIcon icon={faArrowLeft} className="editleicon" />
+            </div>
+            <div className="editletext">Go Back</div>
+          </button>
         </div>
-        {editRow !== null && (
-          <div className="edit-modal">
-            <div className="edit-modal">
-              <div className="edit-popup">
-                <button className="modal-close-button" onClick={closeEditModal}>
-                  X
-                </button>
-                <h2>Edit Line Data</h2>
-                <input
-                  className='editle-inputs'
-                  type="text"
-                  placeholder="Line Name"
-                  value={editedData.Linename}
-                  onChange={(e) => setEditedData({ ...editedData, Linename: e.target.value })}
-                />
-                <input
-                  className='editle-inputs'
-                  type="text"
-                  placeholder="IP Address"
-                  value={editedData.ipaddress}
-                  onChange={(e) => setEditedData({ ...editedData, ipaddress: e.target.value })}
-                />
-                <select
-                  className='editle-inputs'
-                  value={editedData.packline === 1 ? 'Pack Line' : 'Extruder'}
-                  onChange={(e) =>
-                    setEditedData({
-                      ...editedData,
-                      packline: e.target.value === 'Pack Line' ? 1 : 0,
-                      extruder: e.target.value === 'Extruder' ? 1 : 0,
-                    })
-                  }
-                >
-                  <option value="Pack Line">Pack Line</option>
-                  <option value="Extruder">Extruder</option>
-                </select>
-                <button className="modalbutton" onClick={checkeditline}>
-                  Save
-                </button>
-                <button className="modalbutton" onClick={closeEditModal}>
-                  Cancel
-                </button>
-                {addLineMessage && <p className="error-message">{addLineMessage}</p>}
-              </div>
+        <ReactBootStrap.Table striped bordered hover>
+          <thead>
+            <tr className="header-row">
+              <th>Line Name</th>
+              <th>IP Address</th>
+              <th>Type</th>
+              <th>Edit</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            {lines.map((rowData, index) => (
+              <tr key={index} className={index % 2 === 0 ? 'even' : 'odd'}>
+                <td>{rowData.Linename}</td>
+                <td>{rowData.ipaddress}</td>
+                <td>{gettype(rowData.packline, rowData.extruder)}</td>
+                <td><p className='eleditdeletebutton' onClick={() => handleEditClick(index)}><FontAwesomeIcon icon={faGear} /></p></td>
+                <td><p className='eleditdeletebutton' onClick={() => handledeleteClick(index)}><FontAwesomeIcon icon={faTrashCan} /></p></td>
+              </tr>
+            ))}
+          </tbody>
+        </ReactBootStrap.Table>
+      </div>
+      {editRow !== null && (
+        <div className="edit-modal">
+          <div className="edit-popup">
+            <button className="modal-close-button" onClick={closeEditModal}>
+              X
+            </button>
+            <h2>Edit Line Data</h2>
+            {addLineMessage && <p className="error-message">{addLineMessage}</p>}
+            <div className='editleflexbox-item'>
+              Line Name
+              <input
+                className='editle-inputs'
+                type="text"
+                placeholder="Line Name"
+                value={editedData.Linename}
+                onChange={(e) => setEditedData({ ...editedData, Linename: e.target.value })}
+              />
+            </div>
+            <div className='editleflexbox-item'>
+              IP Address
+              <input
+                className='editle-inputs'
+                type="text"
+                placeholder="IP Address"
+                value={editedData.ipaddress}
+                onChange={(e) => setEditedData({ ...editedData, ipaddress: e.target.value })}
+              />
+            </div>
+            <div className='editleflexbox-item'>
+              Line Type
+              <select
+                className='editle-dropdown'
+                value={editedData.packline === 1 ? 'Pack Line' : 'Extruder'}
+                onChange={(e) =>
+                  setEditedData({
+                    ...editedData,
+                    packline: e.target.value === 'Pack Line' ? 1 : 0,
+                    extruder: e.target.value === 'Extruder' ? 1 : 0,
+                  })
+                }
+              >
+                <option value="Pack Line">Pack Line</option>
+                <option value="Extruder">Extruder</option>
+              </select>
+            </div>
+            <br />
+            <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+              <button className="editlebutton" onClick={checkeditline}>
+                <div className="editleicon-wrapper">
+                  <FontAwesomeIcon icon={faCheck} className="editleicon" />
+                </div>
+                <div className="editletext">Save</div>
+              </button>
+              <button className="editlebutton" onClick={closeEditModal}>
+                <div className="editleicon-wrapper">
+                  <FontAwesomeIcon icon={faXmark} className="editleicon" />
+                </div>
+                <div className="editletext">Cancel</div>
+              </button>
             </div>
           </div>
-        )}
-        <button className="editlebutton" onClick={handleAddClick}>
-          Add
-        </button>
-        <button className="editlebutton" onClick={() => navigate('/Account')}>
-          Go Back
-        </button>
-      </view>
+        </div>
+      )}
       {showAddModal && (
         <div className="edit-modal">
           <div className="edit-popup">
@@ -376,40 +394,57 @@ function Editlineextruder() {
               X
             </button>
             <h2>Add Line Data</h2>
-            <input
-              className='editle-inputs'
-              type="text"
-              placeholder="Line Name"
-              value={newData.Linename}
-              onChange={(e) => setNewData({ ...newData, Linename: e.target.value })}
-            />
-            <input
-              className='editle-inputs'
-              type="text"
-              placeholder="IP Address"
-              value={newData.ipaddress}
-              onChange={(e) => setNewData({ ...newData, ipaddress: e.target.value })}
-            />
-            <select
-              className='editle-inputs'
-              value={newData.packline === 1 ? 'Pack Line' : 'Extruder'}
-              onChange={(e) =>
-                setNewData({
-                  ...newData,
-                  packline: e.target.value === 'Pack Line' ? 1 : 0,
-                  extruder: e.target.value === 'Extruder' ? 1 : 0,
-                })
-              }
-            >
-              <option value="Pack Line">Pack Line</option>
-              <option value="Extruder">Extruder</option>
-            </select>
-            <button className="modalbutton" onClick={checkaddline}>
-              Save
-            </button>
-            <button className="modalbutton" onClick={closeAddModal}>
-              Cancel
-            </button>
+            <div className='editleflexbox-item'>
+              Line Name
+              <input
+                className='editle-inputs'
+                type="text"
+                placeholder="Line Name"
+                value={newData.Linename}
+                onChange={(e) => setNewData({ ...newData, Linename: e.target.value })}
+              />
+            </div>
+            <div className='editleflexbox-item'>
+              IP Address
+              <input
+                className='editle-inputs'
+                type="text"
+                placeholder="IP Address"
+                value={newData.ipaddress}
+                onChange={(e) => setNewData({ ...newData, ipaddress: e.target.value })}
+              />
+            </div>
+            <div className='editleflexbox-item'>
+              Line Type
+              <select
+                className='editle-dropdown'
+                value={newData.packline === 1 ? 'Pack Line' : 'Extruder'}
+                onChange={(e) =>
+                  setNewData({
+                    ...newData,
+                    packline: e.target.value === 'Pack Line' ? 1 : 0,
+                    extruder: e.target.value === 'Extruder' ? 1 : 0,
+                  })
+                }
+              >
+                <option value="Pack Line">Pack Line</option>
+                <option value="Extruder">Extruder</option>
+              </select>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+              <button className="editlebutton" onClick={checkaddline}>
+                <div className="editleicon-wrapper">
+                  <FontAwesomeIcon icon={faCheck} className="editleicon" />
+                </div>
+                <div className="editletext">Save</div>
+              </button>
+              <button className="editlebutton" onClick={closeAddModal}>
+                <div className="editleicon-wrapper">
+                  <FontAwesomeIcon icon={faXmark} className="editleicon" />
+                </div>
+                <div className="editletext">Cancel</div>
+              </button>
+            </div>
             {/* Display the message */}
             {addLineMessage && <p className="error-message">{addLineMessage}</p>}
           </div>
