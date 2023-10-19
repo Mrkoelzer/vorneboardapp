@@ -7,12 +7,11 @@ import Toolbar from '../Components/Pdfstoolbar';
 import { linescontext } from '../contexts/linescontext';
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGear, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faGear, faTrashCan, faXmark, faArrowLeft, faCheck, faFilePdf } from '@fortawesome/free-solid-svg-icons';
 
 function Pdfs() {
     const navigate = useNavigate();
     const { userdata } = useContext(usercontext);
-    const { lines, setlines } = useContext(linescontext);
     const [pdfs, setpdfs] = useState([]);
     const [searchValue, setSearchValue] = useState("");
     const { localipaddr } = useContext(ipaddrcontext);
@@ -82,8 +81,8 @@ function Pdfs() {
 
             const fileNameWithoutExtension = selectedFile.name.replace('.pdf', '');
             const requestData = { pdfname: fileNameWithoutExtension };
-            for(let i = 0; i < pdfs.length; i++){
-                if(pdfs[i].pdfname === requestData.pdfname){
+            for (let i = 0; i < pdfs.length; i++) {
+                if (pdfs[i].pdfname === requestData.pdfname) {
                     setAddLineMessage(requestData.pdfname + ' | File Name Already Exist')
                     return
                 }
@@ -96,10 +95,10 @@ function Pdfs() {
                 body: JSON.stringify(requestData),
             });
             const data = await response.json();
-            if(data.pdfadded){
+            if (data.pdfadded) {
                 handleFileUpload()
             }
-            else{
+            else {
                 setAddLineMessage('An Error Occured')
             }
             // Handle the response as needed
@@ -139,55 +138,62 @@ function Pdfs() {
 
     const deletePdf = async (pdfNameToDelete) => {
         try {
-          const response = await fetch(`http://${localipaddr}:1435/api/delete-pdf/${pdfNameToDelete}`, {
-            method: 'DELETE',
-          });
-          const data = await response.json();
-          if (data.deleted) {
-            fetchpdfs()
-            // File and SQL entry deleted successfully
-            // You may want to update your PDF list here
-          } else {
-            console.error('Failed to delete PDF:', pdfNameToDelete);
-          }
+            const response = await fetch(`http://${localipaddr}:1435/api/delete-pdf/${pdfNameToDelete}`, {
+                method: 'DELETE',
+            });
+            const data = await response.json();
+            if (data.deleted) {
+                fetchpdfs()
+                // File and SQL entry deleted successfully
+                // You may want to update your PDF list here
+            } else {
+                console.error('Failed to delete PDF:', pdfNameToDelete);
+            }
         } catch (error) {
-          console.error('Error deleting PDF:', error);
+            console.error('Error deleting PDF:', error);
         }
-      };
+    };
 
     return (
         <div className="pdfs">
             <view>
-                <Toolbar />
-                <br />
-                <button className="pdfsbutton" onClick={handleAddClick}>
-                    Add
-                </button>
-                <button className="pdfsbutton" onClick={() => navigate('/Account')}>
-                    Go Back
-                </button>
+                <Toolbar />            
+                <div className="pdfstable-container">
+                <br/>
+                <div style={{ display: 'flex', alignSelf: 'center'}}>
+                        <button className="pdfsbutton" onClick={handleAddClick}>
+                            <div className="pdfsicon-wrapper">
+                                <FontAwesomeIcon icon={faFilePdf} className="pdfsicon" />
+                            </div>
+                            <div className="pdfstext">Add PDF</div>
+                        </button>
+                        <button className="pdfsbutton" onClick={() => navigate('/Account')}>
+                            <div className="pdfsicon-wrapper">
+                                <FontAwesomeIcon icon={faArrowLeft} className="pdfsicon" />
+                            </div>
+                            <div className="pdfstext">Go Back</div>
+                        </button>
+                    </div>
                 <input
-                    className='partpdfs-search'
+                    className='pdfs-search'
                     type="text"
                     placeholder="Search..."
                     value={searchValue}
                     onChange={(e) => setSearchValue(e.target.value)}
                 />
-                <div className="pdfstable-container">
+                <br/>
                     <ReactBootStrap.Table striped bordered hover>
                         <thead>
-                            <tr>
+                            <tr className="header-row">
                                 <th>PDF's</th>
                                 <th>Delete</th>
                             </tr>
                         </thead>
                         <tbody>
                             {filteredPartNumbers.map((rowData, index) => (
-                                <tr key={index}>
+                                <tr key={index} className={index % 2 === 0 ? 'even' : 'odd'}>
                                     <td>{rowData.pdfname}</td>
-                                    <td><button className='pdfseditdeletebutton' onClick={() => deletePdf(rowData.pdfname)}>
-                                        <FontAwesomeIcon icon={faTrash} />
-                                    </button></td>
+                                    <td><p className='pdfseditdeletebutton' onClick={() => deletePdf(rowData.pdfname)}><FontAwesomeIcon icon={faTrashCan} /></p></td>
                                 </tr>
                             ))}
                         </tbody>
@@ -202,12 +208,20 @@ function Pdfs() {
                         </button>
                         <h2>Add PDF File</h2>
                         <input type="file" accept=".pdf" className='pdfsaddfile' onChange={handleFileChange} />
-                        <button className="pdfsmodalbutton" onClick={handlesqlfileupload}>
-                            Save
-                        </button>
-                        <button className="pdfsmodalbutton" onClick={closeAddModal}>
-                            Cancel
-                        </button>
+                        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                            <button className="pdfsbutton" onClick={handlesqlfileupload}>
+                                <div className="pdfsicon-wrapper">
+                                    <FontAwesomeIcon icon={faCheck} className="pdfsicon" />
+                                </div>
+                                <div className="pdfstext">Save</div>
+                            </button>
+                            <button className="pdfsbutton" onClick={closeAddModal}>
+                                <div className="pdfsicon-wrapper">
+                                    <FontAwesomeIcon icon={faXmark} className="pdfsicon" />
+                                </div>
+                                <div className="pdfstext">Cancel</div>
+                            </button>
+                        </div>
                         {/* Display the message */}
                         {addLineMessage && <p className="error-message">{addLineMessage}</p>}
                     </div>

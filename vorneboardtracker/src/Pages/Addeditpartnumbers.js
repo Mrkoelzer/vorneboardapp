@@ -6,7 +6,7 @@ import { linescontext } from '../contexts/linescontext';
 import { usercontext } from '../contexts/usercontext';
 import * as ReactBootStrap from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGear, faTrashCan, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faGear, faTrashCan, faCheck, faTimes, faPlus, faArrowLeft, faXmark } from '@fortawesome/free-solid-svg-icons';
 //import Axios from 'axios';
 import Select from 'react-select'
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
@@ -304,7 +304,7 @@ function Addeditpartnumbers() {
                 getpartnumbers();
                 getallpartnumbers();
                 setAddLineMessage('');
-                if(editedData.part_id !== editedData.oldPart_ID){
+                if (editedData.part_id !== editedData.oldPart_ID) {
                     updatepartpdfpartnumbers();
                 }
                 closeEditModal();
@@ -317,7 +317,7 @@ function Addeditpartnumbers() {
         }
     };
 
-    
+
     const updatepartpdfpartnumbers = async () => {
         const updatedData = {
             ...editedData,
@@ -383,8 +383,8 @@ function Addeditpartnumbers() {
     const handleEditClick = (index, partid) => {
         setAddLineMessage('');
         geteditlines(partid)
-        for(let i = 0; i < partnumbers.length; i++){
-            if(partid === partnumbers[i].Part_ID){
+        for (let i = 0; i < partnumbers.length; i++) {
+            if (partid === partnumbers[i].Part_ID) {
                 setEditedData(partnumbers[i])
                 setEditedData((prevData) => ({
                     ...prevData,
@@ -516,304 +516,325 @@ function Addeditpartnumbers() {
     const handleAddAllOptions = () => {
         const allOptionValues = options.map((option) => option.value);
         setSelectedLines(allOptionValues);
-      };
+    };
 
     const lineLabels = editlines.map((line, index) => `${line}`).join(', ');
 
     return (
         <div className='aepartnumberpage'>
-            <div>
-                <Toolbar />
+            <Toolbar />
+            {isLoading ? (
+                <p>Loading...</p>
+            ) : (
                 <div className='aepartnumbers-flexbox-container'>
-                    {isLoading ? (
-                        <p>Loading...</p>
-                    ) : (
-                        <div>
-                            <select className='aepartnumbers-inputs' onChange={(e) => getselectedline(e.target.selectedIndex)}>
-                                {lines.map((line, index) => (
-                                    <option key={index} value={line.Linename}>
-                                        {line.Linename}
-                                    </option>
+                    <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                        <select className='aepartnumbers-inputs' onChange={(e) => getselectedline(e.target.selectedIndex)}>
+                            {lines.map((line, index) => (
+                                <option key={index} value={line.Linename}>
+                                    {line.Linename}
+                                </option>
+                            ))}
+                        </select>
+                        <input
+                            className='aepartnumbers-search'
+                            type="text"
+                            placeholder="Search..."
+                            value={searchValue}
+                            onChange={(e) => setSearchValue(e.target.value)}
+                        />
+                    </div>
+                    <div style={{ display: 'flex', alignSelf: 'center' }}>
+                        <button className="aepartnumberbutton" onClick={handleAddClick}>
+                            <div className="aepartnumbericon-wrapper">
+                                <FontAwesomeIcon icon={faPlus} className="aepartnumbericon" />
+                            </div>
+                            <div className="editletext">Add Part</div>
+                        </button>
+                        <button className="editlebutton" onClick={() => navigate('/Account')}>
+                            <div className="aepartnumbericon-wrapper">
+                                <FontAwesomeIcon icon={faArrowLeft} className="aepartnumbericon" />
+                            </div>
+                            <div className="aepartnumbertext">Go Back</div>
+                        </button>
+                    </div>
+                    <div className="aepartnumberstable-container">
+                        <br />
+                        <ReactBootStrap.Table striped bordered hover>
+                            <thead>
+                                <tr className="header-row">
+                                    <th>Part ID</th>
+                                    <th>Alternate Part ID</th>
+                                    <th>Ideal Cycle Time (s)</th>
+                                    <th>Takt Time (s)</th>
+                                    <th>Target Labor per Piece (s)</th>
+                                    <th>Down (s)</th>
+                                    <th>Count Multiplier</th>
+                                    <th>Start with Changeover</th>
+                                    <th>Edit</th>
+                                    <th>Delete</th>
+                                    <th>PDF</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filteredPartNumbers.map((rowData, index) => (
+                                    <tr key={index} className={index % 2 === 0 ? 'even' : 'odd'} >
+                                        <td>{rowData.Part_ID}</td>
+                                        <td>{rowData.Alternate_Part_ID}</td>
+                                        <td>{rowData.Ideal_Cycle_Time_s}</td>
+                                        <td>{rowData.Takt_Time_s}</td>
+                                        <td>{rowData.Target_Labor_per_Piece_s}</td>
+                                        <td>{rowData.Down_s}</td>
+                                        <td>
+                                            {`${rowData.Count_Multiplier_1}, ${rowData.Count_Multiplier_2}, ${rowData.Count_Multiplier_3}, ${rowData.Count_Multiplier_4}, ${rowData.Count_Multiplier_5}, ${rowData.Count_Multiplier_6}, ${rowData.Count_Multiplier_7}, ${rowData.Count_Multiplier_8}, ${rowData.Target_Multiplier}`}
+                                        </td>
+                                        <td>{rowData.Start_with_Changeover}</td>
+                                        <td><p className='aeeditdeletebutton' onClick={() => handleEditClick(index, rowData.Part_ID)}><FontAwesomeIcon icon={faGear} /></p></td>
+                                        <td><p className='aeeditdeletebutton' onClick={() => handledelete(rowData.Part_ID)}><FontAwesomeIcon icon={faTrashCan} /></p></td>
+                                        <td className={rowData.pdfname === 'No PDF Assigned' ? 'no-pdf' : ''}>
+                                                {rowData.pdfname === 'No PDF Assigned' ? (
+                                                    <FontAwesomeIcon icon={faTimes} /> // Display X if PDF is 'No PDF Assigned'
+                                                ) : rowData.pdfname ? (
+                                                    <FontAwesomeIcon icon={faCheck} /> // Display checkmark if PDF exists
+                                                ) : (
+                                                    'Checking...' // Display a loading message while checking
+                                                )}
+                                            </td>
+                                    </tr>
                                 ))}
-                            </select>
-
-                            <button className='aepartnumberbutton' onClick={handleAddClick}>
-                                Add Part
-                            </button>
-                            <input
-                                className='aepartnumbers-search'
-                                type="text"
-                                placeholder="Search..."
-                                value={searchValue}
-                                onChange={(e) => setSearchValue(e.target.value)}
-                            />
-                            <div className="aepartnumberstable-container">
-                                <ReactBootStrap.Table striped bordered hover>
-                                    <thead>
-                                        <tr>
-                                            <th>Part ID</th>
-                                            <th>Alternate Part ID</th>
-                                            <th>Ideal Cycle Time (s)</th>
-                                            <th>Takt Time (s)</th>
-                                            <th>Target Labor per Piece (s)</th>
-                                            <th>Down (s)</th>
-                                            <th>Count Multiplier</th>
-                                            <th>Start with Changeover</th>
-                                            <th>Edit</th>
-                                            <th>Delete</th>
-                                            <th>PDF</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {filteredPartNumbers.map((rowData, index) => (
-                                            <tr key={index}>
-                                                <td>{rowData.Part_ID}</td>
-                                                <td>{rowData.Alternate_Part_ID}</td>
-                                                <td>{rowData.Ideal_Cycle_Time_s}</td>
-                                                <td>{rowData.Takt_Time_s}</td>
-                                                <td>{rowData.Target_Labor_per_Piece_s}</td>
-                                                <td>{rowData.Down_s}</td>
-                                                <td>
-                                                    {`${rowData.Count_Multiplier_1}, ${rowData.Count_Multiplier_2}, ${rowData.Count_Multiplier_3}, ${rowData.Count_Multiplier_4}, ${rowData.Count_Multiplier_5}, ${rowData.Count_Multiplier_6}, ${rowData.Count_Multiplier_7}, ${rowData.Count_Multiplier_8}, ${rowData.Target_Multiplier}`}
-                                                </td>
-                                                <td>{rowData.Start_with_Changeover}</td>
-                                                <td><button className='aeeditdeletebutton' onClick={() => handleEditClick(index, rowData.Part_ID)}>
-                                                    <FontAwesomeIcon icon={faGear} />
-                                                </button></td>
-                                                <td>
-                                                    <button className='aeeditdeletebutton' onClick={() => handledelete(rowData.Part_ID)}>
-                                                        <FontAwesomeIcon icon={faTrashCan} />
-                                                    </button>
-                                                </td>
-                                                <td>
-                                                    {checkpdf(rowData.Part_ID) ? ( // Check if PDF exists
-                                                        <FontAwesomeIcon icon={faCheck} /> // Display checkmark if PDF exists
-                                                    ) : (
-                                                        <FontAwesomeIcon icon={faTimes} /> // Display X if PDF does not exist
-                                                    )}
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </ReactBootStrap.Table>
-                            </div>
-                        </div>
-                    )}
+                            </tbody>
+                        </ReactBootStrap.Table>
+                    </div>
                 </div>
-                {showAddModal && (
-                    <div className="aeedit-modal">
-                        <div className="aeedit-popup">
-                            <button className="aemodal-close-button" onClick={closeAddModal}>
-                                X
-                            </button>
-                            <h2>Add Part</h2>
-                            {addLineMessage && <p className="error-message">{addLineMessage}</p>}
-                            <div className='aeflexbox-item'>
-                                Select Lines
-                                <Select
-                                    className='aepartnumbers-checkbox'
-                                    isMulti
-                                    onChange={handleSelectChange}
-                                    value={options.filter((option) => selectedLines.includes(option.value))}
-                                    options={options}
-                                />
-                                <button onClick={handleAddAllOptions}>Add All Lines</button>
-                            </div>
-                            <div className='aeflexbox-item'>
-                                Part ID
-                                <input
-                                    className='aepartnumbers-add-input'
-                                    type="text"
-                                    placeholder="Part ID"
-                                    value={newData.Part_ID}
-                                    onChange={(e) => setNewData({ ...newData, Part_ID: e.target.value })}
-                                />
-                            </div>
-                            <div className='aeflexbox-item'>
-                                Alternate Part ID
-                                <input
-                                    className='aepartnumbers-add-input'
-                                    type="text"
-                                    placeholder="Alternate Part ID"
-                                    value={newData.Alternate_Part_ID}
-                                    onChange={(e) => setNewData({ ...newData, Alternate_Part_ID: e.target.value })}
-                                />
-                            </div>
-                            <div className='aeflexbox-item'>
-                                Ideal Cycle Time (s)
-                                <input
-                                    className='aepartnumbers-add-input'
-                                    type="text"
-                                    placeholder="Ideal Cycle Time"
-                                    value={newData.Ideal_Cycle_Time_s}
-                                    onChange={(e) => setNewData({ ...newData, Ideal_Cycle_Time_s: e.target.value })}
-                                    onKeyPress={(event) => {
-                                        if (!/[0-9]/.test(event.key)) {
-                                            event.preventDefault();
-                                        }
-                                    }}
-                                />
-                            </div>
-                            Takt Time(s)
-                            <div className='aeflexbox-item'>
-                                <input
-                                    className='aepartnumbers-add-input'
-                                    type="text"
-                                    placeholder="Takt Time(s)"
-                                    value={newData.Takt_Time_s}
-                                    onChange={(e) => setNewData({ ...newData, Takt_Time_s: e.target.value })}
-                                    onKeyPress={(event) => {
-                                        if (!/[0-9]/.test(event.key)) {
-                                            event.preventDefault();
-                                        }
-                                    }}
-                                />
-                            </div>
-                            <div className='aeflexbox-item'>
-                                Target Laber Per Piece(s)
-                                <input
-                                    className='aepartnumbers-add-input'
-                                    type="text"
-                                    placeholder="Target labor per Piece(s)"
-                                    value={newData.Target_Labor_per_Piece_s}
-                                    onChange={(e) => setNewData({ ...newData, Target_Labor_per_Piece_s: e.target.value })}
-                                    onKeyPress={(event) => {
-                                        if (!/[0-9]/.test(event.key)) {
-                                            event.preventDefault();
-                                        }
-                                    }}
-                                />
-                            </div>
-                            <div className='aeflexbox-item'>
-                                Down(s)
-                                <input
-                                    className='aepartnumbers-add-input'
-                                    type="text"
-                                    placeholder="Down(s)"
-                                    value={newData.Down_s}
-                                    onChange={(e) => setNewData({ ...newData, Down_s: e.target.value })}
-                                    onKeyPress={(event) => {
-                                        if (!/[0-9]/.test(event.key)) {
-                                            event.preventDefault();
-                                        }
-                                    }}
-                                />
-                            </div>
-                            <br />
-                            <button className="modalbutton" onClick={checkaddpart}>
-                                Save
-                            </button>
-                            <button className="modalbutton" onClick={closeAddModal}>
-                                Cancel
-                            </button>
-                            {/* Display the message */}
+            )}
+            {showAddModal && (
+                <div className="aeedit-modal">
+                    <div className="aeedit-popup">
+                        <button className="aemodal-close-button" onClick={closeAddModal}>
+                            X
+                        </button>
+                        <h2>Add Part</h2>
+                        {addLineMessage && <p className="error-message">{addLineMessage}</p>}
+                        <div className='aeflexbox-item'>
+                            Select Lines
+                            <Select
+                                className='aepartnumbers-checkbox'
+                                isMulti
+                                onChange={handleSelectChange}
+                                value={options.filter((option) => selectedLines.includes(option.value))}
+                                options={options}
+                            />
+                            <button onClick={handleAddAllOptions} className='aepartnumberbutton2'>All Lines</button>
                         </div>
-                    </div>
-                )}
-                {showEditModal && (
-                    <div className="aeedit-modal">
-                        <div className="aeedit-popup">
-                            <button className="aemodal-close-button" onClick={closeEditModal}>
-                                X
-                            </button>
-                            <h2>Edit Part</h2>
-                            {addLineMessage && <p className="error-message">{addLineMessage}</p>}
-                            <div className='aeflexbox-item'>
-                                This Part ID is in
-                                <p>{lineLabels}</p>
-                            </div>
-                            <div className='aeflexbox-item'>
-                                Part ID
-                                <input
-                                    className='aepartnumbers-add-input'
-                                    type="text"
-                                    placeholder="Part ID"
-                                    value={editedData.Part_ID}
-                                    onChange={(e) => setEditedData({ ...editedData, Part_ID: e.target.value })}
-                                />
-                            </div>
-                            <div className='aeflexbox-item'>
-                                Alternate Part ID
-                                <input
-                                    className='aepartnumbers-add-input'
-                                    type="text"
-                                    placeholder="Alternate Part ID"
-                                    value={editedData.Alternate_Part_ID}
-                                    onChange={(e) => setEditedData({ ...editedData, Alternate_Part_ID: e.target.value })}
-                                />
-                            </div>
-                            <div className='aeflexbox-item'>
-                                Ideal Cycle Time (s)
-                                <input
-                                    className='aepartnumbers-add-input'
-                                    type="text"
-                                    placeholder="Ideal Cycle Time"
-                                    value={editedData.Ideal_Cycle_Time_s}
-                                    onChange={(e) => setEditedData({ ...editedData, Ideal_Cycle_Time_s: e.target.value })}
-                                    onKeyPress={(event) => {
-                                        if (!/[0-9]/.test(event.key)) {
-                                            event.preventDefault();
-                                        }
-                                    }}
-                                />
-                            </div>
-                            Takt Time(s)
-                            <div className='aeflexbox-item'>
-                                <input
-                                    className='aepartnumbers-add-input'
-                                    type="text"
-                                    placeholder="Takt Time(s)"
-                                    value={editedData.Takt_Time_s}
-                                    onChange={(e) => setEditedData({ ...editedData, Takt_Time_s: e.target.value })}
-                                    onKeyPress={(event) => {
-                                        if (!/[0-9]/.test(event.key)) {
-                                            event.preventDefault();
-                                        }
-                                    }}
-                                />
-                            </div>
-                            <div className='aeflexbox-item'>
-                                Target Laber Per Piece(s)
-                                <input
-                                    className='aepartnumbers-add-input'
-                                    type="text"
-                                    placeholder="Target labor per Piece(s)"
-                                    value={editedData.Target_Labor_per_Piece_s}
-                                    onChange={(e) => setEditedData({ ...editedData, Target_Labor_per_Piece_s: e.target.value })}
-                                    onKeyPress={(event) => {
-                                        if (!/[0-9]/.test(event.key)) {
-                                            event.preventDefault();
-                                        }
-                                    }}
-                                />
-                            </div>
-                            <div className='aeflexbox-item'>
-                                Down(s)
-                                <input
-                                    className='aepartnumbers-add-input'
-                                    type="text"
-                                    placeholder="Down(s)"
-                                    value={editedData.Down_s}
-                                    onChange={(e) => setEditedData({ ...editedData, Down_s: e.target.value })}
-                                    onKeyPress={(event) => {
-                                        if (!/[0-9]/.test(event.key)) {
-                                            event.preventDefault();
-                                        }
-                                    }}
-                                />
-                            </div>
-                            <br />
-                            <button className="modalbutton" onClick={checkeditpart}>
-                                Save
-                            </button>
-                            <button className="modalbutton" onClick={closeEditModal}>
-                                Cancel
-                            </button>
-                            {/* Display the message */}
+                        <div className='aeflexbox-item'>
+                            Part ID
+                            <input
+                                className='aepartnumbers-add-input'
+                                type="text"
+                                placeholder="Part ID"
+                                value={newData.Part_ID}
+                                onChange={(e) => setNewData({ ...newData, Part_ID: e.target.value })}
+                            />
                         </div>
+                        <div className='aeflexbox-item'>
+                            Alternate Part ID
+                            <input
+                                className='aepartnumbers-add-input'
+                                type="text"
+                                placeholder="Alternate Part ID"
+                                value={newData.Alternate_Part_ID}
+                                onChange={(e) => setNewData({ ...newData, Alternate_Part_ID: e.target.value })}
+                            />
+                        </div>
+                        <div className='aeflexbox-item'>
+                            Ideal Cycle Time (s)
+                            <input
+                                className='aepartnumbers-add-input'
+                                type="text"
+                                placeholder="Ideal Cycle Time"
+                                value={newData.Ideal_Cycle_Time_s}
+                                onChange={(e) => setNewData({ ...newData, Ideal_Cycle_Time_s: e.target.value })}
+                                onKeyPress={(event) => {
+                                    if (!/[0-9]/.test(event.key)) {
+                                        event.preventDefault();
+                                    }
+                                }}
+                            />
+                        </div>
+                        Takt Time(s)
+                        <div className='aeflexbox-item'>
+                            <input
+                                className='aepartnumbers-add-input'
+                                type="text"
+                                placeholder="Takt Time(s)"
+                                value={newData.Takt_Time_s}
+                                onChange={(e) => setNewData({ ...newData, Takt_Time_s: e.target.value })}
+                                onKeyPress={(event) => {
+                                    if (!/[0-9]/.test(event.key)) {
+                                        event.preventDefault();
+                                    }
+                                }}
+                            />
+                        </div>
+                        <div className='aeflexbox-item'>
+                            Target Laber Per Piece(s)
+                            <input
+                                className='aepartnumbers-add-input'
+                                type="text"
+                                placeholder="Target labor per Piece(s)"
+                                value={newData.Target_Labor_per_Piece_s}
+                                onChange={(e) => setNewData({ ...newData, Target_Labor_per_Piece_s: e.target.value })}
+                                onKeyPress={(event) => {
+                                    if (!/[0-9]/.test(event.key)) {
+                                        event.preventDefault();
+                                    }
+                                }}
+                            />
+                        </div>
+                        <div className='aeflexbox-item'>
+                            Down(s)
+                            <input
+                                className='aepartnumbers-add-input'
+                                type="text"
+                                placeholder="Down(s)"
+                                value={newData.Down_s}
+                                onChange={(e) => setNewData({ ...newData, Down_s: e.target.value })}
+                                onKeyPress={(event) => {
+                                    if (!/[0-9]/.test(event.key)) {
+                                        event.preventDefault();
+                                    }
+                                }}
+                            />
+                        </div>
+                        <br />
+                        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                            <button className="editlebutton" onClick={checkaddpart}>
+                                <div className="editleicon-wrapper">
+                                    <FontAwesomeIcon icon={faCheck} className="editleicon" />
+                                </div>
+                                <div className="editletext">Save</div>
+                            </button>
+                            <button className="editlebutton" onClick={closeAddModal}>
+                                <div className="editleicon-wrapper">
+                                    <FontAwesomeIcon icon={faXmark} className="editleicon" />
+                                </div>
+                                <div className="editletext">Cancel</div>
+                            </button>
+                        </div>
+                        {/* Display the message */}
                     </div>
-                )}
-            </div>
+                </div>
+            )}
+            {showEditModal && (
+                <div className="aeedit-modal">
+                    <div className="aeedit-popup">
+                        <button className="aemodal-close-button" onClick={closeEditModal}>
+                            X
+                        </button>
+                        <h2>Edit Part</h2>
+                        {addLineMessage && <p className="error-message">{addLineMessage}</p>}
+                        <div className='aeflexbox-item'>
+                            This Part ID is in
+                            <p>{lineLabels}</p>
+                        </div>
+                        <div className='aeflexbox-item'>
+                            Part ID
+                            <input
+                                className='aepartnumbers-add-input'
+                                type="text"
+                                placeholder="Part ID"
+                                value={editedData.Part_ID}
+                                onChange={(e) => setEditedData({ ...editedData, Part_ID: e.target.value })}
+                            />
+                        </div>
+                        <div className='aeflexbox-item'>
+                            Alternate Part ID
+                            <input
+                                className='aepartnumbers-add-input'
+                                type="text"
+                                placeholder="Alternate Part ID"
+                                value={editedData.Alternate_Part_ID}
+                                onChange={(e) => setEditedData({ ...editedData, Alternate_Part_ID: e.target.value })}
+                            />
+                        </div>
+                        <div className='aeflexbox-item'>
+                            Ideal Cycle Time (s)
+                            <input
+                                className='aepartnumbers-add-input'
+                                type="text"
+                                placeholder="Ideal Cycle Time"
+                                value={editedData.Ideal_Cycle_Time_s}
+                                onChange={(e) => setEditedData({ ...editedData, Ideal_Cycle_Time_s: e.target.value })}
+                                onKeyPress={(event) => {
+                                    if (!/[0-9]/.test(event.key)) {
+                                        event.preventDefault();
+                                    }
+                                }}
+                            />
+                        </div>
+                        Takt Time(s)
+                        <div className='aeflexbox-item'>
+                            <input
+                                className='aepartnumbers-add-input'
+                                type="text"
+                                placeholder="Takt Time(s)"
+                                value={editedData.Takt_Time_s}
+                                onChange={(e) => setEditedData({ ...editedData, Takt_Time_s: e.target.value })}
+                                onKeyPress={(event) => {
+                                    if (!/[0-9]/.test(event.key)) {
+                                        event.preventDefault();
+                                    }
+                                }}
+                            />
+                        </div>
+                        <div className='aeflexbox-item'>
+                            Target Laber Per Piece(s)
+                            <input
+                                className='aepartnumbers-add-input'
+                                type="text"
+                                placeholder="Target labor per Piece(s)"
+                                value={editedData.Target_Labor_per_Piece_s}
+                                onChange={(e) => setEditedData({ ...editedData, Target_Labor_per_Piece_s: e.target.value })}
+                                onKeyPress={(event) => {
+                                    if (!/[0-9]/.test(event.key)) {
+                                        event.preventDefault();
+                                    }
+                                }}
+                            />
+                        </div>
+                        <div className='aeflexbox-item'>
+                            Down(s)
+                            <input
+                                className='aepartnumbers-add-input'
+                                type="text"
+                                placeholder="Down(s)"
+                                value={editedData.Down_s}
+                                onChange={(e) => setEditedData({ ...editedData, Down_s: e.target.value })}
+                                onKeyPress={(event) => {
+                                    if (!/[0-9]/.test(event.key)) {
+                                        event.preventDefault();
+                                    }
+                                }}
+                            />
+                        </div>
+                        <br />
+                        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                            <button className="editlebutton" onClick={checkeditpart}>
+                                <div className="editleicon-wrapper">
+                                    <FontAwesomeIcon icon={faCheck} className="editleicon" />
+                                </div>
+                                <div className="editletext">Save</div>
+                            </button>
+                            <button className="editlebutton" onClick={closeEditModal}>
+                                <div className="editleicon-wrapper">
+                                    <FontAwesomeIcon icon={faXmark} className="editleicon" />
+                                </div>
+                                <div className="editletext">Cancel</div>
+                            </button>
+                        </div>
+                        {/* Display the message */}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

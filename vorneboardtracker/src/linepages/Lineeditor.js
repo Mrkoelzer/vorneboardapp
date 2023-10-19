@@ -3,24 +3,26 @@ import { partruncontext } from '../contexts/partruncontext';
 import { linedatacontext } from '../contexts/linedatacontext';
 import { line3partdatacontext } from '../contexts/linepartdatacontext';
 import { linescontext } from '../contexts/linescontext';
-import React, { useContext, useEffect, useState, useRef } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import * as ReactBootStrap from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import Toolbar from '../Components/Linepagetoolbar';
 import '../Css/linepages.css'
 import { selectedlinecontext } from '../contexts/selectedlinecontext';
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMinus, faPlus, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 function Line3() {
   const [linepagedata, setlinepagedata] = useState([]);
-  const [ linedatatable, setlinedatatable ] = useState([]);
-  const [ lineparts, setlineparts ] = useState([]);
+  const [linedatatable, setlinedatatable] = useState([]);
+  const [lineparts, setlineparts] = useState([]);
   const { selectedline, setselectedline } = useContext(selectedlinecontext)
   const [isLoading, setIsLoading] = useState(true); // Add isLoading state
   const { lines, setlines } = useContext(linescontext);
   const [goodcount, setgoodcount] = useState(1);
   const [rejectcount, setrejectcount] = useState(1);
-  const {localipaddr} = useContext(ipaddrcontext);
+  const { localipaddr } = useContext(ipaddrcontext);
 
   const navigate = useNavigate();
   const apiEndpoints = {
@@ -48,7 +50,7 @@ function Line3() {
     else if (processState === 'No Operator') {
       return 'action6'; // Assuming 'Running', 'Down', 'Detecting State', and 'Break' correspond to 'Start Production' action
     }
-    else if (processState === 'Missing Reason'){
+    else if (processState === 'Missing Reason') {
       return 'action7'
     }
     // Add more conditions as needed for other process states
@@ -75,7 +77,7 @@ function Line3() {
     if (selectedEndpointIdentifier) {
       // Map the endpoint identifier to the full URL
       const selectedEndpoint = `http://${localipaddr}:1433/${selectedEndpointIdentifier}`;
-  
+
       // Construct requestData based on the selected action
       let requestData;
       if (selectedAction === 'action1') {
@@ -85,10 +87,10 @@ function Line3() {
       } else if (selectedAction === 'action3') {
         requestData = { value: "changeover" }; // Do not include ipaddress here
       }
-  
+
       // Add ipaddress to the requestData
       requestData.ipaddress = ipaddress;
-  
+
       // Make the API call based on selected action and row
       await Axios.post(selectedEndpoint, requestData)
         .then((response) => {
@@ -99,7 +101,7 @@ function Line3() {
         });
     }
   };
-  
+
   const getPartNumbers = async (tableName) => {
     try {
       const response = await fetch(`http://${localipaddr}:1435/api/getlinepart/${tableName}`, {
@@ -108,7 +110,7 @@ function Line3() {
           'Content-Type': 'application/json',
         },
       });
-  
+
       const data = await response.json();
       if (data) {
         setlineparts(data.result.recordset);
@@ -120,7 +122,7 @@ function Line3() {
     }
   };
 
-  const handlereasonSelect = async(selectedAction) => {
+  const handlereasonSelect = async (selectedAction) => {
     // Map the endpoint identifier to the full URL
     const selectedEndpoint = `http://${localipaddr}:1433/updateprocessstatereason`;
 
@@ -168,11 +170,11 @@ function Line3() {
       };
     }
     else if (selectedAction === 'action7') {
-        return
+      return
     }
 
     // Make the API call based on selected action and row
-   await Axios.post(selectedEndpoint, requestData)
+    await Axios.post(selectedEndpoint, requestData)
       .then((response) => {
         console.log('API call success:', response.data);
       })
@@ -181,7 +183,7 @@ function Line3() {
       });
   };
 
-  const handlepartidSelect = async(selectedAction) => {
+  const handlepartidSelect = async (selectedAction) => {
     // Map the endpoint identifier to the full URL
     const selectedEndpoint = `http://${localipaddr}:1433/updatepartidline`;
 
@@ -190,9 +192,9 @@ function Line3() {
     let selectedpart = selectedAction.replace(/j/g, '-')
     let linedata;
     lineparts.forEach((line) => {
-        if(line.Part_ID === selectedpart){
-          linedata = line
-        }
+      if (line.Part_ID === selectedpart) {
+        linedata = line
+      }
     });
     // Construct requestData based on the selected action
     let requestData;
@@ -228,22 +230,22 @@ function Line3() {
       });
   };
 
-  function getshiftname(shift){
-    if(shift==="first_shift"){
+  function getshiftname(shift) {
+    if (shift === "first_shift") {
       return "First Shift"
     }
-    else if(shift==="second_shift"){
+    else if (shift === "second_shift") {
       return "Second Shift"
     }
-    else if(shift==="third_shift"){
+    else if (shift === "third_shift") {
       return "Third Shift"
     }
-    else{
+    else {
       return "Unkown Shift"
     }
   }
 
-  function getsectotime(time){
+  function getsectotime(time) {
     var date = new Date(0);
     date.setSeconds(time); // specify value for SECONDS here
     var timeString = date.toISOString().substring(11, 19);
@@ -278,7 +280,7 @@ function Line3() {
       const linedata = await getlinedata(line.ipaddress);
       const processStateDetailsData = await getprocessstatedetails(line.ipaddress);
       const shiftData = await getshiftdata(line.ipaddress);
-  
+
       // Combine all the data into a single object
       const lineDataObject = {
         lineip,
@@ -288,17 +290,17 @@ function Line3() {
         processStateDetailsData,
         shiftData,
       };
-  
+
       // Use map to check for null values and replace them with 0
       Object.keys(lineDataObject).forEach((key) => {
         if (lineDataObject[key] === null) {
           lineDataObject[key] = 0;
         }
       });
-  
+
       return lineDataObject;
     });
-  
+
     // Wait for all promises to resolve
     const lineData = await Promise.all(lineDataPromises);
     // Filter out only the data for the selected line
@@ -308,7 +310,7 @@ function Line3() {
         data.linedata = data.linedata.map((value) => (value === null ? 0 : value));
       }
     });
-  
+
     // Create an array with the predefined structure
     const linedatatable = filteredLineData.map((data) => ({
       shift: getshiftname(data.linedata[0]) || 0, // Replace null with 0
@@ -318,9 +320,9 @@ function Line3() {
       in_count: data.linedata[4] || 0, // Replace null with 0
       good_count: data.linedata[5] || 0, // Replace null with 0
       reject_count: data.linedata[6] || 0, // Replace null with 0
-      average_cycle_time: (Math.round(data.linedata[7]*100)/100).toFixed(2) || 0, // Replace null with 0
+      average_cycle_time: (Math.round(data.linedata[7] * 100) / 100).toFixed(2) || 0, // Replace null with 0
       ideal_cycle_time: data.linedata[8].toFixed(2) || 0, // Replace null with 0
-      oee: (data.linedata[9]*100).toFixed(1) || 0, // Replace null with 0
+      oee: (data.linedata[9] * 100).toFixed(1) || 0, // Replace null with 0
     }));
     setlinedatatable(linedatatable);
     return filteredLineData;
@@ -462,7 +464,7 @@ function Line3() {
 
   const getpartname = () => {
     for (let i = 0; i < lineparts.length; i++) {
-      if (lineparts[i].Part_ID === linepagedata[0].partrunData.part_id.replace(/j/g, '-')){
+      if (lineparts[i].Part_ID === linepagedata[0].partrunData.part_id.replace(/j/g, '-')) {
         return lineparts[i].Alternate_Part_ID;
       }
     }
@@ -484,7 +486,7 @@ function Line3() {
       setselectedline(savedSelectedLine);
     }
   }, [localStorage.getItem('selectedline')]);
-  
+
   useEffect(() => {
     // Ensure selectedline is set before fetching data
     if (selectedline) {
@@ -497,12 +499,12 @@ function Line3() {
           saveDataToLocalStorage('selectedline', selectedline)
         }
       };
-  
+
       fetchDataAndSetState();
-  
+
       // Fetch data every 10 seconds
       const interval = setInterval(fetchDataAndSetState, 10000);
-  
+
       // Clean up the interval when the component unmounts
       return () => clearInterval(interval);
     }
@@ -512,7 +514,7 @@ function Line3() {
     // This effect will run whenever linepagedata changes
     if (linepagedata.length !== 0) {
       setIsLoading(false); // Data has been loaded, set isLoading to false
-      
+
     }
   }, [linepagedata]);
 
@@ -567,8 +569,12 @@ function Line3() {
             </div>
             <div className='lineflexbox-item'>
               <p className='linetextinboxes'>Increment Count & Reject</p>
-              <p>
-                <button className='linepagebutton2' onClick={handlegoodcount}>+ Good</button>
+              <div style={{ display: 'flex', justifyContent: "space-evenly" }}>
+                <button className="goodrejectbutton" onClick={handlegoodcount}>
+                  <div className="goodrejecticon-wrapper">
+                    <FontAwesomeIcon icon={faPlus} className="goodrejecticon" />
+                  </div>
+                </button>
                 <input
                   className='linepagebutton2'
                   value={goodcount}
@@ -579,9 +585,13 @@ function Line3() {
                     }
                   }}
                 />
-              </p>
-              <p>
-                <button className='linepagebutton2' onClick={handlerejectcount}>+ Reject</button>
+              </div>
+              <div style={{ display: 'flex', justifyContent: "space-evenly" }}>
+                <button className="goodrejectbutton" onClick={handlerejectcount}>
+                  <div className="goodrejecticon-wrapper">
+                    <FontAwesomeIcon icon={faMinus} className="goodrejecticon" />
+                  </div>
+                </button>
                 <input
                   className='linepagebutton2'
                   value={rejectcount}
@@ -592,7 +602,7 @@ function Line3() {
                     }
                   }}
                 />
-              </p>
+              </div>
             </div>
             <div className='lineflexbox-item'>
               <p className='linetextinboxes'>Change Reason</p>
@@ -616,7 +626,7 @@ function Line3() {
             <div className="linetable-container">
               <ReactBootStrap.Table striped bordered hover>
                 <thead>
-                  <tr>
+                  <tr className="header-row">
                     <th>Shift</th>
                     <th>Run Time</th>
                     <th>Down Time</th>
@@ -630,7 +640,7 @@ function Line3() {
                 </thead>
                 <tbody>
                   {linedatatable.map((rowData, index) => (
-                    <tr key={index}>
+                    <tr key={index} className={index % 2 === 0 ? 'even' : 'odd'}>
                       <td>{rowData.shift}</td>
                       <td>{rowData.run_time}</td>
                       <td>{rowData.unplanned_stop_time}</td>
@@ -646,11 +656,16 @@ function Line3() {
               </ReactBootStrap.Table>
             </div>
           </div>
-          <button className='linepagebutton' onClick={() => navigate('/Tracker')}>
-            Go Back
-          </button>
         </>
       )}
+      <div style={{ display: 'flex', justifyContent: "space-evenly" }}>
+        <button className="goodreject2button" onClick={() => navigate('/Tracker')}>
+          <div className="goodreject2icon-wrapper">
+            <FontAwesomeIcon icon={faArrowLeft} className="goodreject2icon" />
+          </div>
+          <div className="goodreject2text">Go Back</div>
+        </button>
+      </div>
     </div>
   );
 }

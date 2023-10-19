@@ -1,8 +1,8 @@
 import React, { useContext, useState } from 'react';
 import '../Css/toolbar.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGear, faUser } from '@fortawesome/free-solid-svg-icons'
-import logo from '../IMAGES/jsix-brand-logo.png';
+import { faChalkboardUser, faGear, faGears, faRightFromBracket, faUser } from '@fortawesome/free-solid-svg-icons'
+import logo from '../IMAGES/jsixlogo.png';
 import { useNavigate } from 'react-router-dom';
 import { usercontext } from '../contexts/usercontext';
 
@@ -33,35 +33,34 @@ function Mainpagetoolbar() {
     })
     localStorage.removeItem('userdata');
   }
+
   return (
     <div className="toolbar">
       <div className="toolbar-left">
-        <img src={logo} className="App-logo-tracker" alt="logo" />
-        <p>
-          Vorne Board Tracker And Updater
-        </p>
+        <img src={logo} className="logo" alt="logo" />
+        <p>Vorne Main Page</p>
       </div>
-      <button className={`dropdown ${isDropdownOpen ? 'active' : ''}`} onClick={toggleDropdown}>
-        <FontAwesomeIcon icon={userdata.loggedin === 1 ? faUser : faGear} />
-      </button>
       <div className="dropdown-container">
+        <button className={`dropdown ${isDropdownOpen ? 'active' : ''}`} onClick={toggleDropdown}>
+          <FontAwesomeIcon icon={userdata.loggedin === 1 ? faUser : faChalkboardUser} />
+        </button>
         {isDropdownOpen && (
           <div className="dropdown-menu">
             {/* Dropdown menu items */}
             {userdata.loggedin === 1 ? (
               <>
-                <p onClick={() => navigate('/Account')}>Account</p>
-                <p onClick={logout}>Logout</p>
+                <p onClick={() => navigate('/Account')}> <FontAwesomeIcon icon={faGear}/> Settings</p>
+                <p onClick={logout}><FontAwesomeIcon icon={faRightFromBracket}/> Logout</p>
               </>
             ) : (
-              <p onClick={() => navigate('/Login')}>Login</p>
+              <p onClick={() => navigate('/Login')}><FontAwesomeIcon icon={faChalkboardUser}/> Login</p>
             )}
             {/* Add more menu items as needed */}
           </div>
         )}
       </div>
     </div>
-  )
+  );
 }
 
 export default Mainpagetoolbar;

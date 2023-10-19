@@ -1,15 +1,17 @@
 .userpage{
-    background-color: #282c34;
+  background: linear-gradient( #0f1626,  #262d3b);
     min-height: 100vh;
-    font-size: calc(10px + 2vmin);
+    font-size: calc(10px + 1vmin);
     color: white;
   }
 
   .userpage-flexbox-container{
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
+    justify-content:space-around;
     flex-wrap: wrap;
-  }
+}
   .userpageflexbox-item{
     width: 100%;
     min-height: 2vh;
@@ -35,8 +37,8 @@
   .userpage-checkbox{
     font-weight: bold;
     font-size: large;
-    color:black;
-    background: whitesmoke;
+    color:#0f1626;
+    background: #f5f5f5;
     width: 10%;
     font-weight: normal;
     transition: all 0.2s ease-in-out;
@@ -48,8 +50,8 @@
   .userpage-add-input{
     font-weight: bold;
     font-size: large;
-    color:black;
-    background: whitesmoke;
+    color:#0f1626;
+    background: #f5f5f5;
     padding: 15px 40px;
     border-radius: 4px;
     font-weight: normal;
@@ -59,6 +61,10 @@
     min-height: 2vh;
     padding: 14px;
     margin-top: 10px;
+  }
+  .userpage-add-input:hover{
+    color: black;
+    box-shadow: 0 5px 15px #f5f5f5;
   }
 
   .userpage-search{
@@ -84,9 +90,14 @@
     justify-content: center;
 }
 
+.userpagetable-container table {
+  width: 98%; /* Adjust the width as needed */
+  border-collapse: collapse;
+}
+
 .userpagetable-container th,
 .userpagetable-container td {
-    border: 1px solid #dee2e6;
+    border: 1px solid #f5f5f5;
     /* Border color for cells */
     padding: 5px;
     /* Adjust padding as needed */
@@ -94,26 +105,88 @@
     /* Center-align content */
     vertical-align: middle;
     /* Vertically center content */
-    box-shadow: 0 0 0 1px #dee2e6;
+    box-shadow: 0 0 0 1px #f5f5f5;
+}
+.userpagetable-container tr.even {
+  background-color: #262d3b; /* Set the background color for even rows */
+}
+
+.userpagetable-container tr.even:hover {
+  background-color: #0f1626; /* Set the background color for even rows on hover */
+}
+
+.userpagetable-container tr.odd {
+  background-color: #3e4451; /* Set the background color for odd rows */
+}
+
+.userpagetable-container tr.odd:hover {
+  background-color: #0f1626; /* Set the background color for odd rows on hover */
+}
+
+.userpagetable-container .header-row {
+  background-color: #FF533d; /* Set the background color for the header row */
+  color: #f5f5f5; /* Set the font color for the header row */
+}
+
+.userpagetable-container tr.even .userpageeditdeletebutton,
+.userpagetable-container tr.odd .userpageeditdeletebutton {
+  background-color: inherit; /* Set the background color to inherit from the row */
+  color: #f5f5f5; /* Set the font color for the buttons */
+  border: none;
+  margin: 10px;
+}
+
+.userpagetable-container tr.even .userpageeditdeletebutton:hover,
+.userpagetable-container tr.odd .userpageeditdeletebutton:hover {
+  color: #FF533d; /* Set the font color for the buttons on row hover */
 }
 
 .userpagebutton {
-    font-weight: bold;
-    font-size: large;
-    color: black;
-    background: whitesmoke;
-    padding: 15px 40px;
-    border-radius: 4px;
-    font-weight: normal;
-    text-transform: uppercase;
-    transition: all 0.2s ease-in-out;
-    width: 100%;
-    text-align: center;
+  font-size: large;
+  color: black;
+  background: #FF533d;
+  padding: 30px;
+  border-radius: 50%;
+  font-weight: normal;
+  text-transform: uppercase;
+  transition: all 0.2s ease-in-out;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.userpagebutton:hover{
+  color: black;
+  box-shadow: 0 5px 15px #f5f5f5;
 }
 
-.userpagebutton:hover {
-  color: black;
-  box-shadow: 0 5px 15px white;
+.usericon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.usericon {
+  color: #f5f5f5;
+  height: 50px;
+  width: 50px;
+}
+
+.usertext {
+  font-weight: bold;
+  font-size: medium;
+  color: #f5f5f5;
 }
 
 .userpageedit-modal {
@@ -132,39 +205,47 @@
   
   /* Styling for the modal pop-up */
   .userpageedit-popup {
-    background-color: white;
+    background-color: #AB987a;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
     position: relative;
-    color: black;
+    color: #0f1626;
     max-height: 80vh; /* Set a maximum height for the modal */
     overflow-y: auto; /* Enable vertical scrolling within the modal */
   }
+
+  .userpagemodalbutton {
+    font-weight: bold;
+    font-size: large;
+    color: #0f1626;
+    background: #f5f5f5;
+    padding: 15px 40px;
+    border-radius: 4px;
+    font-weight: normal;
+    text-transform: uppercase;
+    transition: all 0.2s ease-in-out;
+    width: 50%;
+    text-align: center;
+}
+.userpagemodalbutton:hover{
+  color: black;
+  box-shadow: 0 5px 15px #f5f5f5;
+}
 
     /* Styling for the close button (X) */
     .userpagemodal-close-button {
         position: absolute;
         top: 10px;
         right: 10px;
-        font-size: 18px;
+        font-size: 36px;
         cursor: pointer;
         background: none;
         border: none;
         outline: none;
       }
-
-      .userpageeditdeletebutton{
-        background-color: #282c34;
-        color: white;
-        border: none;
-        scale: 200%;
-        margin: 10%;
-        min-height: 2vh;
-      }
-      .userpageeditdeletebutton:hover {
-        color: white;
-        box-shadow: 0 5px 15px white;
+      .userpagemodal-close-button:hover{
+        color: #FF533d;
       }
       @media (max-width: 767px) {
         .userpagepartnumbers-search{
@@ -182,5 +263,11 @@
           font-size: 28px;
           align-self: center;
         }
-        /* Additional styles for other elements if needed */
+       
+        .userpage{
+          background-color: #0f1626;
+          min-height: 100vh;
+          font-size: 10px;
+          color: white;
+        }
       }

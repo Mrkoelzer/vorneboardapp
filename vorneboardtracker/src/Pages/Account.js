@@ -1,13 +1,15 @@
-import React, { useContext, useEffect} from 'react';
+import React, { useContext, useEffect } from 'react';
 import '../Css/account.css'
 import { useNavigate } from 'react-router-dom';
 import { usercontext } from '../contexts/usercontext';
 import Accounttoobar from '../Components/Accounttoobar';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft, faBarcode, faBoxesPacking, faCircle, faFileCirclePlus, faFilePdf, faUnlockKeyhole, faUser, faUserGear } from '@fortawesome/free-solid-svg-icons';
 
 function Account() {
     const navigate = useNavigate();
     const { userdata, setuserdata } = useContext(usercontext);
-    
+
     useEffect(() => {
         const userDataFromLocalStorage = localStorage.getItem('userdata');
         let parsedUserData;
@@ -25,28 +27,51 @@ function Account() {
     }, [setuserdata, navigate]);
     return (
         <div className="accountpage">
-                <Accounttoobar/>
+            <Accounttoobar />
+            <div className='account-container'>
                 <button className='accountbutton' onClick={() => navigate('/Users')}>
-                    Users
+                    <div className="icon-wrapper">
+                        <FontAwesomeIcon icon={faUserGear} className="icon" />
+                    </div>
+                    <div className="text">Users</div>
                 </button>
                 <button className='accountbutton' onClick={() => navigate('/Changepasswordpin')}>
-                    Change Password/Pin
+                <div className="icon-wrapper">
+                    <FontAwesomeIcon icon={faUnlockKeyhole}  className="icon" /> 
+                    </div>
+                    <div className="text">Change Password/Pin</div>
                 </button>
                 <button className='accountbutton' onClick={() => navigate('/Editlineextruder')}>
-                    Edit Lines/Extruders
+                <div className="icon-wrapper">
+                    <FontAwesomeIcon icon={faBoxesPacking}  className="icon"/>   
+                    </div>
+                    <div className="text">Edit Lines/Extruders</div>
                 </button>
                 <button className='accountbutton' onClick={() => navigate('/Addeditpartnumbers')}>
-                    Add/Edit Part Numbers
+                <div className="icon-wrapper">
+                    <FontAwesomeIcon icon={faBarcode}  className="icon"/>  
+                    </div>
+                    <div className="text">Add/Edit Part Numbers</div>
                 </button>
                 <button className='accountbutton' onClick={() => navigate('/Pdfs')}>
-                    Add/Delete PDFs
+                <div className="icon-wrapper">
+                    <FontAwesomeIcon icon={faFilePdf}  className="icon"/>   
+                    </div>
+                    <div className="text">Add/Delete PDFs</div>
                 </button>
                 <button className='accountbutton' onClick={() => navigate('/Partpdfs')}>
-                    Edit Linked PDFs
+                <div className="icon-wrapper">
+                    <FontAwesomeIcon icon={faFileCirclePlus}  className="icon"/>   
+                    </div>
+                    <div className="text">Edit Linked PDFs</div>
                 </button>
                 <button className='accountbutton' onClick={() => navigate('/')}>
-                    Go Back
+                <div className="icon-wrapper">
+                    <FontAwesomeIcon icon={faArrowLeft}  className="icon"/>   
+                    </div>
+                    <div className="text">Go Back</div>
                 </button>
+            </div>
         </div>
     );
 }

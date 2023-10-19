@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import * as ReactBootStrap from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircle } from '@fortawesome/free-solid-svg-icons';
+import { faCircle, faCircleInfo, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import '../Css/tracker.css';
 import Trackertoolbar from '../Components/Trackertoolbar';
 import { linescontext } from '../contexts/linescontext';
@@ -17,21 +17,21 @@ function Tracker() {
   const { setselectedline } = useContext(selectedlinecontext)
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true); // Add isLoading state
-  const {localipaddr} = useContext(ipaddrcontext);
+  const { localipaddr } = useContext(ipaddrcontext);
 
   const handleNavigate = (index) => {
     setselectedline(lines[index].Linename);
-      navigate('/lineeditor');
+    navigate('/lineeditor');
   };
   const saveDataToLocalStorage = (key, data) => {
     if (key === 'selectedline') {
       localStorage.setItem(key, data); // Store as a string without quotes
-    } 
+    }
   };
-     // Load data from local storage when the component mounts
-     useEffect(() => {
-      saveDataToLocalStorage('selectedline', '')
-    }, []);
+  // Load data from local storage when the component mounts
+  useEffect(() => {
+    saveDataToLocalStorage('selectedline', '')
+  }, []);
   const fetchlines = async () => {
     try {
       const response = await fetch(`http://${localipaddr}:1435/api/getlines`, {
@@ -155,7 +155,7 @@ function Tracker() {
   };
 
   useEffect(() => {
-    
+
     const fetchDataAndSetState = async () => {
       const lineData = await fetchlines();
       if (lineData) {
@@ -164,12 +164,12 @@ function Tracker() {
         setIsLoading(false); // Data has been loaded, set isLoading to false
       }
     };
-  
+
     fetchDataAndSetState();
-  
+
     // Fetch data every 10 seconds
     const interval = setInterval(fetchDataAndSetState, 10000);
-  
+
     // Clean up the interval when the component unmounts
     return () => clearInterval(interval);
   }, []);
@@ -184,17 +184,18 @@ function Tracker() {
         ) : (
           <ReactBootStrap.Table striped bordered hover>
             <thead>
-              <tr>
+              <tr className="header-row">
                 <th>X</th>
                 <th>Line Name</th>
                 <th>Part ID</th>
                 <th>Process State</th>
-                <th>More Information</th>
+                <th>Process State Reason</th>
+                <th style={{ width: '10%' }}>More Information</th>
               </tr>
             </thead>
             <tbody>
               {partruntable.map((rowData, index) => (
-                <tr key={index}>
+                <tr key={index} className={index % 2 === 0 ? 'even' : 'odd'}>
                   <td className="icon-cell">
                     {rowData.processStateDetailsData === 'Running' ? (
                       <FontAwesomeIcon icon={faCircle} style={{ color: 'green' }} />
@@ -217,17 +218,21 @@ function Tracker() {
                   <td>{rowData.linename}</td>
                   <td>{rowData.partrunData.part_id.replace(/j/g, '-')}</td>
                   <td>{rowData.processStateDetailsData}</td>
-                  <td>
-                    <button className='trackerbutton' onClick={() => handleNavigate(index)}>More</button>
-                  </td>
+                  <td>{rowData.processStateReasonData}</td>
+                  <td><p className='trackermorebutton' onClick={() => handleNavigate(index)}><FontAwesomeIcon icon={faCircleInfo} /></p></td>
                 </tr>
               ))}
             </tbody>
           </ReactBootStrap.Table>
         )}
+        <button className="trackerbutton" onClick={() => navigate('/')}>
+          <div className="trackericon-wrapper">
+            <FontAwesomeIcon icon={faArrowLeft} className="trackericon" />
+          </div>
+          <div className="trackertext">Go Back</div>
+        </button>
       </div>
-      <br/>
-      <iframe title="Rhombus Video Wall" allow="fullscreen" frameBorder="0" height="1000px" width="100%" src="https://console.rhombussystems.com/share/videowall/AjNIug9vTb-rQ5inCkrYCw"></iframe>
+      <br />
     </div>
   );
 }

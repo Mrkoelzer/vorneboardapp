@@ -6,7 +6,7 @@ import { linescontext } from '../contexts/linescontext';
 import { usercontext } from '../contexts/usercontext';
 import * as ReactBootStrap from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGear, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faGear, faCheck, faTimes, faArrowLeft, faXmark } from '@fortawesome/free-solid-svg-icons';
 import Axios from 'axios';
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
 
@@ -53,8 +53,8 @@ function Partpdfs() {
     }
     const handleEditClick = (linename, partid) => {
         setAddLineMessage('');
-        for(let i =0; i< allpartnumbers.length; i++){
-            if(linename === allpartnumbers[i].linename && partid === allpartnumbers[i].part_id){
+        for (let i = 0; i < allpartnumbers.length; i++) {
+            if (linename === allpartnumbers[i].linename && partid === allpartnumbers[i].part_id) {
                 setEditedData(allpartnumbers[i])
             }
         }
@@ -134,10 +134,10 @@ function Partpdfs() {
         }
     };
     const changelinkedpdf = async () => {
-        if(ChangeAll){
+        if (ChangeAll) {
             changelinkedpdfAll()
         }
-        else{
+        else {
             changelinkedpdfOne()
         }
     }
@@ -228,11 +228,11 @@ function Partpdfs() {
         <div className='partpdfpage'>
             <div>
                 <Toolbar />
-                <div className='partpdfs-flexbox-container'>
-                    {isLoading ? (
-                        <p>Loading...</p>
-                    ) : (
-                        <div>
+                {isLoading ? (
+                    <p>Loading...</p>
+                ) : (
+                    <div className='partpdfs-flexbox-container'>
+                        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
                             <select className='partpdfs-inputs' onChange={(e) => getselectedline(e.target.selectedIndex)}>
                                 {updatedlines.map((line, index) => (
                                     <option key={index} value={line.Linename}>
@@ -247,43 +247,49 @@ function Partpdfs() {
                                 value={searchValue}
                                 onChange={(e) => setSearchValue(e.target.value)}
                             />
-                            <div className="partpdfstable-container">
-                                <ReactBootStrap.Table striped bordered hover>
-                                    <thead>
-                                        <tr>
-                                            <th>Line</th>
-                                            <th>Part ID</th>
-                                            <th>PDF Name</th>
-                                            <th>PDF</th>
-                                            <th>Edit</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {filteredPartNumbers.map((rowData, index) => (
-                                            <tr key={index}>
-                                                <td>{rowData.linename}</td>
-                                                <td>{rowData.part_id}</td>
-                                                <td>{rowData.pdfname}</td>
-                                                <td>
-                                                    {rowData.pdfname === 'No PDF Assigned' ? (
-                                                        <FontAwesomeIcon icon={faTimes} /> // Display X if PDF is 'No PDF Assigned'
-                                                    ) : rowData.pdfname ? (
-                                                        <FontAwesomeIcon icon={faCheck} /> // Display checkmark if PDF exists
-                                                    ) : (
-                                                        'Checking...' // Display a loading message while checking
-                                                    )}
-                                                </td>
-                                                <td><button className='ppeditdeletebutton' onClick={() => handleEditClick(rowData.linename, rowData.part_id)}>
-                                                    <FontAwesomeIcon icon={faGear} />
-                                                </button></td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </ReactBootStrap.Table>
-                            </div>
                         </div>
-                    )}
-                </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                            <button className="partpdfbutton" onClick={() => navigate('/Account')}>
+                                <div className="partpdficon-wrapper">
+                                    <FontAwesomeIcon icon={faArrowLeft} className="partpdficon" />
+                                </div>
+                                <div className="partpdftext">Go Back</div>
+                            </button>
+                        </div>
+                        <div className="partpdfstable-container">
+                            <ReactBootStrap.Table striped bordered hover>
+                                <thead>
+                                    <tr className="header-row">
+                                        <th>Line</th>
+                                        <th>Part ID</th>
+                                        <th>PDF Name</th>
+                                        <th>PDF</th>
+                                        <th>Edit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {filteredPartNumbers.map((rowData, index) => (
+                                        <tr key={index} className={index % 2 === 0 ? 'even' : 'odd'}>
+                                            <td>{rowData.linename}</td>
+                                            <td>{rowData.part_id}</td>
+                                            <td>{rowData.pdfname}</td>
+                                            <td className={rowData.pdfname === 'No PDF Assigned' ? 'no-pdf' : ''}>
+                                                {rowData.pdfname === 'No PDF Assigned' ? (
+                                                    <FontAwesomeIcon icon={faTimes} /> // Display X if PDF is 'No PDF Assigned'
+                                                ) : rowData.pdfname ? (
+                                                    <FontAwesomeIcon icon={faCheck} /> // Display checkmark if PDF exists
+                                                ) : (
+                                                    'Checking...' // Display a loading message while checking
+                                                )}
+                                            </td>
+                                            <td><p className='ppeditdeletebutton' onClick={() => handleEditClick(rowData.linename, rowData.part_id)}><FontAwesomeIcon icon={faGear} /></p></td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </ReactBootStrap.Table>
+                        </div>
+                    </div>
+                )}
                 {showEditModal && (
                     <div className="ppedit-modal">
                         <div className="ppedit-popup">
@@ -297,7 +303,7 @@ function Partpdfs() {
                                 <br />
                                 Line: {editedData.linename}
                                 <select
-                                    className='partpdfs-inputs'
+                                    className='partpdfsedit-inputs'
                                     value={pdfs[selectedPdfIndex]?.pdfname}
                                     onChange={(e) => setSelectedPdfIndex(e.target.selectedIndex)}
                                 >
@@ -307,17 +313,23 @@ function Partpdfs() {
                                         </option>
                                     ))}
                                 </select>
-                            </div> 
+                            </div>
                             <input checked={ChangeAll} className="createaccount-checkbox" type="checkbox" onChange={(e) => setChangeAll(e.target.checked)} />
                             Change All Parts
-                            <br />
-                            <br />
-                            <button className="modalbutton" onClick={changelinkedpdf}>
-                                Save
-                            </button>
-                            <button className="modalbutton" onClick={closeEditModal}>
-                                Cancel
-                            </button>
+                            <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                                <button className="editlebutton" onClick={changelinkedpdf}>
+                                    <div className="editleicon-wrapper">
+                                        <FontAwesomeIcon icon={faCheck} className="editleicon" />
+                                    </div>
+                                    <div className="editletext">Save</div>
+                                </button>
+                                <button className="editlebutton" onClick={closeEditModal}>
+                                    <div className="editleicon-wrapper">
+                                        <FontAwesomeIcon icon={faXmark} className="editleicon" />
+                                    </div>
+                                    <div className="editletext">Cancel</div>
+                                </button>
+                            </div>
                             {/* Display the message */}
                         </div>
                     </div>

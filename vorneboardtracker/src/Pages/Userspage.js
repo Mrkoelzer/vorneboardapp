@@ -5,17 +5,14 @@ import { useNavigate } from 'react-router-dom';
 import { usercontext } from '../contexts/usercontext';
 import Toolbar from '../Components/Createtoolbar';
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
-import { linescontext } from '../contexts/linescontext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGear, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faCheck, faGear, faTrashCan, faUserPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 
 function Userspage() {
     const navigate = useNavigate();
     const { userdata } = useContext(usercontext);
     const [users, setusers] = useState([])
-    const [editRow, setEditRow] = useState(null);
-    const { lines, setlines } = useContext(linescontext);
     const { localipaddr } = useContext(ipaddrcontext);
     const [editedData, setEditedData] = useState({
         userid: 0,
@@ -209,13 +206,13 @@ function Userspage() {
             return
         }
         const updatedData = { ...editedData };
-            for (const key in updatedData) {
-                if (typeof updatedData[key] === 'boolean') {
-                    updatedData[key] = updatedData[key] ? 1 : 0;
-                }
+        for (const key in updatedData) {
+            if (typeof updatedData[key] === 'boolean') {
+                updatedData[key] = updatedData[key] ? 1 : 0;
             }
+        }
         if (updatedData.admin === 0
-            && updatedData.superadmin === 0 
+            && updatedData.superadmin === 0
             && updatedData.guest === 0) {
             setAddLineMessage('Access Needs to Be Set')
             return
@@ -332,44 +329,43 @@ function Userspage() {
     return (
         <div className="userpage">
             <Toolbar />
-            <br />
             <div className="userpagetable-container">
-                <div style={{ display: 'flex', gap: '10px', width: '70%' }}>
+                <div style={{ display: 'flex' }}>
                     <button className="userpagebutton" onClick={handleAddClick}>
-                        Add
+                        <div className="usericon-wrapper">
+                            <FontAwesomeIcon icon={faUserPlus} className="usericon" />
+                        </div>
+                        <div className="usertext">Add</div>
                     </button>
                     <button className="userpagebutton" onClick={() => navigate('/Account')}>
-                        Go Back
+                        <div className="usericon-wrapper">
+                            <FontAwesomeIcon icon={faArrowLeft} className="usericon" />
+                        </div>
+                        <div className="usertext">Go Back</div>
                     </button>
                 </div>
                 <ReactBootStrap.Table striped bordered hover>
                     <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Admin</th>
-                            <th>Super Admin</th>
-                            <th>Password Change</th>
-                            <th>Pin Change</th>
-                            <th>Edit</th>
-                            <th>Delete</th>
+                        <tr className="header-row">
+                            <th style={{ width: '20%' }}>Name</th>
+                            <th style={{ width: '5%' }}>Admin</th>
+                            <th style={{ width: '8%' }}>Super Admin</th>
+                            <th style={{ width: '10%' }}>Password Change</th>
+                            <th style={{ width: '10%' }}>Pin Change</th>
+                            <th style={{ width: '3%' }}>Edit</th>
+                            <th style={{ width: '3%' }}>Delete</th>
                         </tr>
                     </thead>
                     <tbody>
                         {users.map((rowData, index) => (
-                            <tr key={index}>
+                            <tr key={index} className={index % 2 === 0 ? 'even' : 'odd'}>
                                 <td>{rowData.first_name} {rowData.last_name}</td>
                                 <td>{getvalues(rowData.admin)}</td>
                                 <td>{getvalues(rowData.superadmin)}</td>
                                 <td>{getvalues(rowData.passwordchange)}</td>
                                 <td>{getvalues(rowData.pinchange)}</td>
-                                <td><button className='userpageeditdeletebutton' onClick={() => handleEditClick(index, rowData.Part_ID)}>
-                                    <FontAwesomeIcon icon={faGear} />
-                                </button></td>
-                                <td>
-                                    <button className="userpageeditdeletebutton" onClick={() => handledeleteClick(index)}>
-                                        <FontAwesomeIcon icon={faTrashCan} />
-                                    </button>
-                                </td>
+                                <td><p className='userpageeditdeletebutton' onClick={() => handleEditClick(index, rowData.Part_ID)}><FontAwesomeIcon icon={faGear} /></p></td>
+                                <td><p className='userpageeditdeletebutton' onClick={() => handledeleteClick(index)}><FontAwesomeIcon icon={faTrashCan} /></p></td>
                             </tr>
                         ))}
                     </tbody>
@@ -489,12 +485,20 @@ function Userspage() {
                             />
                         </div>
                         <br />
-                        <button className="modalbutton" onClick={checkaddline}>
-                            Save
-                        </button>
-                        <button className="modalbutton" onClick={closeAddModal}>
-                            Cancel
-                        </button>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <button className="userpagebutton" onClick={checkaddline}>
+                                <div className="usericon-wrapper">
+                                    <FontAwesomeIcon icon={faCheck} className="usericon" />
+                                </div>
+                                <div className="usertext">Save</div>
+                            </button>
+                            <button className="userpagebutton" onClick={closeAddModal}>
+                                <div className="usericon-wrapper">
+                                    <FontAwesomeIcon icon={faXmark} className="usericon" />
+                                </div>
+                                <div className="usertext">Cancel</div>
+                            </button>
+                        </div>
                         {/* Display the message */}
                     </div>
                 </div>
@@ -613,12 +617,21 @@ function Userspage() {
                             />
                         </div>
                         <br />
-                        <button className="modalbutton" onClick={checkeditline}>
-                            Save
-                        </button>
-                        <button className="modalbutton" onClick={closeEditModal}>
-                            Cancel
-                        </button>
+                        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                            <button className="userpagebutton" onClick={checkeditline}>
+                                <div className="usericon-wrapper">
+                                    <FontAwesomeIcon icon={faCheck} className="usericon" />
+                                </div>
+                                <div className="usertext">Save</div>
+                            </button>
+                            <button className="userpagebutton" onClick={closeEditModal}>
+                                <div className="usericon-wrapper">
+                                    <FontAwesomeIcon icon={faXmark} className="usericon" />
+                                </div>
+                                <div className="usertext">Cancel</div>
+                            </button>
+                        </div>
+
                         {/* Display the message */}
                     </div>
                 </div>
