@@ -37,7 +37,7 @@ function AddeditpartsToobar() {
       <div className="toolbar">
         <div className="toolbar-left">
           <img src={logo} className="logo" alt="logo" />
-          <p>Edit Part Numbers</p>
+          <p>Edit Linked PDFs</p>
         </div>
         <div className="dropdown-container">
           <button className={`dropdown ${isDropdownOpen ? 'active' : ''}`} onClick={toggleDropdown}>

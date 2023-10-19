@@ -7,7 +7,7 @@ import Changepin from '../Components/Changepin'
 import { usercontext } from '../contexts/usercontext';
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBraille, faUserLock, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faBraille, faUserLock, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 function Changepasswordpin() {
   const navigate = useNavigate();
@@ -165,13 +165,21 @@ function Changepasswordpin() {
           </>
         )}
         <br />
-        <br />
         <div className='changepasspinflexbox-item'>
           <button className='changepasspinbutton' onClick={togglePopup2}>
             <div className="changepasspinbuttonicon-wrapper">
               <FontAwesomeIcon icon={faBraille} className="changepasspinbuttonicon" />
             </div>
             <div className="changepasspinbuttontext">Change Pin</div>
+          </button>
+        </div>
+        <br />
+        <div className='changepasspinflexbox-item'>
+          <button className='changepasspinbutton' onClick={() => navigate('/Account')}>
+            <div className="changepasspinbuttonicon-wrapper">
+              <FontAwesomeIcon icon={faArrowLeft} className="changepasspinbuttonicon" />
+            </div>
+            <div className="changepasspinbuttontext">Go Back</div>
           </button>
         </div>
         {isPopupOpen2 && (

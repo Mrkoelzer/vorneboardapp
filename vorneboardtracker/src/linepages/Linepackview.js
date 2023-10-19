@@ -10,18 +10,20 @@ import { selectedlinecontext } from '../contexts/selectedlinecontext';
 import { partnumbercontext } from '../contexts/partnumbercontext';
 import { linescontext } from '../contexts/linescontext';
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBone, faDownLong, faGear, faHillRockslide, faMugSaucer, faPlay, faRoadBarrier, faScrewdriver, faScrewdriverWrench, faSliders, faStop, faUserSlash, faUsersSlash, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 function Line3packview() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isPopupOpen2, setIsPopupOpen2] = useState(false);
   const { selectedline, setselectedline } = useContext(selectedlinecontext);
-  const [processstate, setprocessstate]= useState('No Orders')
+  const [processstate, setprocessstate] = useState('No Orders')
   const { lines } = useContext(linescontext);
   const [ip, setip] = useState('');
   //const [partnumber, setpartnumber] = useContext(partnumbercontext)
   const [partinfo, setpartinfo] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const {localipaddr} = useContext(ipaddrcontext);
+  const { localipaddr } = useContext(ipaddrcontext);
   const navigate = useNavigate();
 
   const togglePopup = () => {
@@ -77,7 +79,7 @@ function Line3packview() {
     if (selectedEndpointIdentifier) {
       // Map the endpoint identifier to the full URL
       const selectedEndpoint = `http://${localipaddr}:1433/${selectedEndpointIdentifier}`;
-  
+
       // Construct requestData based on the selected action
       let requestData;
       if (selectedAction === 'action1') {
@@ -87,10 +89,10 @@ function Line3packview() {
       } else if (selectedAction === 'action3') {
         requestData = { value: "changeover" }; // Do not include ipaddress here
       }
-  
+
       // Add ipaddress to the requestData
       requestData.ipaddress = ipaddress;
-  
+
       // Make the API call based on selected action and row
       await Axios.post(selectedEndpoint, requestData)
         .then((response) => {
@@ -101,32 +103,32 @@ function Line3packview() {
         });
     }
   };
-  
+
   const handleBreakSelect = async () => {
     let ipaddress = ip
-      // Map the endpoint identifier to the full URL
-      const selectedEndpoint = `http://${localipaddr}:1433/updatebreak`;
-  
-      // Construct requestData based on the selected action
-      let requestData = {
-        enabled: true,
-        reason: "break"
-      } // Do not include ipaddress here
-  
-      // Add ipaddress to the requestData
-      requestData.ipaddress = ipaddress;
-  
-      // Make the API call based on selected action and row
-      await Axios.post(selectedEndpoint, requestData)
-        .then((response) => {
-          console.log('API call success:', response.data);
-        })
-        .catch((error) => {
-          console.error('API call error:', error);
-        });
+    // Map the endpoint identifier to the full URL
+    const selectedEndpoint = `http://${localipaddr}:1433/updatebreak`;
+
+    // Construct requestData based on the selected action
+    let requestData = {
+      enabled: true,
+      reason: "break"
+    } // Do not include ipaddress here
+
+    // Add ipaddress to the requestData
+    requestData.ipaddress = ipaddress;
+
+    // Make the API call based on selected action and row
+    await Axios.post(selectedEndpoint, requestData)
+      .then((response) => {
+        console.log('API call success:', response.data);
+      })
+      .catch((error) => {
+        console.error('API call error:', error);
+      });
   };
 
-  const handlereasonSelect = async(selectedAction) => {
+  const handlereasonSelect = async (selectedAction) => {
     // Map the endpoint identifier to the full URL
     const selectedEndpoint = `http://${localipaddr}:1433/updateprocessstatereason`;
     let ipaddress = ip;
@@ -174,11 +176,11 @@ function Line3packview() {
       };
     }
     else if (selectedAction === 'action7') {
-        return
+      return
     }
 
     // Make the API call based on selected action and row
-   await Axios.post(selectedEndpoint, requestData)
+    await Axios.post(selectedEndpoint, requestData)
       .then((response) => {
         console.log('API call success:', response.data);
       })
@@ -232,24 +234,24 @@ function Line3packview() {
     }
   };
 
-   // Load data from local storage when the component mounts
-   useEffect(() => {
+  // Load data from local storage when the component mounts
+  useEffect(() => {
     const savedPartInfo = localStorage.getItem('partInfo');
     if (savedPartInfo) {
       const parsedPartInfo = JSON.parse(savedPartInfo);
       setpartinfo(parsedPartInfo);
     }
-  
+
     const savedProcessState = localStorage.getItem('processState');
     if (savedProcessState) {
       setprocessstate(savedProcessState);
     }
-  
+
     const savedSelectedLine = localStorage.getItem('selectedline');
     if (savedSelectedLine) {
       setselectedline(savedSelectedLine);
     }
-  
+
     setIsLoading(false);
   }, []);
 
@@ -299,11 +301,11 @@ function Line3packview() {
 
   // Watch for changes in partinfo[0].partrunData.part_id
   useEffect(() => {
-    if(partinfo.length !== 0){
+    if (partinfo.length !== 0) {
       if (partinfo[0].partrunData.part_id !== currentPartId) {
         // Update the currentPartId state
         setCurrentPartId(partinfo[0].partrunData.part_id);
-  
+
         // Reload the page
         //window.location.reload();
       }
@@ -326,52 +328,114 @@ function Line3packview() {
           </div>
           <br />
           <div className='buttonlayout'>
-            <button className='pdfbuttonsstartprod' onClick={() => handleproductionSelect('action2')}>Start Product</button>
-            <button className='pdfbuttonsnoorders' onClick={() => handleproductionSelect('action1')}>No Orders</button>
-            <button className='pdfbuttonsbreak' onClick={() => handleBreakSelect()}>Break</button>
-            <button className='pdfbuttonsdown' onClick={togglePopup}
+            <button className="pdfbuttonsstartprod" onClick={() => handleproductionSelect('action2')}>
+              <div className="pdficon-wrapper">
+                <FontAwesomeIcon icon={faPlay} className="pdficon" />
+              </div>
+              <div className="pdftext">Start Product</div>
+            </button>
+            <button className="pdfbuttonsnoorders" onClick={() => handleproductionSelect('action1')}>
+              <div className="pdficon-wrapper">
+                <FontAwesomeIcon icon={faStop} className="pdficon" />
+              </div>
+              <div className="pdftext">No Orders</div>
+            </button>
+            <button className="pdfbuttonsbreak" onClick={() => handleBreakSelect()}>
+              <div className="pdficon-wrapper">
+                <FontAwesomeIcon icon={faMugSaucer} className="pdficon" />
+              </div>
+              <div className="pdftext">Break</div>
+            </button>
+            <button className="pdfbuttonsdown" onClick={togglePopup}
             disabled={processstate === "Running Normally" || processstate === "No Orders" || processstate === "Lunch" || processstate === "Break"}
             >
-              Down Reasons
+              <div className="pdficon-wrapper">
+                <FontAwesomeIcon icon={faDownLong} className="pdficon" />
+              </div>
+              <div className="pdftext">Down Reasons</div>
             </button>
           </div>
           <div className='pdftextnotif'>
             {partinfo[0] && partinfo[0].partrunData ? (
               <>
                 {partinfo[0].partrunData.part_id.replace(/j/g, '-')} | {processstate}
-                <button className='pdfbuttonsetup' onClick={togglePopup2}>
-                  Setup
-                </button>
+                <button className="pdfbuttons" onClick={togglePopup2}>
+              <div className="pdf2icon-wrapper">
+                <FontAwesomeIcon icon={faGear} className="pdf2icon" />
+              </div>
+              <div className="pdf2text">Setup</div>
+            </button>
               </>
             ) : (
               <p>No part data available.</p>
             )}
           </div>
           {isPopupOpen && (
-                <div className='popup'>
-                  <div className='popup-content'>
-                    <button className='popup-close' onClick={togglePopup}>
-                      X
-                    </button>
-                    <button className='popup-button' onClick={() => handlereasonSelect('action1')}>Adjustment</button>
-                    <button className='popup-button' onClick={() => handlereasonSelect('action2')}>Maintenance</button>
-                    <button className='popup-button' onClick={() => handlereasonSelect('action3')}>Breakdown</button>
-                    <button className='popup-button' onClick={() => handlereasonSelect('action4')}>Jam</button>
-                    <button className='popup-button' onClick={() => handlereasonSelect('action5')}>No Material</button>
-                    <button className='popup-button' onClick={() => handlereasonSelect('action6')}>No Operator</button>
+            <div className='popup'>
+              <div className='popup-content'>
+                <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
+              <button className="popup-button"  onClick={togglePopup}>
+                  <div className="pdficon-wrapper">
+                    <FontAwesomeIcon icon={faXmark} className="pdficon" />
                   </div>
+                  <div className="pdftext">Close</div>
+                </button>
+
+
                 </div>
-              )}
+                <div style={{width: '100%', display: 'flex', justifyContent: 'space-evenly'}}>
+                <button className="popup-button" onClick={() => handlereasonSelect('action1')}>
+                  <div className="pdficon-wrapper">
+                    <FontAwesomeIcon icon={faSliders} className="pdficon" />
+                  </div>
+                  <div className="pdftext">Adjustment</div>
+                </button>
+                <button className="popup-button" onClick={() => handlereasonSelect('action2')}>
+                  <div className="pdficon-wrapper">
+                    <FontAwesomeIcon icon={faScrewdriverWrench} className="pdficon" />
+                  </div>
+                  <div className="pdftext">Maintenance</div>
+                </button>
+                <button className="popup-button" onClick={() => handlereasonSelect('action3')}>
+                  <div className="pdficon-wrapper">
+                    <FontAwesomeIcon icon={faHillRockslide} className="pdficon" />
+                  </div>
+                  <div className="pdftext">Breakdown</div>
+                </button>
+                </div>
+
+
+                <button className="popup-button" onClick={() => handlereasonSelect('action4')}>
+                  <div className="pdficon-wrapper">
+                    <FontAwesomeIcon icon={faRoadBarrier} className="pdficon" />
+                  </div>
+                  <div className="pdftext">Jam</div>
+                </button>
+                <button className="popup-button" onClick={() => handlereasonSelect('action5')}>
+                  <div className="pdficon-wrapper">
+                    <FontAwesomeIcon icon={faBone} className="pdficon" />
+                  </div>
+                  <div className="pdftext">No Material</div>
+                </button>
+                <button className="popup-button" onClick={() => handlereasonSelect('action6')}>
+                  <div className="pdficon-wrapper">
+                    <FontAwesomeIcon icon={faUsersSlash} className="pdficon" />
+                  </div>
+                  <div className="pdftext">No Operator</div>
+                </button>
+              </div>
+              </div>
+          )}
           {isPopupOpen2 && (
-                <div className='popup-form'>
-                  <div className='popup-form-content'>
-                    <button className='popup-close2' onClick={togglePopup2}>
-                      X
-                    </button>
-                    <Pin />
-                  </div>
-                </div>
-              )}
+            <div className='popup-form'>
+              <div className='popup-form-content'>
+                <button className='popup-close2' onClick={togglePopup2}>
+                  X
+                </button>
+                <Pin />
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

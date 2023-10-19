@@ -590,13 +590,15 @@ function Addeditpartnumbers() {
                                         <td>{rowData.Start_with_Changeover}</td>
                                         <td><p className='aeeditdeletebutton' onClick={() => handleEditClick(index, rowData.Part_ID)}><FontAwesomeIcon icon={faGear} /></p></td>
                                         <td><p className='aeeditdeletebutton' onClick={() => handledelete(rowData.Part_ID)}><FontAwesomeIcon icon={faTrashCan} /></p></td>
-                                        <td>
-                                            {checkpdf(rowData.Part_ID) ? ( // Check if PDF exists
-                                                <FontAwesomeIcon icon={faCheck} /> // Display checkmark if PDF exists
-                                            ) : (
-                                                <FontAwesomeIcon icon={faTimes} /> // Display X if PDF does not exist
-                                            )}
-                                        </td>
+                                        <td className={rowData.pdfname === 'No PDF Assigned' ? 'no-pdf' : ''}>
+                                                {rowData.pdfname === 'No PDF Assigned' ? (
+                                                    <FontAwesomeIcon icon={faTimes} /> // Display X if PDF is 'No PDF Assigned'
+                                                ) : rowData.pdfname ? (
+                                                    <FontAwesomeIcon icon={faCheck} /> // Display checkmark if PDF exists
+                                                ) : (
+                                                    'Checking...' // Display a loading message while checking
+                                                )}
+                                            </td>
                                     </tr>
                                 ))}
                             </tbody>

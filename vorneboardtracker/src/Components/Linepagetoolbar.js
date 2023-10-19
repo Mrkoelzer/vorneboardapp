@@ -1,13 +1,14 @@
 import React, { useContext, useState } from 'react';
 import '../Css/toolbar.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircle, faBars } from '@fortawesome/free-solid-svg-icons'
-import logo from '../IMAGES/jsix-brand-logo.png';
+import { faCircle, faGear, faHouse, faRightFromBracket, faUser, faChalkboardUser, faMagnifyingGlassChart } from '@fortawesome/free-solid-svg-icons'
+import logo from '../IMAGES/jsixlogo.png';
 import { partruncontext } from '../contexts/partruncontext';
 import { useNavigate } from 'react-router-dom';
+import { usercontext } from '../contexts/usercontext';
 
 function Linepagetoolbar({line}) {
-
+    const { userdata, setuserdata } = useContext(usercontext);
     const { partruntable } = useContext(partruncontext);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const navigate = useNavigate();
@@ -15,11 +16,30 @@ function Linepagetoolbar({line}) {
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
       };
+      const logout = () => {
+        setuserdata({
+          userid: 0,
+          username: '',
+          password: '',
+          first_name: '',
+          last_name: '',
+          pin: '',
+          email: '',
+          admin: false,
+          superadmin: false,
+          guest: false,
+          passwordchange: false,
+          pinchange: false,
+          loggedin: 0
+        })
+        localStorage.removeItem('userdata');
+        navigate('/')
+      }
     return (
         <div className="toolbar">
             <div className="toolbar-left">
-                <img src={logo} className="App-logo-tracker" alt="logo" />
-                <p>Vorne Board {line[0].linename} Editor</p>
+                <img src={logo} className="logo" alt="logo" />
+                <p>Vorne {line[0].linename}</p>
                 <p className="icon-cell-line">
                     {line[0].processStateDetailsData === 'Running' ? (
                         <FontAwesomeIcon icon={faCircle} style={{ color: 'green' }} />
@@ -40,20 +60,30 @@ function Linepagetoolbar({line}) {
                     )}</p>
                 <p>{line[0].processStateDetailsData}</p>
             </div>
-            <button className={`dropdown ${isDropdownOpen ? 'active' : ''}`} onClick={toggleDropdown}>
-                <FontAwesomeIcon icon={faBars} />
-            </button>
             <div className="dropdown-container">
-                {isDropdownOpen && (
-                    <div className="dropdown-menu">
-                        {/* Dropdown menu items */}
-                        <p onClick={() => navigate('/')}>Home</p>
-                        <p onClick={() => navigate('/Tracker')}>Tracker</p>
-                        <p onClick={() => navigate('/Updater')}>Updater</p>
-                        {/* Add more menu items as needed */}
-                    </div>
-                )}
+          <button className={`dropdown ${isDropdownOpen ? 'active' : ''}`} onClick={toggleDropdown}>
+            <FontAwesomeIcon icon={userdata.loggedin === 1 ? faUser : faChalkboardUser} />
+          </button>
+          {isDropdownOpen && (
+            <div className="dropdown-menu">
+              {/* Dropdown menu items */}
+              {userdata.loggedin === 1 ? (
+              <>
+              <p onClick={() => navigate('/')}><FontAwesomeIcon icon={faHouse}/> Home</p>
+              <p onClick={() => navigate('/Tracker')}> <FontAwesomeIcon icon={faMagnifyingGlassChart}/> Tracker</p>
+              <p onClick={() => navigate('/Account')}> <FontAwesomeIcon icon={faGear}/> Settings</p>
+              <p onClick={logout}><FontAwesomeIcon icon={faRightFromBracket}/> Logout</p>
+              </>
+            ) : (
+              <>
+              <p onClick={() => navigate('/')}><FontAwesomeIcon icon={faHouse}/> Home</p>
+              <p onClick={() => navigate('/Tracker')}> <FontAwesomeIcon icon={faMagnifyingGlassChart}/> Tracker</p>
+              <p onClick={() => navigate('/Login')}><FontAwesomeIcon icon={faChalkboardUser}/> Login</p>
+              </>
+              )}
             </div>
+          )}
+        </div>
         </div>
     )
 }

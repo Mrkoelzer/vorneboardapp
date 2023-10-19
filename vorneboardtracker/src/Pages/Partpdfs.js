@@ -6,7 +6,7 @@ import { linescontext } from '../contexts/linescontext';
 import { usercontext } from '../contexts/usercontext';
 import * as ReactBootStrap from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGear, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faGear, faCheck, faTimes, faArrowLeft, faXmark } from '@fortawesome/free-solid-svg-icons';
 import Axios from 'axios';
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
 
@@ -248,8 +248,15 @@ function Partpdfs() {
                                 onChange={(e) => setSearchValue(e.target.value)}
                             />
                         </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                            <button className="partpdfbutton" onClick={() => navigate('/Account')}>
+                                <div className="partpdficon-wrapper">
+                                    <FontAwesomeIcon icon={faArrowLeft} className="partpdficon" />
+                                </div>
+                                <div className="partpdftext">Go Back</div>
+                            </button>
+                        </div>
                         <div className="partpdfstable-container">
-                            <br />
                             <ReactBootStrap.Table striped bordered hover>
                                 <thead>
                                     <tr className="header-row">
@@ -266,7 +273,7 @@ function Partpdfs() {
                                             <td>{rowData.linename}</td>
                                             <td>{rowData.part_id}</td>
                                             <td>{rowData.pdfname}</td>
-                                            <td>
+                                            <td className={rowData.pdfname === 'No PDF Assigned' ? 'no-pdf' : ''}>
                                                 {rowData.pdfname === 'No PDF Assigned' ? (
                                                     <FontAwesomeIcon icon={faTimes} /> // Display X if PDF is 'No PDF Assigned'
                                                 ) : rowData.pdfname ? (
@@ -296,7 +303,7 @@ function Partpdfs() {
                                 <br />
                                 Line: {editedData.linename}
                                 <select
-                                    className='partpdfs-inputs'
+                                    className='partpdfsedit-inputs'
                                     value={pdfs[selectedPdfIndex]?.pdfname}
                                     onChange={(e) => setSelectedPdfIndex(e.target.selectedIndex)}
                                 >
@@ -309,14 +316,20 @@ function Partpdfs() {
                             </div>
                             <input checked={ChangeAll} className="createaccount-checkbox" type="checkbox" onChange={(e) => setChangeAll(e.target.checked)} />
                             Change All Parts
-                            <br />
-                            <br />
-                            <button className="modalbutton" onClick={changelinkedpdf}>
-                                Save
-                            </button>
-                            <button className="modalbutton" onClick={closeEditModal}>
-                                Cancel
-                            </button>
+                            <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                                <button className="editlebutton" onClick={changelinkedpdf}>
+                                    <div className="editleicon-wrapper">
+                                        <FontAwesomeIcon icon={faCheck} className="editleicon" />
+                                    </div>
+                                    <div className="editletext">Save</div>
+                                </button>
+                                <button className="editlebutton" onClick={closeEditModal}>
+                                    <div className="editleicon-wrapper">
+                                        <FontAwesomeIcon icon={faXmark} className="editleicon" />
+                                    </div>
+                                    <div className="editletext">Cancel</div>
+                                </button>
+                            </div>
                             {/* Display the message */}
                         </div>
                     </div>

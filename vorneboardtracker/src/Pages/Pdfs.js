@@ -175,7 +175,7 @@ function Pdfs() {
                         </button>
                     </div>
                 <input
-                    className='partpdfs-search'
+                    className='pdfs-search'
                     type="text"
                     placeholder="Search..."
                     value={searchValue}

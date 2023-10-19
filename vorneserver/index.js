@@ -850,7 +850,10 @@ appSql.get('/api/getlinepartnumbers', async (req, res) => {
     const pool = await sql.connect(config);
     const request = pool.request(); // Create a request object from the connection pool
 
-    const query = `select * from [${linename}] order by Part_id`;
+    const query = `select [${linename}].*, partpdf.pdfname from [${linename}] 
+    inner join partpdf on [${linename}].Part_ID = partpdf.part_id
+     where partpdf.linename= '${linename}' 
+     order by [${linename}].Part_ID`;
     const result = await request.query(query);
 
     if (result) {
