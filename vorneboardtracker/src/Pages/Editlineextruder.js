@@ -12,7 +12,7 @@ import { faGear, faTrashCan, faCheck, faXmark, faArrowLeft, faPlus } from '@fort
 
 function Editlineextruder() {
   const navigate = useNavigate();
-  const { userdata } = useContext(usercontext);
+  const { userdata, setuserdata } = useContext(usercontext);
   const { lines, setlines } = useContext(linescontext);
   const [editRow, setEditRow] = useState(null);
   const { localipaddr } = useContext(ipaddrcontext);
@@ -31,6 +31,22 @@ function Editlineextruder() {
     extruder: 0,
   });
   const [addLineMessage, setAddLineMessage] = useState('');
+
+  useEffect(() => {
+    const userDataFromLocalStorage = localStorage.getItem('userdata');
+    let parsedUserData;
+    if (userDataFromLocalStorage) {
+        parsedUserData = JSON.parse(userDataFromLocalStorage);
+        setuserdata(parsedUserData);
+    }
+    if ((userdata && userdata.loggedin === 1) || (parsedUserData && parsedUserData.loggedin === 1)) {
+        if ((userdata && userdata.passwordchange === 1) || (parsedUserData && parsedUserData.pinchange === 1)) {
+            navigate('/Changepasswordpin');
+        }
+    } else {
+        navigate('/');
+    }
+}, [setuserdata, navigate]);
 
   const fetchlines = async () => {
     try {

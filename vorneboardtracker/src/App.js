@@ -13,6 +13,8 @@ import Createaccount from './Pages/Createaccount';
 import Editlineextruder from './Pages/Editlineextruder'
 import Addeditpartnumbers from './Pages/Addeditpartnumbers';
 import Changepasswordpin from './Pages/Changepasswordpin'
+import Livecameraviews from './Pages/Livecameraviews';
+import Selecttablet from './Pages/Selecttablet';
 import Pdfs from './Pages/Pdfs';
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { partruncontext } from './contexts/partruncontext';
@@ -136,6 +138,8 @@ function App() {
                 <Route path="/Users" element={<Userspage/>}/>
                 <Route path="/Partpdfs" element={<Partpdfs/>}/>
                 <Route path="/Pdfs" element={<Pdfs/>}/>
+                <Route path="/Livecameraviews" element={<Livecameraviews/>}/>
+                <Route path="/Selecttablet" element={<Selecttablet/>}/>
               </Routes>
               </ipaddrcontext.Provider>
               </usercontext.Provider>

@@ -11,13 +11,29 @@ import { faGear, faTrashCan, faXmark, faArrowLeft, faCheck, faFilePdf } from '@f
 
 function Pdfs() {
     const navigate = useNavigate();
-    const { userdata } = useContext(usercontext);
+    const { userdata, setuserdata } = useContext(usercontext);
     const [pdfs, setpdfs] = useState([]);
     const [searchValue, setSearchValue] = useState("");
     const { localipaddr } = useContext(ipaddrcontext);
     const [selectedFile, setSelectedFile] = useState(null);
     const [showAddModal, setShowAddModal] = useState(false); // State for showing/hiding the add modal
     const [addLineMessage, setAddLineMessage] = useState('');
+
+    useEffect(() => {
+        const userDataFromLocalStorage = localStorage.getItem('userdata');
+        let parsedUserData;
+        if (userDataFromLocalStorage) {
+            parsedUserData = JSON.parse(userDataFromLocalStorage);
+            setuserdata(parsedUserData);
+        }
+        if ((userdata && userdata.loggedin === 1) || (parsedUserData && parsedUserData.loggedin === 1)) {
+            if ((userdata && userdata.passwordchange === 1) || (parsedUserData && parsedUserData.pinchange === 1)) {
+                navigate('/Changepasswordpin');
+            }
+        } else {
+            navigate('/');
+        }
+    }, [setuserdata, navigate]);
 
     const fetchpdfs = async () => {
         try {

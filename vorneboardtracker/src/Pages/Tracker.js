@@ -4,12 +4,13 @@ import React, { useContext, useEffect, useState } from 'react';
 import * as ReactBootStrap from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircle, faCircleInfo, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faCircle, faCircleInfo, faArrowLeft, faVideo } from '@fortawesome/free-solid-svg-icons';
 import '../Css/tracker.css';
 import Trackertoolbar from '../Components/Trackertoolbar';
 import { linescontext } from '../contexts/linescontext';
 import { selectedlinecontext } from '../contexts/selectedlinecontext';
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
+import { usercontext } from '../contexts/usercontext';
 
 function Tracker() {
   const { partruntable, setpartruntable } = useContext(partruncontext);
@@ -18,6 +19,7 @@ function Tracker() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true); // Add isLoading state
   const { localipaddr } = useContext(ipaddrcontext);
+  const { userdata, setuserdata } = useContext(usercontext);
 
   const handleNavigate = (index) => {
     setselectedline(lines[index].Linename);
@@ -28,6 +30,21 @@ function Tracker() {
       localStorage.setItem(key, data); // Store as a string without quotes
     }
   };
+  useEffect(() => {
+    const userDataFromLocalStorage = localStorage.getItem('userdata');
+    let parsedUserData;
+    if (userDataFromLocalStorage) {
+        parsedUserData = JSON.parse(userDataFromLocalStorage);
+        setuserdata(parsedUserData);
+    }
+    if ((userdata && userdata.loggedin === 1) || (parsedUserData && parsedUserData.loggedin === 1)) {
+        if ((userdata && userdata.passwordchange === 1) || (parsedUserData && parsedUserData.pinchange === 1)) {
+            navigate('/Changepasswordpin');
+        }
+    } else {
+        navigate('/');
+    }
+}, [setuserdata, navigate]);
   // Load data from local storage when the component mounts
   useEffect(() => {
     saveDataToLocalStorage('selectedline', '')
@@ -225,12 +242,20 @@ function Tracker() {
             </tbody>
           </ReactBootStrap.Table>
         )}
+        <div style={{ display: 'flex', alignSelf: 'center' }}>
+          <button className="trackerbutton" onClick={() => navigate('/Livecameraviews')}>
+          <div className="trackericon-wrapper">
+            <FontAwesomeIcon icon={faVideo} className="trackericon" />
+          </div>
+          <div className="trackertext">Live Views</div>
+        </button>
         <button className="trackerbutton" onClick={() => navigate('/')}>
           <div className="trackericon-wrapper">
             <FontAwesomeIcon icon={faArrowLeft} className="trackericon" />
           </div>
           <div className="trackertext">Go Back</div>
         </button>
+        </div>
       </div>
       <br />
     </div>
