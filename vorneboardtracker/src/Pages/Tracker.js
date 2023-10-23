@@ -31,7 +31,7 @@ function Tracker() {
     }
   };
   useEffect(() => {
-    const userDataFromLocalStorage = localStorage.getItem('userdata');
+    const userDataFromLocalStorage = sessionStorage.getItem('userdata');
     let parsedUserData;
     if (userDataFromLocalStorage) {
         parsedUserData = JSON.parse(userDataFromLocalStorage);

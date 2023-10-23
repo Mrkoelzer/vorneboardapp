@@ -5,13 +5,30 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import Trackertoolbar from '../Components/Selecttablettoolbar';
 import { linescontext } from '../contexts/linescontext';
-
+import { usercontext } from '../contexts/usercontext';
 
 function Selecttablet() {
   const navigate = useNavigate();
   const { lines } = useContext(linescontext);
   const [currentline, setcurrentline] = useState(localStorage.getItem('selectedtabletline') || '');
   const [message, setMessage] = useState('');
+  const { userdata, setuserdata } = useContext(usercontext);
+
+  useEffect(() => {
+    const userDataFromLocalStorage = sessionStorage.getItem('userdata');
+    let parsedUserData;
+    if (userDataFromLocalStorage) {
+        parsedUserData = JSON.parse(userDataFromLocalStorage);
+        setuserdata(parsedUserData);
+    }
+    if ((userdata && userdata.loggedin === 1) || (parsedUserData && parsedUserData.loggedin === 1)) {
+        if ((userdata && userdata.passwordchange === 1) || (parsedUserData && parsedUserData.pinchange === 1)) {
+            navigate('/Changepasswordpin');
+        }
+    } else {
+        navigate('/');
+    }
+}, [setuserdata, navigate]);
 
   const handleSelectedTabletLine = (line) => {
     setcurrentline(line);

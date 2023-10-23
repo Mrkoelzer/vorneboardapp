@@ -102,7 +102,8 @@ function App() {
   }])
 
   const getuserdata = async () => {
-    const userDataFromLocalStorage = localStorage.getItem('userdata');
+    const userDataFromLocalStorage = sessionStorage.getItem('userdata');
+    localStorage.removeItem('userdata')
     if (userDataFromLocalStorage) {
       const parsedUserData = JSON.parse(userDataFromLocalStorage);
       setuserdata(parsedUserData);

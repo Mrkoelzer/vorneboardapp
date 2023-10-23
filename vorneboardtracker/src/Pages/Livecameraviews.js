@@ -7,10 +7,26 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircle, faCircleInfo, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import '../Css/tracker.css';
 import Trackertoolbar from '../Components/Liveviewtoolbar';
+import { usercontext } from '../contexts/usercontext';
 
 function Livecameraviews() {
   const navigate = useNavigate();
-
+  const { userdata, setuserdata } = useContext(usercontext);
+  useEffect(() => {
+    const userDataFromLocalStorage = sessionStorage.getItem('userdata');
+    let parsedUserData;
+    if (userDataFromLocalStorage) {
+        parsedUserData = JSON.parse(userDataFromLocalStorage);
+        setuserdata(parsedUserData);
+    }
+    if ((userdata && userdata.loggedin === 1) || (parsedUserData && parsedUserData.loggedin === 1)) {
+        if ((userdata && userdata.passwordchange === 1) || (parsedUserData && parsedUserData.pinchange === 1)) {
+            navigate('/Changepasswordpin');
+        }
+    } else {
+        navigate('/');
+    }
+}, [setuserdata, navigate]);
   return (
     <div className="tracker">
       <Trackertoolbar />
