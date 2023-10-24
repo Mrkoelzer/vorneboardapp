@@ -561,7 +561,7 @@ function Userspage() {
                         <div className='userpageflexbox-item'>
                             <input
                                 className='userpage-add-input'
-                                type="text"
+                                type="password"
                                 placeholder="Password"
                                 value={editedData.password}
                                 onChange={(e) => setEditedData({ ...editedData, password: e.target.value })}
@@ -571,7 +571,7 @@ function Userspage() {
                             Pin
                             <input
                                 className='userpage-add-input'
-                                type="text"
+                                type="password"
                                 placeholder="Pin"
                                 value={editedData.pin}
                                 onChange={(e) => setEditedData({ ...editedData, pin: e.target.value })}
