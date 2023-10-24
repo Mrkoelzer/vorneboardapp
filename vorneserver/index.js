@@ -751,7 +751,7 @@ appSql.get('/api/getlinepart/:tableName', async (req, res) => {
     await sql.connect(config);
 
     const request = new sql.Request();
-    const query = `select * from [${tableName}]`;
+    const query = `select * from [${tableName}] order by Part_ID asc`;
     
     const result = await request.query(query);
 

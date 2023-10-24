@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import logo from '../IMAGES/jsix-brand-logo.png';
 import '../Css/Changepasswordpin.css';
 import { useNavigate } from 'react-router-dom';
@@ -22,6 +22,22 @@ function Changepasswordpin() {
     confimpassword: '',
     username: userdata.username
   });
+
+  useEffect(() => {
+    const userDataFromLocalStorage = sessionStorage.getItem('userdata');
+    let parsedUserData;
+    if (userDataFromLocalStorage) {
+        parsedUserData = JSON.parse(userDataFromLocalStorage);
+        setuserdata(parsedUserData);
+    }
+    if ((userdata && userdata.loggedin === 1) || (parsedUserData && parsedUserData.loggedin === 1)) {
+        if ((userdata && userdata.passwordchange === 1) || (parsedUserData && parsedUserData.pinchange === 1)) {
+            navigate('/Changepasswordpin');
+        }
+    } else {
+        navigate('/');
+    }
+}, [setuserdata, navigate]);
 
   const handleShowChangePasswordForm = () => {
     setShowChangePasswordForm(true);

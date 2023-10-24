@@ -14,7 +14,7 @@ import { ipaddrcontext } from '../contexts/ipaddrcontext';
 function Addeditpartnumbers() {
     const navigate = useNavigate();
     const { lines } = useContext(linescontext);
-    const { userdata } = useContext(usercontext);
+    const { userdata, setuserdata } = useContext(usercontext);
     const [selectedline, setselectedline] = useState(0);
     const [partnumbers, setpartnumbers] = useState([]);
     const [allpartnumbers, setallpartnumbers] = useState([]);
@@ -24,7 +24,7 @@ function Addeditpartnumbers() {
     const [showEditModal, setshowEditModal] = useState(false);
     const [addLineMessage, setAddLineMessage] = useState('');
     const { localipaddr } = useContext(ipaddrcontext);
-    const [editlines, seteditlines] = useState([])
+    const [editlines, seteditlines] = useState([]);
     const [newData, setNewData] = useState({
         Linename: '',
         Part_ID: '',
@@ -70,6 +70,23 @@ function Addeditpartnumbers() {
         Set_a_target_time_of_s: '0',
         End_Event: 'By Barcode'
     });
+
+    useEffect(() => {
+        const userDataFromLocalStorage = sessionStorage.getItem('userdata');
+        let parsedUserData;
+        if (userDataFromLocalStorage) {
+            parsedUserData = JSON.parse(userDataFromLocalStorage);
+            setuserdata(parsedUserData);
+        }
+        if ((userdata && userdata.loggedin === 1) || (parsedUserData && parsedUserData.loggedin === 1)) {
+            if ((userdata && userdata.passwordchange === 1) || (parsedUserData && parsedUserData.pinchange === 1)) {
+                navigate('/Changepasswordpin');
+            }
+        } else {
+            navigate('/');
+        }
+    }, [setuserdata, navigate]);
+
     useEffect(() => {
         if (userdata.loggedin !== 1) {
             navigate('/');

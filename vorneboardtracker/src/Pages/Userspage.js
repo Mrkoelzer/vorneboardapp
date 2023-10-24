@@ -11,7 +11,7 @@ import { faArrowLeft, faCheck, faGear, faTrashCan, faUserPlus, faXmark } from '@
 
 function Userspage() {
     const navigate = useNavigate();
-    const { userdata } = useContext(usercontext);
+    const { userdata, setuserdata } = useContext(usercontext);
     const [users, setusers] = useState([])
     const { localipaddr } = useContext(ipaddrcontext);
     const [editedData, setEditedData] = useState({
@@ -45,6 +45,22 @@ function Userspage() {
         pinchange: true
     });
     const [addLineMessage, setAddLineMessage] = useState('');
+
+    useEffect(() => {
+        const userDataFromLocalStorage = sessionStorage.getItem('userdata');
+        let parsedUserData;
+        if (userDataFromLocalStorage) {
+            parsedUserData = JSON.parse(userDataFromLocalStorage);
+            setuserdata(parsedUserData);
+        }
+        if ((userdata && userdata.loggedin === 1) || (parsedUserData && parsedUserData.loggedin === 1)) {
+            if ((userdata && userdata.passwordchange === 1) || (parsedUserData && parsedUserData.pinchange === 1)) {
+                navigate('/Changepasswordpin');
+            }
+        } else {
+            navigate('/');
+        }
+    }, [setuserdata, navigate]);
 
     const fetchlines = async () => {
         try {
@@ -545,7 +561,7 @@ function Userspage() {
                         <div className='userpageflexbox-item'>
                             <input
                                 className='userpage-add-input'
-                                type="text"
+                                type="password"
                                 placeholder="Password"
                                 value={editedData.password}
                                 onChange={(e) => setEditedData({ ...editedData, password: e.target.value })}
@@ -555,7 +571,7 @@ function Userspage() {
                             Pin
                             <input
                                 className='userpage-add-input'
-                                type="text"
+                                type="password"
                                 placeholder="Pin"
                                 value={editedData.pin}
                                 onChange={(e) => setEditedData({ ...editedData, pin: e.target.value })}

@@ -31,7 +31,7 @@ function Accounttoobar() {
           pinchange: false,
           loggedin: 0
         })
-        localStorage.removeItem('userdata');
+        sessionStorage.removeItem('userdata');
         navigate('/')
       }
       return (

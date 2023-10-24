@@ -30,18 +30,38 @@ function MainPage() {
     saveDataToLocalStorage('selectedline', '')
     saveDataToLocalStorage('processState', '');
   }, []);
-  const lineButtons = lines.map((line, index) => (
-    <button
-      key={index}
-      className='mainpagebutton'
-      onClick={() => handleNavigate(index)}
-    >
-      <div className="icon-wrapper">
-        <FontAwesomeIcon icon={faClipboard} className="icon" />
-      </div>
-      <div className="text">{line.Linename} Pack View</div>
-    </button>
-  ));
+
+  let lineButtons;
+  const selectedTabletLine = localStorage.getItem('selectedtabletline');
+
+  if (!selectedTabletLine) {
+    lineButtons = lines.map((line, index) => (
+      <button key={index} className="mainpagebutton" onClick={() => handleNavigate(index)}>
+        <div className="icon-wrapper">
+          <FontAwesomeIcon icon={faClipboard} className="icon" />
+        </div>
+        <div className="text">{line.Linename} Pack View</div>
+      </button>
+    ));
+  } else {
+    const selectedIndex = lines.findIndex((line) => line.Linename === selectedTabletLine);
+    if (selectedIndex !== -1) {
+      lineButtons = [
+        <button
+          key={selectedIndex}
+          className="mainpagebutton"
+          onClick={() => handleNavigate(selectedIndex)}
+        >
+          <div className="icon-wrapper">
+            <FontAwesomeIcon icon={faClipboard} className="icon" />
+          </div>
+          <div className="text">{lines[selectedIndex].Linename} Pack View</div>
+        </button>,
+      ];
+    } else {
+      lineButtons = [];
+    }
+  }
 
   return (
     <div className='mainpage'>

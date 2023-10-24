@@ -7,7 +7,7 @@ import { partruncontext } from '../contexts/partruncontext';
 import { useNavigate } from 'react-router-dom';
 import { usercontext } from '../contexts/usercontext';
 
-function Linepagetoolbar({line}) {
+function SelecttabletToolabar({line}) {
     const { userdata, setuserdata } = useContext(usercontext);
     const { partruntable } = useContext(partruncontext);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -39,26 +39,7 @@ function Linepagetoolbar({line}) {
         <div className="toolbar">
             <div className="toolbar-left">
                 <img src={logo} className="logo" alt="logo" />
-                <p>Vorne {line[0].linename}</p>
-                <p className="icon-cell-line">
-                    {line[0].processStateDetailsData === 'Running' ? (
-                        <FontAwesomeIcon icon={faCircle} style={{ color: 'green' }} />
-                    ) : line[0].processStateDetailsData === 'Down' ? (
-                        <FontAwesomeIcon icon={faCircle} style={{ color: 'red' }} />
-                    ) : line[0].processStateDetailsData === 'No Production' ? (
-                        <FontAwesomeIcon icon={faCircle} style={{ color: 'blue' }} />
-                    ) : line[0].processStateDetailsData === 'Not Monitored' ? (
-                        <FontAwesomeIcon icon={faCircle} style={{ color: 'lightblue' }} />
-                    ) : line[0].processStateDetailsData === 'Detecting State' ? (
-                        <FontAwesomeIcon icon={faCircle} style={{ color: 'grey' }} />
-                    ) : line[0].processStateDetailsData === 'Changeover' ? (
-                        <FontAwesomeIcon icon={faCircle} style={{ color: 'yellow' }} />
-                    ) : line[0].processStateDetailsData === 'Break' ? (
-                        <FontAwesomeIcon icon={faCircle} style={{ color: 'darkblue' }} />
-                    ) : (
-                        <FontAwesomeIcon icon={faCircle} />
-                    )}</p>
-                <p>{line[0].processStateDetailsData}</p>
+                <p>Select Tablet Line</p>
             </div>
             <div className="dropdown-container">
           <button className={`dropdown ${isDropdownOpen ? 'active' : ''}`} onClick={toggleDropdown}>
@@ -70,14 +51,12 @@ function Linepagetoolbar({line}) {
               {userdata.loggedin === 1 ? (
               <>
               <p onClick={() => navigate('/')}><FontAwesomeIcon icon={faHouse}/> Home</p>
-              <p onClick={() => navigate('/Tracker')}> <FontAwesomeIcon icon={faMagnifyingGlassChart}/> Tracker</p>
               <p onClick={() => navigate('/Account')}> <FontAwesomeIcon icon={faGear}/> Settings</p>
               <p onClick={logout}><FontAwesomeIcon icon={faRightFromBracket}/> Logout</p>
               </>
             ) : (
               <>
               <p onClick={() => navigate('/')}><FontAwesomeIcon icon={faHouse}/> Home</p>
-              <p onClick={() => navigate('/Tracker')}> <FontAwesomeIcon icon={faMagnifyingGlassChart}/> Tracker</p>
               <p onClick={() => navigate('/Login')}><FontAwesomeIcon icon={faChalkboardUser}/> Login</p>
               </>
               )}
@@ -88,4 +67,4 @@ function Linepagetoolbar({line}) {
     )
 }
 
-export default Linepagetoolbar;
+export default SelecttabletToolabar;

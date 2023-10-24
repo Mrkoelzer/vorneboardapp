@@ -10,7 +10,7 @@ import { ipaddrcontext } from '../contexts/ipaddrcontext';
 function Createaccount() {
   const navigate = useNavigate();
   const [authenticated, setAuthenticated] = useState(false);
-  const { userdata } = useContext(usercontext);
+  const { userdata, setuserdata } = useContext(usercontext);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [first_name, setFirst_name] = useState('');
@@ -21,6 +21,22 @@ function Createaccount() {
   const [admin, setAdmin] = useState(false);
   const [superadmin, setSuperadmin] = useState(false);
   const { localipaddr } = useContext(ipaddrcontext);
+
+  useEffect(() => {
+    const userDataFromLocalStorage = sessionStorage.getItem('userdata');
+    let parsedUserData;
+    if (userDataFromLocalStorage) {
+        parsedUserData = JSON.parse(userDataFromLocalStorage);
+        setuserdata(parsedUserData);
+    }
+    if ((userdata && userdata.loggedin === 1) || (parsedUserData && parsedUserData.loggedin === 1)) {
+        if ((userdata && userdata.passwordchange === 1) || (parsedUserData && parsedUserData.pinchange === 1)) {
+            navigate('/Changepasswordpin');
+        }
+    } else {
+        navigate('/');
+    }
+}, [setuserdata, navigate]);
 
   useEffect(() => {
     if (userdata.loggedin === 1 || userdata.superadmin === 1) {

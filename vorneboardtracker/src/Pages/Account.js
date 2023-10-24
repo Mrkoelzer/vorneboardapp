@@ -4,14 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import { usercontext } from '../contexts/usercontext';
 import Accounttoobar from '../Components/Accounttoobar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faBarcode, faBoxesPacking, faCircle, faFileCirclePlus, faFilePdf, faUnlockKeyhole, faUser, faUserGear } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faBarcode, faBoxesPacking, faCircle, faFileCirclePlus, faFilePdf, faTabletScreenButton, faUnlockKeyhole, faUser, faUserGear } from '@fortawesome/free-solid-svg-icons';
 
 function Account() {
     const navigate = useNavigate();
     const { userdata, setuserdata } = useContext(usercontext);
 
     useEffect(() => {
-        const userDataFromLocalStorage = localStorage.getItem('userdata');
+        const userDataFromLocalStorage = sessionStorage.getItem('userdata');
         let parsedUserData;
         if (userDataFromLocalStorage) {
             parsedUserData = JSON.parse(userDataFromLocalStorage);
@@ -64,6 +64,12 @@ function Account() {
                     <FontAwesomeIcon icon={faFileCirclePlus}  className="icon"/>   
                     </div>
                     <div className="text">Edit Linked PDFs</div>
+                </button>
+                <button className='accountbutton' onClick={() => navigate('/Selecttablet')}>
+                <div className="icon-wrapper">
+                    <FontAwesomeIcon icon={faTabletScreenButton}  className="icon"/>   
+                    </div>
+                    <div className="text">Select Tablet</div>
                 </button>
                 <button className='accountbutton' onClick={() => navigate('/')}>
                 <div className="icon-wrapper">

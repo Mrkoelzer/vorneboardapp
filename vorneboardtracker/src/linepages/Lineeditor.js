@@ -480,6 +480,10 @@ function Line3() {
     }
   };
 
+  const handleGoBack = () => {
+    window.history.back();
+  };
+
   useEffect(() => {
     const savedSelectedLine = localStorage.getItem('selectedline');
     if (savedSelectedLine) {
@@ -659,7 +663,7 @@ function Line3() {
         </>
       )}
       <div style={{ display: 'flex', justifyContent: "space-evenly" }}>
-        <button className="goodreject2button" onClick={() => navigate('/Tracker')}>
+        <button className="goodreject2button" onClick={handleGoBack}>
           <div className="goodreject2icon-wrapper">
             <FontAwesomeIcon icon={faArrowLeft} className="goodreject2icon" />
           </div>

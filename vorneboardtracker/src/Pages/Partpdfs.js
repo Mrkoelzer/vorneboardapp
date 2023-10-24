@@ -15,7 +15,7 @@ function Partpdfs() {
     const { lines } = useContext(linescontext);
     const [updatedlines, setupdatedlines] = useState([]);
     const [pdfs, setpdfs] = useState([]);
-    const { userdata } = useContext(usercontext);
+    const { userdata, setuserdata } = useContext(usercontext);
     const [selectedline, setselectedline] = useState(0);
     const [allpartnumbers, setallpartnumbers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -26,6 +26,22 @@ function Partpdfs() {
     const [selectedPdfIndex, setSelectedPdfIndex] = useState(0);
     const [editedData, setEditedData] = useState([]);
     const [ChangeAll, setChangeAll] = useState(false);
+
+    useEffect(() => {
+        const userDataFromLocalStorage = sessionStorage.getItem('userdata');
+        let parsedUserData;
+        if (userDataFromLocalStorage) {
+            parsedUserData = JSON.parse(userDataFromLocalStorage);
+            setuserdata(parsedUserData);
+        }
+        if ((userdata && userdata.loggedin === 1) || (parsedUserData && parsedUserData.loggedin === 1)) {
+            if ((userdata && userdata.passwordchange === 1) || (parsedUserData && parsedUserData.pinchange === 1)) {
+                navigate('/Changepasswordpin');
+            }
+        } else {
+            navigate('/');
+        }
+    }, [setuserdata, navigate]);
 
     const AllLines = [
         {
