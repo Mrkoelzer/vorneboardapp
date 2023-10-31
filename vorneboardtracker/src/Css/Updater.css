@@ -1,0 +1,19 @@
+.updaterpage{
+    background: linear-gradient( #0f1626,  #262d3b);
+      min-height: 100vh;
+      font-size: calc(10px + 1vmin);
+      color: white;
+    }
+  
+    .updater-flexbox-container{
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content:space-around;
+      flex-wrap: wrap;
+  }
+    .updaterflexbox-item{
+      width: 100%;
+      min-height: 2vh;
+      align-items: center;
+    }

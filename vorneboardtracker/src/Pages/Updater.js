@@ -1,8 +1,12 @@
 import React, { useContext, useEffect } from 'react';
 import logo from '../IMAGES/jsix-brand-logo.png';
-import '../Css/App.css';
+import '../Css/Updater.css';
 import { useNavigate } from 'react-router-dom';
 import { usercontext } from '../contexts/usercontext'
+import Toolbar from '../Components/Updatertoobar';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPenToSquare} from '@fortawesome/free-solid-svg-icons';
+
 
 function Updater() {
   const navigate = useNavigate();
@@ -22,14 +26,18 @@ function Updater() {
         navigate('/');
     }
 }, [setuserdata, navigate]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Vorne Board Updater
-        </p>
-      </header>
+    <div className="updaterpage">
+      <Toolbar/>
+      <div className='updater-flexbox-container'>
+      <button className='mainpagebutton' onClick={() => navigate('/Modifyevents')}>
+          <div className="icon-wrapper">
+            <FontAwesomeIcon icon={faPenToSquare} className="icon" />
+          </div>
+          <div className="text">Modify Past Events</div>
+        </button>
+      </div>
     </div>
   );
 }
