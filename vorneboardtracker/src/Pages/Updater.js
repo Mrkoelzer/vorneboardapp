@@ -3,14 +3,19 @@ import logo from '../IMAGES/jsix-brand-logo.png';
 import '../Css/Updater.css';
 import { useNavigate } from 'react-router-dom';
 import { usercontext } from '../contexts/usercontext'
-import Toolbar from '../Components/Updatertoobar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPenToSquare} from '@fortawesome/free-solid-svg-icons';
-
+import { faCalendar, faPenToSquare} from '@fortawesome/free-solid-svg-icons';
+import { Toolbarcontext } from '../Components/Navbar/Toolbarcontext';
 
 function Updater() {
   const navigate = useNavigate();
   const { userdata, setuserdata } = useContext(usercontext);
+  const { settoolbarinfo } = useContext(Toolbarcontext)
+
+  useEffect(() => {
+    settoolbarinfo([{Title: 'Vorne Updater Page'}])
+  }, []);
+
   useEffect(() => {
     const userDataFromLocalStorage = sessionStorage.getItem('userdata');
     let parsedUserData;
@@ -23,19 +28,24 @@ function Updater() {
             navigate('/Changepasswordpin');
         }
     } else {
-        navigate('/');
+        navigate('/login');
     }
 }, [setuserdata, navigate]);
 
   return (
     <div className="updaterpage">
-      <Toolbar/>
       <div className='updater-flexbox-container'>
       <button className='mainpagebutton' onClick={() => navigate('/Modifyevents')}>
           <div className="icon-wrapper">
             <FontAwesomeIcon icon={faPenToSquare} className="icon" />
           </div>
           <div className="text">Modify Past Events</div>
+        </button>
+        <button className='mainpagebutton' onClick={() => navigate('/Calendarview')}>
+          <div className="icon-wrapper">
+            <FontAwesomeIcon icon={faCalendar} className="icon" />
+          </div>
+          <div className="text">Calendar View</div>
         </button>
       </div>
     </div>

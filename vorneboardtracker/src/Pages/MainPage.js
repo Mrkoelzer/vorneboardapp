@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Css/mainpage.css';
 import Mainpagetoolbar from '../Components/Mainpagetoobar';
@@ -6,11 +6,18 @@ import { linescontext } from '../contexts/linescontext';
 import { selectedlinecontext } from '../contexts/selectedlinecontext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClipboard, faMagnifyingGlassChart, faWrench } from '@fortawesome/free-solid-svg-icons';
+import { Toolbarcontext } from '../Components/Navbar/Toolbarcontext';
 
 function MainPage() {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const { lines } = useContext(linescontext);
   const { setselectedline } = useContext(selectedlinecontext);
+  const { settoolbarinfo } = useContext(Toolbarcontext)
+
+  useEffect(() => {
+    settoolbarinfo([{Title: 'Vorne Home Page'}])
+  }, []);
 
   const handleNavigate = (index) => {
     setselectedline(lines[index].Linename);
@@ -65,22 +72,27 @@ function MainPage() {
 
   return (
     <div className='mainpage'>
-      <Mainpagetoolbar />
-      <div className='mainpage-flexbox-container'>
-        <button className='mainpagebutton' onClick={() => navigate('/Tracker')}>
-          <div className="icon-wrapper">
-            <FontAwesomeIcon icon={faMagnifyingGlassChart} className="icon" />
+      {isLoading ? (
+        <div>Loading...</div>
+      ) : (
+        <>
+          <div className='mainpage-flexbox-container'>
+            <button className='mainpagebutton' onClick={() => navigate('/Tracker')}>
+              <div className="icon-wrapper">
+                <FontAwesomeIcon icon={faMagnifyingGlassChart} className="icon" />
+              </div>
+              <div className="text">Tracker</div>
+            </button>
+            <button className='mainpagebutton' onClick={() => navigate('/Updater')}>
+              <div className="icon-wrapper">
+                <FontAwesomeIcon icon={faWrench} className="icon" />
+              </div>
+              <div className="text">Updater</div>
+            </button>
+            {lineButtons}
           </div>
-          <div className="text">Tracker</div>
-        </button>
-        <button className='mainpagebutton' onClick={() => navigate('/Updater')}>
-          <div className="icon-wrapper">
-            <FontAwesomeIcon icon={faWrench} className="icon" />
-          </div>
-          <div className="text">Updater</div>
-        </button>
-        {lineButtons}
-      </div>
+        </>
+      )}
     </div>
   );
 }

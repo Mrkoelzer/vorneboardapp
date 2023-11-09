@@ -5,16 +5,19 @@ import '../Css/Modifyevents.css';
 import { useNavigate } from 'react-router-dom';
 import { usercontext } from '../contexts/usercontext'
 import { linescontext } from '../contexts/linescontext';
-import Toolbar from '../Components/Modifyeventstoolbar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faXmark, faCircleInfo, faCircle, faCalendarDays, fa1, faTimeline, faPlay, faStop, faMugSaucer, faDownLong, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
 import Axios from 'axios';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import 'react-notifications/lib/notifications.css';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
+import { Toolbarcontext } from '../Components/Navbar/Toolbarcontext';
 
 function Modifyevents() {
     useEffect(() => {
+        settoolbarinfo([{Title: 'Vorne Modify Events'}])
         if (lines.length === 0) {
             const storedLines = localStorage.getItem('lines');
             // Parse the retrieved string back into an array
@@ -30,6 +33,7 @@ function Modifyevents() {
             setselectedip(lines[0].ipaddress)
         }
     }, []);
+    const { settoolbarinfo } = useContext(Toolbarcontext)
     const { localipaddr } = useContext(ipaddrcontext);
     const [isLoading, setIsLoading] = useState(true); // Add isLoading state
     const [showRunning, setShowRunning] = useState(true);
@@ -184,11 +188,13 @@ function Modifyevents() {
             isTimeWithinRange(editedData.start_time, [7, 15, 23]) // Check if the time is 7 am, 3 pm, or 11 pm
         ) {
             if (PastNotesData.length === 0) {
+                NotificationManager.success('Updating Event!')
                 insertpastnotesdata();
                 setShowEditModal(false)
                 return;
             }
             else {
+                NotificationManager.success('Updating Event!')
                 updatepastnotesdata()
                 setShowEditModal(false)
                 return;
@@ -201,20 +207,24 @@ function Modifyevents() {
                     if (data.changed) {
                         setIsLoading(true)
                         if (PastNotesData.length === 0) {
+                            NotificationManager.success('Updating Event!')
                             insertpastnotesdata();
                         }
                         else {
+                            NotificationManager.success('Updating Event!')
                             updatepastnotesdata()
                         }
                         setShowEditModal(false)
                         gettodaysproductionday(selecteddate)
                     }
                     else {
+                        NotificationManager.error(`Can't Change This Process State`)
                         updatepastnotesdata()
                         setAddLineMessage("Can't Change This Process State")
                     }
                 })
                 .catch((error) => {
+                    NotificationManager.error("Can't Change This Process State")
                     setAddLineMessage("Can't Change This Process State")
                     console.error('Error fetching data:', error);
                 });
@@ -462,11 +472,32 @@ function Modifyevents() {
     };
 
     const handleDateChange = (date) => {
-        setselecteddate(date)
+        const startDate = date[0];
+        const endDate = date[1];
+        const maxDate = new Date(endDate);
+        maxDate.setMonth(maxDate.getMonth() - 1);
+    
+        const timeDiff = Math.abs(endDate.getTime() - startDate.getTime());
+        const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    
+        if (endDate < startDate) {
+            // If the end date is before the start date, switch the dates
+            setselecteddate([endDate, startDate]);
+        } else if (diffDays > 30) {
+            const newEndDate = new Date(endDate);
+            newEndDate.setMonth(newEndDate.getMonth() - 1);
+            setselecteddate([newEndDate, endDate]);
+        } else {
+            setselecteddate([startDate, endDate]);
+        }
+    
         setIsLoading(true);
         setShowCalanderModal(false);
-        gettodaysproductionday(date)
+        gettodaysproductionday(date);
     };
+    
+    
+      
 
     const handleSelectedLine = (line) => {
         setselectedline(line)
@@ -499,7 +530,7 @@ function Modifyevents() {
     const handleprocessstatechange = (e) => {
         let processstatereason = ''
         if (e === "no_production") {
-            processstatereason = 'no_order'
+            processstatereason = 'no_orders'
         }
         if (e === "break") {
             processstatereason = 'break'
@@ -581,8 +612,8 @@ function Modifyevents() {
 
     return (
         <div className="modifyeventspage">
-            <Toolbar />
             <div className='modifyevents-container'>
+            <NotificationContainer/>
                 <div className='button-container'>
                     <p style={{ marginTop: '30px', fontSize: '24px' }}>
                         Selected Days: {selecteddate[0].toLocaleDateString()} -{' '}
@@ -807,7 +838,7 @@ function Modifyevents() {
                                                     <>
                                                         <option value="material_change">Material Change</option>
                                                         <option value="part_change">Part Change</option>
-                                                        <option value="setup">Setup</option>
+                                                        <option value="changeover">Setup</option>
                                                     </>
                                                 ) : (
                                                     <option value="default">Default Option</option>

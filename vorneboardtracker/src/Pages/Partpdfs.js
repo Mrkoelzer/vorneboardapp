@@ -1,14 +1,16 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Css/partpdfs.css';
-import Toolbar from '../Components/Partpdfstoobar';
 import { linescontext } from '../contexts/linescontext';
 import { usercontext } from '../contexts/usercontext';
 import * as ReactBootStrap from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import 'react-notifications/lib/notifications.css';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 import { faGear, faCheck, faTimes, faArrowLeft, faXmark } from '@fortawesome/free-solid-svg-icons';
 import Axios from 'axios';
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
+import { Toolbarcontext } from '../Components/Navbar/Toolbarcontext';
 
 function Partpdfs() {
     const navigate = useNavigate();
@@ -26,8 +28,10 @@ function Partpdfs() {
     const [selectedPdfIndex, setSelectedPdfIndex] = useState(0);
     const [editedData, setEditedData] = useState([]);
     const [ChangeAll, setChangeAll] = useState(false);
+    const { settoolbarinfo } = useContext(Toolbarcontext)
 
     useEffect(() => {
+        settoolbarinfo([{Title: 'Vorne Link PDFs'}])
         const userDataFromLocalStorage = sessionStorage.getItem('userdata');
         let parsedUserData;
         if (userDataFromLocalStorage) {
@@ -176,13 +180,16 @@ function Partpdfs() {
             if (response.ok) {
                 const data = await response.json();
                 if (data.pdfupdated) {
+                    NotificationManager.success(`All Lines With ${requestData.part_id} linked to PDF ${requestData.pdfname}!`)
                     getparts();
                     closeEditModal()
                 }
             } else {
+                NotificationManager.error('Failed to Link Part to PDF!')
                 console.error('Failed to retrieve data');
             }
         } catch (error) {
+            NotificationManager.error('Failed to Link Part to PDF!')
             console.error('Error:', error);
         }
     };
@@ -207,13 +214,16 @@ function Partpdfs() {
             if (response.ok) {
                 const data = await response.json();
                 if (data.pdfupdated) {
+                    NotificationManager.success(`${requestData.linename} ${requestData.part_id} linked to PDF ${requestData.pdfname}!`)
                     getparts();
                     closeEditModal()
                 }
             } else {
+                NotificationManager.error('Failed to Link Part to PDF!')
                 console.error('Failed to retrieve data');
             }
         } catch (error) {
+            NotificationManager.error('Failed to Link Part to PDF!')
             console.error('Error:', error);
         }
     };
@@ -243,7 +253,7 @@ function Partpdfs() {
     return (
         <div className='partpdfpage'>
             <div>
-                <Toolbar />
+                <NotificationContainer/>
                 {isLoading ? (
                     <p>Loading...</p>
                 ) : (

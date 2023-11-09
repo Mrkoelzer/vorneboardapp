@@ -3,17 +3,19 @@ import * as ReactBootStrap from 'react-bootstrap';
 import '../Css/Userspage.css';
 import { useNavigate } from 'react-router-dom';
 import { usercontext } from '../contexts/usercontext';
-import Toolbar from '../Components/Createtoolbar';
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import 'react-notifications/lib/notifications.css';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 import { faArrowLeft, faCheck, faGear, faTrashCan, faUserPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
-
+import { Toolbarcontext } from '../Components/Navbar/Toolbarcontext';
 
 function Userspage() {
     const navigate = useNavigate();
     const { userdata, setuserdata } = useContext(usercontext);
     const [users, setusers] = useState([])
     const { localipaddr } = useContext(ipaddrcontext);
+    const { settoolbarinfo } = useContext(Toolbarcontext)
     const [editedData, setEditedData] = useState({
         userid: 0,
         username: '',
@@ -47,6 +49,7 @@ function Userspage() {
     const [addLineMessage, setAddLineMessage] = useState('');
 
     useEffect(() => {
+        settoolbarinfo([{Title: 'Vorne User Page'}])
         const userDataFromLocalStorage = sessionStorage.getItem('userdata');
         let parsedUserData;
         if (userDataFromLocalStorage) {
@@ -117,12 +120,16 @@ function Userspage() {
             // Handle response
             if (response.ok) {
                 // Line deleted successfully
+                NotificationManager.success(`Delete Successful!`)
+    
 
                 fetchlines(); // Refresh the line data
             } else {
+                NotificationManager.error('Deleted Failed')
                 console.error('Delete failed');
             }
         } catch (error) {
+            NotificationManager.error('Deleted Failed')
             console.error('Error:', error);
         }
     };
@@ -255,11 +262,13 @@ function Userspage() {
             // Handle response and update the data if needed
             if (response.ok) {
                 fetchlines()
+                NotificationManager.success(`${updatedData.first_name} ${updatedData.last_name} Updated!`)
 
                 // Close the edit pop-up
                 closeEditModal();
             }
         } catch (error) {
+            NotificationManager.error('Update Failed')
             console.error('Error:', error);
         }
     };
@@ -306,6 +315,7 @@ function Userspage() {
             const data = await response.json();
             if (data.createdauthenticated) {
                 // Reset newData to initial state
+                NotificationManager.success(`${updatedData.first_name} ${updatedData.last_name} Added!`)
                 setNewData({
                     userid: 0,
                     username: '',
@@ -329,6 +339,7 @@ function Userspage() {
             // Close the add modal
             closeAddModal();
         } catch (error) {
+            NotificationManager.error('Add Failed')
             console.error('Error:', error);
         }
     };
@@ -344,8 +355,8 @@ function Userspage() {
 
     return (
         <div className="userpage">
-            <Toolbar />
             <div className="userpagetable-container">
+            <NotificationContainer/>
                 <div style={{ display: 'flex' }}>
                     <button className="userpagebutton" onClick={handleAddClick}>
                         <div className="usericon-wrapper">

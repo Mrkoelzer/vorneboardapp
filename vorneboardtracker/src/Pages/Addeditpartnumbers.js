@@ -1,15 +1,17 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Css/Addeditpartnumbers.css';
-import Toolbar from '../Components/AddeditpartsToolbar';
 import { linescontext } from '../contexts/linescontext';
 import { usercontext } from '../contexts/usercontext';
 import * as ReactBootStrap from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import 'react-notifications/lib/notifications.css';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 import { faGear, faTrashCan, faCheck, faTimes, faPlus, faArrowLeft, faXmark } from '@fortawesome/free-solid-svg-icons';
 //import Axios from 'axios';
 import Select from 'react-select'
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
+import { Toolbarcontext } from '../Components/Navbar/Toolbarcontext';
 
 function Addeditpartnumbers() {
     const navigate = useNavigate();
@@ -25,6 +27,7 @@ function Addeditpartnumbers() {
     const [addLineMessage, setAddLineMessage] = useState('');
     const { localipaddr } = useContext(ipaddrcontext);
     const [editlines, seteditlines] = useState([]);
+    const { settoolbarinfo } = useContext(Toolbarcontext)
     const [newData, setNewData] = useState({
         Linename: '',
         Part_ID: '',
@@ -72,6 +75,7 @@ function Addeditpartnumbers() {
     });
 
     useEffect(() => {
+        settoolbarinfo([{Title: 'Vorne Edit Parts'}])
         const userDataFromLocalStorage = sessionStorage.getItem('userdata');
         let parsedUserData;
         if (userDataFromLocalStorage) {
@@ -189,12 +193,15 @@ function Addeditpartnumbers() {
 
             // Handle response
             if (response.ok) {
+                NotificationManager.success(`${linename} Deleted!`)
                 handlepartpdfdelete(id);
                 getpartnumbers()
             } else {
+                NotificationManager.error(`Delete Failed!`)
                 console.error('Delete failed');
             }
         } catch (error) {
+            NotificationManager.error(`Delete Failed!`)
             console.error('Error:', error);
         }
     };
@@ -296,12 +303,15 @@ function Addeditpartnumbers() {
 
             if (response.ok) {
                 passed = true
+                NotificationManager.success(`${updatedData.Part_ID} Added to ${updatedData.Linename}!`)
                 addNewParttopartpdf(updatedData);
                 console.log('Part added successfully');
             } else {
+                NotificationManager.error('Add Part Failed!')
                 console.error('Failed to add part');
             }
         } catch (error) {
+            NotificationManager.error('Add Part Failed!')
             console.error('Error:', error);
         }
     };
@@ -318,6 +328,7 @@ function Addeditpartnumbers() {
             });
 
             if (response.ok) {
+                NotificationManager.success(`${editedData.Part_ID} Updated!`)
                 getpartnumbers();
                 getallpartnumbers();
                 setAddLineMessage('');
@@ -327,9 +338,11 @@ function Addeditpartnumbers() {
                 closeEditModal();
                 console.log('Part Updated successfully');
             } else {
+                NotificationManager.error('Update Part Failed!')
                 console.error('Failed to Update part');
             }
         } catch (error) {
+            NotificationManager.error('Update Part Failed!')
             console.error('Error:', error);
         }
     };
@@ -539,7 +552,7 @@ function Addeditpartnumbers() {
 
     return (
         <div className='aepartnumberpage'>
-            <Toolbar />
+            <NotificationContainer/>
             {isLoading ? (
                 <p>Loading...</p>
             ) : (

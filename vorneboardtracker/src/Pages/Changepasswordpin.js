@@ -2,12 +2,14 @@ import React, { useState, useContext, useEffect } from 'react';
 import logo from '../IMAGES/jsix-brand-logo.png';
 import '../Css/Changepasswordpin.css';
 import { useNavigate } from 'react-router-dom';
-import Toolbar from '../Components/Changetoobar';
 import Changepin from '../Components/Changepin'
 import { usercontext } from '../contexts/usercontext';
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import 'react-notifications/lib/notifications.css';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 import { faArrowLeft, faBraille, faUserLock, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { Toolbarcontext } from '../Components/Navbar/Toolbarcontext';
 
 function Changepasswordpin() {
   const navigate = useNavigate();
@@ -16,6 +18,7 @@ function Changepasswordpin() {
   const { userdata, setuserdata } = useContext(usercontext);
   const { localipaddr } = useContext(ipaddrcontext);
   const [addLineMessage, setAddLineMessage] = useState('');
+  const { settoolbarinfo } = useContext(Toolbarcontext)
   const [passworddata, setpassworddata] = useState({
     oldpassword: '',
     newpassword: '',
@@ -24,6 +27,7 @@ function Changepasswordpin() {
   });
 
   useEffect(() => {
+    settoolbarinfo([{Title: 'Change Password/PIN'}])
     const userDataFromLocalStorage = sessionStorage.getItem('userdata');
     let parsedUserData;
     if (userDataFromLocalStorage) {
@@ -79,11 +83,13 @@ function Changepasswordpin() {
           });
           const data = await response.json();
           if (data.passupdated) {
+            NotificationManager.success('Password Updated!')
             getuserdata();
             handleShowChangePasswordForm()
             return;
           }
         } catch (error) {
+          NotificationManager.error('Password Update Failed!')
           console.error('Error:', error);
         }
       } else {
@@ -122,8 +128,8 @@ function Changepasswordpin() {
   };
   return (
     <div className="changepasspin">
-      <Toolbar />
       <div className='changepasspin-flexbox-container'>
+      <NotificationContainer/>
         <br />
         {showChangePasswordForm ? (
           <div className='changepasspinflexbox-item'>

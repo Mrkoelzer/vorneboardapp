@@ -3,11 +3,13 @@ import * as ReactBootStrap from 'react-bootstrap';
 import '../Css/pdfs.css';
 import { useNavigate } from 'react-router-dom';
 import { usercontext } from '../contexts/usercontext';
-import Toolbar from '../Components/Pdfstoolbar';
 import { linescontext } from '../contexts/linescontext';
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import 'react-notifications/lib/notifications.css';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 import { faGear, faTrashCan, faXmark, faArrowLeft, faCheck, faFilePdf } from '@fortawesome/free-solid-svg-icons';
+import { Toolbarcontext } from '../Components/Navbar/Toolbarcontext';
 
 function Pdfs() {
     const navigate = useNavigate();
@@ -18,8 +20,10 @@ function Pdfs() {
     const [selectedFile, setSelectedFile] = useState(null);
     const [showAddModal, setShowAddModal] = useState(false); // State for showing/hiding the add modal
     const [addLineMessage, setAddLineMessage] = useState('');
+    const { settoolbarinfo } = useContext(Toolbarcontext)
 
     useEffect(() => {
+        settoolbarinfo([{Title: 'Vorne Edit PDFs'}])
         const userDataFromLocalStorage = sessionStorage.getItem('userdata');
         let parsedUserData;
         if (userDataFromLocalStorage) {
@@ -138,15 +142,18 @@ function Pdfs() {
             .then((response) => response.json())
             .then((data) => {
                 if (data.success) {
+                    NotificationManager.success(`Pdf Added!`)
                     fetchpdfs();
                     closeAddModal();
                     setAddLineMessage('PDF file uploaded successfully.');
                     // Optionally, you can perform additional actions here
                 } else {
+                    NotificationManager.error(`Pdf Add failed`)
                     setAddLineMessage('Failed to upload PDF file.');
                 }
             })
             .catch((error) => {
+                NotificationManager.error(`Pdf Add failed`)
                 console.error('Error uploading PDF file:', error);
                 setAddLineMessage('An error occurred while uploading the PDF file.');
             });
@@ -160,21 +167,24 @@ function Pdfs() {
             const data = await response.json();
             if (data.deleted) {
                 fetchpdfs()
+                NotificationManager.success(`${pdfNameToDelete} Deleted!`)
                 // File and SQL entry deleted successfully
                 // You may want to update your PDF list here
             } else {
+                NotificationManager.error('Delete Failed!')
                 console.error('Failed to delete PDF:', pdfNameToDelete);
             }
         } catch (error) {
+            NotificationManager.error('Delete Failed!')
             console.error('Error deleting PDF:', error);
         }
     };
 
     return (
         <div className="pdfs">
-            <view>
-                <Toolbar />            
+            <view>          
                 <div className="pdfstable-container">
+                <NotificationContainer/>
                 <br/>
                 <div style={{ display: 'flex', alignSelf: 'center'}}>
                         <button className="pdfsbutton" onClick={handleAddClick}>

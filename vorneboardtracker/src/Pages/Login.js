@@ -1,12 +1,11 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usercontext } from '../contexts/usercontext';
 import '../Css/login.css'
-import Logintoobar from '../Components/Logintoobar';
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faRightToBracket, faArrowLeft} from '@fortawesome/free-solid-svg-icons';
-
+import { Toolbarcontext } from '../Components/Navbar/Toolbarcontext';
 
 function Login() {
   const navigate = useNavigate();
@@ -15,7 +14,11 @@ function Login() {
   const [authenticated, setAuthenticated] = useState('');
   const { userdata, setuserdata } = useContext(usercontext);
   const { localipaddr } = useContext(ipaddrcontext);
+  const { settoolbarinfo } = useContext(Toolbarcontext)
 
+  useEffect(() => {
+    settoolbarinfo([{Title: 'Vorne Login Page'}])
+  }, []);
 
   const hangleNavigate = (pass, pin) => {
     if (pass === 1 || pin === 1) {
@@ -63,7 +66,6 @@ function Login() {
 
   return (
     <div className="loginpage">
-      <Logintoobar />
       <div className='login-container'>
         <h1>Login</h1>
         <p>Username:</p>

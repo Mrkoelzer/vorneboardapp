@@ -6,13 +6,16 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircle, faCircleInfo, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import '../Css/tracker.css';
-import Trackertoolbar from '../Components/Liveviewtoolbar';
 import { usercontext } from '../contexts/usercontext';
+import { Toolbarcontext } from '../Components/Navbar/Toolbarcontext';
 
 function Livecameraviews() {
   const navigate = useNavigate();
   const { userdata, setuserdata } = useContext(usercontext);
+  const { settoolbarinfo } = useContext(Toolbarcontext)
+
   useEffect(() => {
+    settoolbarinfo([{Title: 'Vorne Live Views'}])
     const userDataFromLocalStorage = sessionStorage.getItem('userdata');
     let parsedUserData;
     if (userDataFromLocalStorage) {
@@ -29,7 +32,6 @@ function Livecameraviews() {
 }, [setuserdata, navigate]);
   return (
     <div className="tracker">
-      <Trackertoolbar />
       <br />
       <div className="table-container">
       <iframe allow="fullscreen" frameborder="0" height="800vh" width="100%" src="https://console.rhombussystems.com/share/videowall/AjNIug9vTb-rQ5inCkrYCw"></iframe>

@@ -2,14 +2,18 @@ import React, { useContext, useEffect } from 'react';
 import '../Css/account.css'
 import { useNavigate } from 'react-router-dom';
 import { usercontext } from '../contexts/usercontext';
-import Accounttoobar from '../Components/Accounttoobar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faBarcode, faBoxesPacking, faCircle, faFileCirclePlus, faFilePdf, faTabletScreenButton, faUnlockKeyhole, faUser, faUserGear } from '@fortawesome/free-solid-svg-icons';
+import { Toolbarcontext } from '../Components/Navbar/Toolbarcontext';
 
 function Account() {
     const navigate = useNavigate();
     const { userdata, setuserdata } = useContext(usercontext);
-
+    const { settoolbarinfo } = useContext(Toolbarcontext)
+    
+    useEffect(() => {
+        settoolbarinfo([{Title: 'Vorne Settings Page'}])
+      }, []);
     useEffect(() => {
         const userDataFromLocalStorage = sessionStorage.getItem('userdata');
         let parsedUserData;
@@ -27,7 +31,6 @@ function Account() {
     }, [setuserdata, navigate]);
     return (
         <div className="accountpage">
-            <Accounttoobar />
             <div className='account-container'>
                 <button className='accountbutton' onClick={() => navigate('/Users')}>
                     <div className="icon-wrapper">

@@ -12,6 +12,17 @@
     flex-wrap: wrap;
   }
 
+.lineinfo{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 90%;
+  background-color: #AB987a;
+  height: 5vh;
+  margin-left: 5%;
+  margin-right: 30px;
+}
+
   .lineflexbox-item{
     width: 55vh;
     text-align: center;

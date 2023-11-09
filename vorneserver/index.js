@@ -200,8 +200,8 @@ appApi.post('/updatebreak', (req, res) => {
     const requestData = {
       changes: changes.map(change => ({
         record_id: change.record_id,
-        process_state: change.process_state,
-        reason: change.reason
+        process_state: `${change.process_state}`,
+        reason: `${change.reason}`
       }))
     };
     axios.post(apiUrl, requestData)
@@ -447,6 +447,59 @@ appSql.post('/api/insertnewline', async (req, res) => {
     }
 
     sql.close();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+appSql.get('/api/geterrorlog', async (req, res) => {
+  let pool;
+  try {
+    pool = await sql.connect(config);
+    const request = pool.request(); // Create a request object from the connection pool
+
+    const query = `SELECT * FROM error_log`;
+    const result = await request.query(query);
+
+    if (result) {
+      res.json(result.recordset); // Send the result's recordset without wrapping it in an object
+    } else {
+      res.json({ authenticated: false });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+appSql.post('/api/inserterrorlog', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const requestData = req.body;
+    const query = `INSERT INTO error_log ([error_message], [error_type])VALUES('${requestData[0].error_message}','${requestData[0].error_type}')`;
+    const result = await sql.query(query);
+    if (result) {
+      res.json({ errorcreated: true });
+    } else {
+      res.json({ errorcreated: false });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+appSql.delete('/api/deleteerrorlog', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const { error_id } = req.body; // Get the lineid from the URL parameter
+    const result = await sql.query`delete from [error_log] where [error_id] = ${error_id}`;
+    
+    if (result.rowsAffected[0] === 1) {
+      res.json({ deleted: true });
+    } else {
+      res.json({ deleted: false });
+    }
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
