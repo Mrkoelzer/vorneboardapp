@@ -47,7 +47,8 @@ function Tracker() {
             navigate('/Changepasswordpin');
         }
     } else {
-        navigate('/');
+      sessionStorage.setItem('LastPage', 'Tracker')
+        navigate('/login');
     }
 }, [setuserdata, navigate]);
   // Load data from local storage when the component mounts

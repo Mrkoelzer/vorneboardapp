@@ -32,6 +32,7 @@ import { useErrorlogcontext } from './contexts/errorlogcontext';
 import { errorcontext } from './contexts/errorcontext';
 import { Toolbarcontext } from './Components/Navbar/Toolbarcontext'
 import Navbar from './Components/Navbar/Navbar';
+import ShowNavBar from './Components/Navbar/ShowNavBar';
 //import { ErrorLogProvider } from './contexts/errorlogcontext';
 import Axios from 'axios';
 
@@ -126,29 +127,31 @@ function App() {
                   <partnumbercontext.Provider value={{ partnumber, setpartnumber }}>
                     <usercontext.Provider value={{ userdata, setuserdata }}>
                       <ipaddrcontext.Provider value={{ localipaddr, setlocalipaddr }}>
-                      <Toolbarcontext.Provider value={{ toolbarinfo, settoolbarinfo }}>
-                        <Navbar />
-                        <Routes>
-                          <Route path="/" element={<MainPage />} />
-                          <Route path="/Tracker" element={<Tracker />} />
-                          <Route path="/Updater" element={<Updater />} />
-                          <Route path="/Lineeditor" element={<Lineeditor />} />
-                          <Route path="/Linepackview" element={<Linepackview />} />
-                          <Route path="/Line3setup" element={<Line3setup />} />
-                          <Route path="/Login" element={<Login />} />
-                          <Route path="/Account" element={<Account />} />
-                          <Route path="/Createaccount" element={<Createaccount />} />
-                          <Route path="/Editlineextruder" element={<Editlineextruder />} />
-                          <Route path="/Addeditpartnumbers" element={<Addeditpartnumbers />} />
-                          <Route path="/Changepasswordpin" element={<Changepasswordpin />} />
-                          <Route path="/Users" element={<Userspage />} />
-                          <Route path="/Partpdfs" element={<Partpdfs />} />
-                          <Route path="/Pdfs" element={<Pdfs />} />
-                          <Route path="/Livecameraviews" element={<Livecameraviews />} />
-                          <Route path="/Selecttablet" element={<Selecttablet />} />
-                          <Route path="/Modifyevents" element={<Modifyevents />} />
-                          <Route path="/Calendarview" element={<Calendarview />} />
-                        </Routes>
+                        <Toolbarcontext.Provider value={{ toolbarinfo, settoolbarinfo }}>
+                          <ShowNavBar>
+                            <Navbar />
+                          </ShowNavBar>
+                          <Routes>
+                            <Route path="/" element={<MainPage />} />
+                            <Route path="/Tracker" element={<Tracker />} />
+                            <Route path="/Updater" element={<Updater />} />
+                            <Route path="/Lineeditor" element={<Lineeditor />} />
+                            <Route path="/Linepackview" element={<Linepackview />} />
+                            <Route path="/Line3setup" element={<Line3setup />} />
+                            <Route path="/Login" element={<Login />} />
+                            <Route path="/Account" element={<Account />} />
+                            <Route path="/Createaccount" element={<Createaccount />} />
+                            <Route path="/Editlineextruder" element={<Editlineextruder />} />
+                            <Route path="/Addeditpartnumbers" element={<Addeditpartnumbers />} />
+                            <Route path="/Changepasswordpin" element={<Changepasswordpin />} />
+                            <Route path="/Users" element={<Userspage />} />
+                            <Route path="/Partpdfs" element={<Partpdfs />} />
+                            <Route path="/Pdfs" element={<Pdfs />} />
+                            <Route path="/Livecameraviews" element={<Livecameraviews />} />
+                            <Route path="/Selecttablet" element={<Selecttablet />} />
+                            <Route path="/Modifyevents" element={<Modifyevents />} />
+                            <Route path="/Calendarview" element={<Calendarview />} />
+                          </Routes>
                         </Toolbarcontext.Provider>
                       </ipaddrcontext.Provider>
                     </usercontext.Provider>

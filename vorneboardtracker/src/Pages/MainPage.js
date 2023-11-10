@@ -17,6 +17,7 @@ function MainPage() {
 
   useEffect(() => {
     settoolbarinfo([{Title: 'Vorne Home Page'}])
+    sessionStorage.setItem('LastPage', '')
   }, []);
 
   const handleNavigate = (index) => {

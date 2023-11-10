@@ -1,18 +1,22 @@
 .dropdown-menu {
   background: #AB987a;
-  width: 200px;
+  width: 150px;
   position: absolute;
   top: 80px;
   list-style: none;
   text-align: start;
+  padding: 5px;
+  border-left: #b3a186 solid 5px;
+  border-right: #b3a186 solid 5px;
+  border-bottom: #b3a186 solid 5px;
 }
 .dropdown-menu li {
-  background: #FF533d;
+  background: #AB987a;
   cursor: pointer;
 }
 
 .dropdown-menu li:hover {
-  background: #ee1b00;
+  background: #FF533d;
 }
 
 .dropdown-menu.clicked {
@@ -21,17 +25,11 @@
 
 .dropdown-link {
   display: block;
-  height: 80%;
+  height: 50%;
   width: 100%;
   text-decoration: none;
   color: #fff;
-  padding: 16px;
-}
-
-.logo {
-  width: 100px; 
-  height: auto;
-  margin-right: 10px;
+  padding: 5px;
 }
 
 @media screen and (max-width: 960px) {

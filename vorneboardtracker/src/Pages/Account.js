@@ -26,7 +26,8 @@ function Account() {
                 navigate('/Changepasswordpin');
             }
         } else {
-            navigate('/');
+            sessionStorage.setItem('LastPage', 'Account')
+            navigate('/Login');
         }
     }, [setuserdata, navigate]);
     return (

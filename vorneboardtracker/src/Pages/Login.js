@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { usercontext } from '../contexts/usercontext';
 import '../Css/login.css'
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
@@ -9,6 +9,7 @@ import { Toolbarcontext } from '../Components/Navbar/Toolbarcontext';
 
 function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [authenticated, setAuthenticated] = useState('');
@@ -25,7 +26,8 @@ function Login() {
       navigate('/changepasswordpin')
     }
     else {
-      navigate('/')
+      const lastpage = sessionStorage.getItem('LastPage')
+      navigate(`/${lastpage}`)
     }
   }
 

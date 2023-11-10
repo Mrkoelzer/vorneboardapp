@@ -28,6 +28,7 @@ function Updater() {
             navigate('/Changepasswordpin');
         }
     } else {
+      sessionStorage.setItem('LastPage', 'Updater')
         navigate('/login');
     }
 }, [setuserdata, navigate]);
