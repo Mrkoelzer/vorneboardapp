@@ -7,12 +7,13 @@ import { usercontext } from '../contexts/usercontext';
 import { linescontext } from '../contexts/linescontext';
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
 import 'react-notifications/lib/notifications.css';
-import {NotificationContainer, NotificationManager} from 'react-notifications';
+import { NotificationContainer, NotificationManager } from 'react-notifications';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGear, faTrashCan, faCheck, faXmark, faArrowLeft, faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useErrorlogcontext } from '../contexts/errorlogcontext';
 import { errorcontext } from '../contexts/errorcontext';
 import { Toolbarcontext } from '../Components/Navbar/Toolbarcontext';
+import DeleteConfirmation from '../Components/DeleteConfirmation';
 
 function Editlineextruder() {
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ function Editlineextruder() {
   const { seterrorlogstate } = useContext(errorcontext)
   const [isLoading, setIsLoading] = useState(false);
   const { settoolbarinfo } = useContext(Toolbarcontext)
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [editedData, setEditedData] = useState({
     Linename: '',
     ipaddress: '',
@@ -32,6 +34,7 @@ function Editlineextruder() {
     extruder: '',
     sqlid: '',
   });
+  const [showEditModal, setshowEditModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false); // State for showing/hiding the add modal
   const [newData, setNewData] = useState({
     Linename: '',
@@ -42,7 +45,7 @@ function Editlineextruder() {
   const [addLineMessage, setAddLineMessage] = useState('');
 
   useEffect(() => {
-    settoolbarinfo([{Title: 'Vorne Edit Lines'}])
+    settoolbarinfo([{ Title: 'Vorne Edit Lines' }])
     fetchAndCheckLines();
     const userDataFromLocalStorage = sessionStorage.getItem('userdata');
     let parsedUserData;
@@ -68,7 +71,7 @@ function Editlineextruder() {
           'Content-Type': 'application/json',
         },
       });
-  
+
       const data = await response.json();
       if (data) {
         const promises = data.result.recordset.map(async (record) => {
@@ -104,7 +107,7 @@ function Editlineextruder() {
     const updateddata = await Geterrorlog(localipaddr);
     seterrorlogstate(updateddata)
   };
-  
+
 
   function gettype(packline, extruder) {
     if (packline === 1) {
@@ -125,13 +128,26 @@ function Editlineextruder() {
 
   const handleEditClick = (index) => {
     setEditRow(index);
+    setshowEditModal(true);
     setEditedData(editlines[index]);
   };
-  const handledeleteClick = (index) => {
-    handledelete(editlines[index].lineid);
+  const handledeleteClick = () => {
+    setshowEditModal(false);
+    setShowDeleteConfirmation(true)
+  };
+
+  const handleDelete = () => {
+    handledelete(editlines[editRow].lineid);
+    setShowDeleteConfirmation(false);
+  };
+
+  const handleClosed = () => {
+    handleEditClick(editRow)
+    setShowDeleteConfirmation(false);
   };
 
   const closeEditModal = () => {
+    setshowEditModal(false);
     setEditRow(null);
     setEditedData({
       Linename: '',
@@ -345,7 +361,7 @@ function Editlineextruder() {
   return (
     <div className="editle">
       <br />
-      <NotificationContainer/>
+      <NotificationContainer />
       {isLoading ? (
         <div>Loading...</div>
       ) : (
@@ -372,13 +388,11 @@ function Editlineextruder() {
                   <th>Line Name</th>
                   <th>IP Address</th>
                   <th>Type</th>
-                  <th style={{ width: '5%' }}>Edit</th>
-                  <th style={{ width: '5%' }}>Delete</th>
                 </tr>
               </thead>
               <tbody>
                 {editlines.map((rowData, index) => (
-                  <tr key={index} className={index % 2 === 0 ? 'even' : 'odd'}>
+                  <tr key={index} className={index % 2 === 0 ? 'even' : 'odd'} onClick={() => handleEditClick(index)}>
                     <td style={{ backgroundColor: rowData.connected ? 'green' : 'red' }}>
                       {rowData.connected ? (
                         <FontAwesomeIcon icon={faCheck} />
@@ -389,14 +403,12 @@ function Editlineextruder() {
                     <td>{rowData.Linename}</td>
                     <td>{rowData.ipaddress}</td>
                     <td>{gettype(rowData.packline, rowData.extruder)}</td>
-                    <td><p className='eleditdeletebutton' onClick={() => handleEditClick(index)}><FontAwesomeIcon icon={faGear} /></p></td>
-                    <td><p className='eleditdeletebutton' onClick={() => handledeleteClick(index)}><FontAwesomeIcon icon={faTrashCan} /></p></td>
                   </tr>
                 ))}
               </tbody>
             </ReactBootStrap.Table>
           </div>
-          {editRow !== null && (
+          {showEditModal && (
             <div className="edit-modal">
               <div className="edit-popup">
                 <button className="modal-close-button" onClick={closeEditModal}>
@@ -454,6 +466,14 @@ function Editlineextruder() {
                       <FontAwesomeIcon icon={faXmark} className="editleicon" />
                     </div>
                     <div className="editletext">Cancel</div>
+                  </button>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                  <button className="editlebutton" onClick={handledeleteClick}>
+                    <div className="editleicon-wrapper">
+                      <FontAwesomeIcon icon={faTrashCan} className="editleicon" />
+                    </div>
+                    <div className="editletext">Delete</div>
                   </button>
                 </div>
               </div>
@@ -522,6 +542,12 @@ function Editlineextruder() {
               </div>
             </div>
           )}
+          <DeleteConfirmation
+            show={showDeleteConfirmation}
+            handleDelete={handleDelete}
+            handleClose={handleClosed}
+            message={`Are you sure you want to delete ${editedData.Linename}?`}
+          />
         </>
       )}
     </div>

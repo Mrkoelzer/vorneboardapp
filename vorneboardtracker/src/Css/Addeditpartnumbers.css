@@ -8,8 +8,9 @@
 .aepartnumbers-flexbox-container {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content:space-around;
   flex-wrap: wrap;
-  justify-content: center;
 }
 
 .aeflexbox-item {
@@ -98,7 +99,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  width: 100%;
+  margin-bottom: 10px;
 }
 
 .aepartnumberstable-container table {
@@ -106,12 +108,13 @@
   /* Adjust the table width as needed */
   border-collapse: collapse;
   /* Collapse borders for a cleaner look */
-  font-size: 12px;
+  font-size: 14px;
   /* Set the font size to make text smaller */
+
 }
 
 .editleflexbox-item {
-  width: 100%;
+  width: 100%; 
   min-height: 2vh;
   align-items: center;
 }

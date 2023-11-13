@@ -6,12 +6,13 @@ import { usercontext } from '../contexts/usercontext';
 import * as ReactBootStrap from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import 'react-notifications/lib/notifications.css';
-import {NotificationContainer, NotificationManager} from 'react-notifications';
+import { NotificationContainer, NotificationManager } from 'react-notifications';
 import { faGear, faTrashCan, faCheck, faTimes, faPlus, faArrowLeft, faXmark } from '@fortawesome/free-solid-svg-icons';
 //import Axios from 'axios';
 import Select from 'react-select'
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
 import { Toolbarcontext } from '../Components/Navbar/Toolbarcontext';
+import DeleteConfirmation from '../Components/DeleteConfirmation';
 
 function Addeditpartnumbers() {
     const navigate = useNavigate();
@@ -28,6 +29,7 @@ function Addeditpartnumbers() {
     const { localipaddr } = useContext(ipaddrcontext);
     const [editlines, seteditlines] = useState([]);
     const { settoolbarinfo } = useContext(Toolbarcontext)
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [newData, setNewData] = useState({
         Linename: '',
         Part_ID: '',
@@ -75,7 +77,7 @@ function Addeditpartnumbers() {
     });
 
     useEffect(() => {
-        settoolbarinfo([{Title: 'Vorne Edit Parts'}])
+        settoolbarinfo([{ Title: 'Vorne Edit Parts' }])
         const userDataFromLocalStorage = sessionStorage.getItem('userdata');
         let parsedUserData;
         if (userDataFromLocalStorage) {
@@ -180,6 +182,16 @@ function Addeditpartnumbers() {
         updatepartnumbers();
     };
 
+    const handleDeleteClick = () => {
+        setShowDeleteConfirmation(true);
+        setshowEditModal(false);
+    };
+
+    const handleClosed = () => {
+        handleEditClick(editedData.Part_ID)
+        setShowDeleteConfirmation(false);
+    };
+
     const handledelete = async (id) => {
         let linename = lines[selectedline].Linename
         try {
@@ -195,6 +207,8 @@ function Addeditpartnumbers() {
             if (response.ok) {
                 NotificationManager.success(`${linename} Deleted!`)
                 handlepartpdfdelete(id);
+                setShowDeleteConfirmation(false);
+                closeEditModal()
                 getpartnumbers()
             } else {
                 NotificationManager.error(`Delete Failed!`)
@@ -383,6 +397,7 @@ function Addeditpartnumbers() {
 
         // After adding all parts, perform other actions (getpartnumbers, reset, close modal, etc.)
         if (passed === true) {
+            console.log('here')
             getpartnumbers();
             getallpartnumbers();
             setAddLineMessage('');
@@ -410,7 +425,7 @@ function Addeditpartnumbers() {
         setShowAddModal(true);
         setAddLineMessage('');
     };
-    const handleEditClick = (index, partid) => {
+    const handleEditClick = (partid) => {
         setAddLineMessage('');
         geteditlines(partid)
         for (let i = 0; i < partnumbers.length; i++) {
@@ -456,6 +471,7 @@ function Addeditpartnumbers() {
 
     const closeAddModal = () => {
         setShowAddModal(false);
+        addpartreset()
     };
 
     const getallpartnumbers = async () => {
@@ -552,12 +568,12 @@ function Addeditpartnumbers() {
 
     return (
         <div className='aepartnumberpage'>
-            <NotificationContainer/>
+            <NotificationContainer />
             {isLoading ? (
                 <p>Loading...</p>
             ) : (
                 <div className='aepartnumbers-flexbox-container'>
-                    <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-around', width: '98%' }}>
                         <select className='aepartnumbers-inputs' onChange={(e) => getselectedline(e.target.selectedIndex)}>
                             {lines.map((line, index) => (
                                 <option key={index} value={line.Linename}>
@@ -588,7 +604,6 @@ function Addeditpartnumbers() {
                         </button>
                     </div>
                     <div className="aepartnumberstable-container">
-                        <br />
                         <ReactBootStrap.Table striped bordered hover>
                             <thead>
                                 <tr className="header-row">
@@ -600,14 +615,12 @@ function Addeditpartnumbers() {
                                     <th>Down (s)</th>
                                     <th>Count Multiplier</th>
                                     <th>Start with Changeover</th>
-                                    <th>Edit</th>
-                                    <th>Delete</th>
                                     <th>PDF</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {filteredPartNumbers.map((rowData, index) => (
-                                    <tr key={index} className={index % 2 === 0 ? 'even' : 'odd'} >
+                                    <tr key={index} className={index % 2 === 0 ? 'even' : 'odd'} onClick={() => handleEditClick(rowData.Part_ID)}>
                                         <td>{rowData.Part_ID}</td>
                                         <td>{rowData.Alternate_Part_ID}</td>
                                         <td>{rowData.Ideal_Cycle_Time_s}</td>
@@ -618,17 +631,15 @@ function Addeditpartnumbers() {
                                             {`${rowData.Count_Multiplier_1}, ${rowData.Count_Multiplier_2}, ${rowData.Count_Multiplier_3}, ${rowData.Count_Multiplier_4}, ${rowData.Count_Multiplier_5}, ${rowData.Count_Multiplier_6}, ${rowData.Count_Multiplier_7}, ${rowData.Count_Multiplier_8}, ${rowData.Target_Multiplier}`}
                                         </td>
                                         <td>{rowData.Start_with_Changeover}</td>
-                                        <td><p className='aeeditdeletebutton' onClick={() => handleEditClick(index, rowData.Part_ID)}><FontAwesomeIcon icon={faGear} /></p></td>
-                                        <td><p className='aeeditdeletebutton' onClick={() => handledelete(rowData.Part_ID)}><FontAwesomeIcon icon={faTrashCan} /></p></td>
                                         <td className={rowData.pdfname === 'No PDF Assigned' ? 'no-pdf' : ''}>
-                                                {rowData.pdfname === 'No PDF Assigned' ? (
-                                                    <FontAwesomeIcon icon={faTimes} /> // Display X if PDF is 'No PDF Assigned'
-                                                ) : rowData.pdfname ? (
-                                                    <FontAwesomeIcon icon={faCheck} /> // Display checkmark if PDF exists
-                                                ) : (
-                                                    'Checking...' // Display a loading message while checking
-                                                )}
-                                            </td>
+                                            {rowData.pdfname === 'No PDF Assigned' ? (
+                                                <FontAwesomeIcon icon={faTimes} /> // Display X if PDF is 'No PDF Assigned'
+                                            ) : rowData.pdfname ? (
+                                                <FontAwesomeIcon icon={faCheck} /> // Display checkmark if PDF exists
+                                            ) : (
+                                                'Checking...' // Display a loading message while checking
+                                            )}
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -861,10 +872,24 @@ function Addeditpartnumbers() {
                                 <div className="editletext">Cancel</div>
                             </button>
                         </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                            <button className="userpagebutton" onClick={handleDeleteClick}>
+                                <div className="usericon-wrapper">
+                                    <FontAwesomeIcon icon={faTrashCan} className="usericon" />
+                                </div>
+                                <div className="usertext">Delete</div>
+                            </button>
+                        </div>
                         {/* Display the message */}
                     </div>
                 </div>
             )}
+            <DeleteConfirmation
+                show={showDeleteConfirmation}
+                handleDelete={() => handledelete(editedData.Part_ID)}
+                handleClose={handleClosed}
+                message={`Are you sure you want to delete Part ${editedData.Part_ID} from ${editedData.Linename}?`}
+            />
         </div>
     );
 }

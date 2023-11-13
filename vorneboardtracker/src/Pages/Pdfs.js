@@ -7,9 +7,10 @@ import { linescontext } from '../contexts/linescontext';
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import 'react-notifications/lib/notifications.css';
-import {NotificationContainer, NotificationManager} from 'react-notifications';
+import { NotificationContainer, NotificationManager } from 'react-notifications';
 import { faGear, faTrashCan, faXmark, faArrowLeft, faCheck, faFilePdf } from '@fortawesome/free-solid-svg-icons';
 import { Toolbarcontext } from '../Components/Navbar/Toolbarcontext';
+import DeleteConfirmation from '../Components/DeleteConfirmation';
 
 function Pdfs() {
     const navigate = useNavigate();
@@ -17,13 +18,15 @@ function Pdfs() {
     const [pdfs, setpdfs] = useState([]);
     const [searchValue, setSearchValue] = useState("");
     const { localipaddr } = useContext(ipaddrcontext);
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
     const [showAddModal, setShowAddModal] = useState(false); // State for showing/hiding the add modal
     const [addLineMessage, setAddLineMessage] = useState('');
+    const [pdfname, setpdfname] = useState('');
     const { settoolbarinfo } = useContext(Toolbarcontext)
 
     useEffect(() => {
-        settoolbarinfo([{Title: 'Vorne Edit PDFs'}])
+        settoolbarinfo([{ Title: 'Vorne Edit PDFs' }])
         const userDataFromLocalStorage = sessionStorage.getItem('userdata');
         let parsedUserData;
         if (userDataFromLocalStorage) {
@@ -66,6 +69,19 @@ function Pdfs() {
         fetchpdfs();
     }, []);
 
+    const handledeleteClick = (pdfname) =>{
+        setpdfname(pdfname)
+        setShowDeleteConfirmation(true)
+    }
+
+    const handleDelete = () => {
+        deletePdf(pdfname)
+        setShowDeleteConfirmation(false);
+      };
+
+      const handleClosed = () => {
+        setShowDeleteConfirmation(false);
+      };
 
     const handleAddClick = () => {
         setShowAddModal(true);
@@ -182,11 +198,11 @@ function Pdfs() {
 
     return (
         <div className="pdfs">
-            <view>          
+            <view>
                 <div className="pdfstable-container">
-                <NotificationContainer/>
-                <br/>
-                <div style={{ display: 'flex', alignSelf: 'center'}}>
+                    <NotificationContainer />
+                    <br />
+                    <div style={{ display: 'flex', alignSelf: 'center' }}>
                         <button className="pdfsbutton" onClick={handleAddClick}>
                             <div className="pdfsicon-wrapper">
                                 <FontAwesomeIcon icon={faFilePdf} className="pdfsicon" />
@@ -200,14 +216,14 @@ function Pdfs() {
                             <div className="pdfstext">Go Back</div>
                         </button>
                     </div>
-                <input
-                    className='pdfs-search'
-                    type="text"
-                    placeholder="Search..."
-                    value={searchValue}
-                    onChange={(e) => setSearchValue(e.target.value)}
-                />
-                <br/>
+                    <input
+                        className='pdfs-search'
+                        type="text"
+                        placeholder="Search..."
+                        value={searchValue}
+                        onChange={(e) => setSearchValue(e.target.value)}
+                    />
+                    <br />
                     <ReactBootStrap.Table striped bordered hover>
                         <thead>
                             <tr className="header-row">
@@ -219,7 +235,7 @@ function Pdfs() {
                             {filteredPartNumbers.map((rowData, index) => (
                                 <tr key={index} className={index % 2 === 0 ? 'even' : 'odd'}>
                                     <td>{rowData.pdfname}</td>
-                                    <td><p className='pdfseditdeletebutton' onClick={() => deletePdf(rowData.pdfname)}><FontAwesomeIcon icon={faTrashCan} /></p></td>
+                                    <td><p className='pdfseditdeletebutton' onClick={() => handledeleteClick(rowData.pdfname)}><FontAwesomeIcon icon={faTrashCan} /></p></td>
                                 </tr>
                             ))}
                         </tbody>
@@ -253,6 +269,12 @@ function Pdfs() {
                     </div>
                 </div>
             )}
+            <DeleteConfirmation
+                show={showDeleteConfirmation}
+                handleDelete={handleDelete}
+                handleClose={handleClosed}
+                message={`Are you sure you want to delete PDF: ${pdfname}?`}
+            />
         </div>
     );
 }

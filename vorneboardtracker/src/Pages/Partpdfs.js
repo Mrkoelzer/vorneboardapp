@@ -258,7 +258,7 @@ function Partpdfs() {
                     <p>Loading...</p>
                 ) : (
                     <div className='partpdfs-flexbox-container'>
-                        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-around', width: '98%' }}>
                             <select className='partpdfs-inputs' onChange={(e) => getselectedline(e.target.selectedIndex)}>
                                 {updatedlines.map((line, index) => (
                                     <option key={index} value={line.Linename}>
@@ -290,12 +290,11 @@ function Partpdfs() {
                                         <th>Part ID</th>
                                         <th>PDF Name</th>
                                         <th>PDF</th>
-                                        <th>Edit</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {filteredPartNumbers.map((rowData, index) => (
-                                        <tr key={index} className={index % 2 === 0 ? 'even' : 'odd'}>
+                                        <tr key={index} className={index % 2 === 0 ? 'even' : 'odd'} onClick={() => handleEditClick(rowData.linename, rowData.part_id)}>
                                             <td>{rowData.linename}</td>
                                             <td>{rowData.part_id}</td>
                                             <td>{rowData.pdfname}</td>
@@ -308,7 +307,6 @@ function Partpdfs() {
                                                     'Checking...' // Display a loading message while checking
                                                 )}
                                             </td>
-                                            <td><p className='ppeditdeletebutton' onClick={() => handleEditClick(rowData.linename, rowData.part_id)}><FontAwesomeIcon icon={faGear} /></p></td>
                                         </tr>
                                     ))}
                                 </tbody>

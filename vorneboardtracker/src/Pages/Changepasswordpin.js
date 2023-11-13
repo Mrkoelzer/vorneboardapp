@@ -18,6 +18,8 @@ function Changepasswordpin() {
   const { userdata, setuserdata } = useContext(usercontext);
   const { localipaddr } = useContext(ipaddrcontext);
   const [addLineMessage, setAddLineMessage] = useState('');
+  const [changepassmessage, setchangepassmessage] = useState('');
+  const [lockedaccount, setlockedaccount] = useState(false);
   const { settoolbarinfo } = useContext(Toolbarcontext)
   const [passworddata, setpassworddata] = useState({
     oldpassword: '',
@@ -27,21 +29,53 @@ function Changepasswordpin() {
   });
 
   useEffect(() => {
-    settoolbarinfo([{Title: 'Change Password/PIN'}])
+    settoolbarinfo([{ Title: 'Change Password/PIN' }])
     const userDataFromLocalStorage = sessionStorage.getItem('userdata');
     let parsedUserData;
+  
     if (userDataFromLocalStorage) {
-        parsedUserData = JSON.parse(userDataFromLocalStorage);
+      parsedUserData = JSON.parse(userDataFromLocalStorage);
+  
+      // Check if the value has changed before updating the state
+      if (JSON.stringify(parsedUserData) !== JSON.stringify(userdata)) {
         setuserdata(parsedUserData);
+      }
     }
+  
     if ((userdata && userdata.loggedin === 1) || (parsedUserData && parsedUserData.loggedin === 1)) {
-        if ((userdata && userdata.passwordchange === 1) || (parsedUserData && parsedUserData.pinchange === 1)) {
-            navigate('/Changepasswordpin');
+      if (
+        userdata.passwordchange === 1 ||
+        parsedUserData.pinchange === 1 ||
+        userdata.pinchange === 1 ||
+        parsedUserData.passwordchange === 1
+      ) {
+        setlockedaccount(true)
+        if (
+          (userdata.pinchange === 1 && userdata.passwordchange === 1) ||
+          (parsedUserData.passwordchange === 1 && parsedUserData.pinchange === 1)
+        ) {
+          setchangepassmessage('Must Update Password and PIN');
+        } else if (userdata.pinchange === 1 || parsedUserData.pinchange === 1) {
+          setchangepassmessage('Must Update PIN');
+        } else if (userdata.passwordchange === 1 || parsedUserData.passwordchange === 1) {
+          setchangepassmessage('Must Update Password');
         }
+      } else {
+        console.log(lockedaccount)
+        if(lockedaccount === true){
+          setchangepassmessage('Password and PIN Updated: Redirecting...');
+          setTimeout(() => {
+            navigate('/');
+          }, 3000); // 3000 milliseconds = 3 seconds
+        }else{
+          setchangepassmessage('');
+        }
+      }
     } else {
-        navigate('/');
+      navigate('/');
     }
-}, [setuserdata, navigate]);
+  }, [userdata]);
+  
 
   const handleShowChangePasswordForm = () => {
     setShowChangePasswordForm(true);
@@ -115,7 +149,16 @@ function Changepasswordpin() {
       });
       const data = await response.json();
       if (data) {
+        console.log(data)
         setuserdata(data.recordset[0])
+        sessionStorage.setItem('userdata', JSON.stringify({
+          ...data.recordset[0],
+          loggedin: 1,
+        }));
+        setuserdata(prevUserData => ({
+          ...prevUserData,
+          loggedin: 1
+        }));
       }
     } catch (error) {
       console.error('Error:', error);
@@ -131,6 +174,9 @@ function Changepasswordpin() {
       <div className='changepasspin-flexbox-container'>
       <NotificationContainer/>
         <br />
+        <div>
+        {changepassmessage}
+        </div>
         {showChangePasswordForm ? (
           <div className='changepasspinflexbox-item'>
             <button className='changepasspinbutton' onClick={handleHideChangePasswordForm}>

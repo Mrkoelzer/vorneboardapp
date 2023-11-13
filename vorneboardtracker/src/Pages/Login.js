@@ -56,7 +56,7 @@ function Login() {
           ...prevUserData,
           loggedin: 1
         }));
-        hangleNavigate(data.result.recordset[0].passwordchange, data.result.recordset[0].pinchage)
+        hangleNavigate(data.result.recordset[0].passwordchange, data.result.recordset[0].pinchange)
       } else {
         setAuthenticated("Wrong Password or Username");
       }

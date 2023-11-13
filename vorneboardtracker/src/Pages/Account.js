@@ -33,48 +33,36 @@ function Account() {
     return (
         <div className="accountpage">
             <div className='account-container'>
+            {userdata.superadmin === 1 && (
                 <button className='accountbutton' onClick={() => navigate('/Users')}>
                     <div className="icon-wrapper">
                         <FontAwesomeIcon icon={faUserGear} className="icon" />
                     </div>
                     <div className="text">Users</div>
                 </button>
+            )}
                 <button className='accountbutton' onClick={() => navigate('/Changepasswordpin')}>
                 <div className="icon-wrapper">
                     <FontAwesomeIcon icon={faUnlockKeyhole}  className="icon" /> 
                     </div>
                     <div className="text">Change Password/Pin</div>
                 </button>
+                {userdata.superadmin === 1 && (
                 <button className='accountbutton' onClick={() => navigate('/Editlineextruder')}>
                 <div className="icon-wrapper">
                     <FontAwesomeIcon icon={faBoxesPacking}  className="icon"/>   
                     </div>
                     <div className="text">Edit Lines/Extruders</div>
                 </button>
-                <button className='accountbutton' onClick={() => navigate('/Addeditpartnumbers')}>
-                <div className="icon-wrapper">
-                    <FontAwesomeIcon icon={faBarcode}  className="icon"/>  
-                    </div>
-                    <div className="text">Add/Edit Part Numbers</div>
-                </button>
-                <button className='accountbutton' onClick={() => navigate('/Pdfs')}>
-                <div className="icon-wrapper">
-                    <FontAwesomeIcon icon={faFilePdf}  className="icon"/>   
-                    </div>
-                    <div className="text">Add/Delete PDFs</div>
-                </button>
-                <button className='accountbutton' onClick={() => navigate('/Partpdfs')}>
-                <div className="icon-wrapper">
-                    <FontAwesomeIcon icon={faFileCirclePlus}  className="icon"/>   
-                    </div>
-                    <div className="text">Edit Linked PDFs</div>
-                </button>
+                )}
+                {userdata.superadmin === 1 && (
                 <button className='accountbutton' onClick={() => navigate('/Selecttablet')}>
                 <div className="icon-wrapper">
                     <FontAwesomeIcon icon={faTabletScreenButton}  className="icon"/>   
                     </div>
                     <div className="text">Select Tablet</div>
                 </button>
+                )}
                 <button className='accountbutton' onClick={() => navigate('/')}>
                 <div className="icon-wrapper">
                     <FontAwesomeIcon icon={faArrowLeft}  className="icon"/>   

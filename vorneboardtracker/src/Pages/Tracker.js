@@ -202,17 +202,16 @@ function Tracker() {
           <ReactBootStrap.Table striped bordered hover>
             <thead>
               <tr className="header-row">
-                <th>X</th>
+                <th><FontAwesomeIcon icon={faCircle} style={{ color: 'white' }} /></th>
                 <th>Line Name</th>
                 <th>Part ID</th>
                 <th>Process State</th>
                 <th>Process State Reason</th>
-                <th style={{ width: '10%' }}>More Information</th>
               </tr>
             </thead>
             <tbody>
               {partruntable.map((rowData, index) => (
-                <tr key={index} className={index % 2 === 0 ? 'even' : 'odd'}>
+                <tr key={index} className={index % 2 === 0 ? 'even' : 'odd'} onClick={() => handleNavigate(index)}>
                   <td className="icon-cell">
                     {rowData.processStateDetailsData === 'Running' ? (
                       <FontAwesomeIcon icon={faCircle} style={{ color: 'green' }} />
@@ -236,7 +235,6 @@ function Tracker() {
                   <td>{rowData.partrunData.part_id.replace(/j/g, '-')}</td>
                   <td>{rowData.processStateDetailsData}</td>
                   <td>{rowData.processStateReasonData}</td>
-                  <td><p className='trackermorebutton' onClick={() => handleNavigate(index)}><FontAwesomeIcon icon={faCircleInfo} /></p></td>
                 </tr>
               ))}
             </tbody>
