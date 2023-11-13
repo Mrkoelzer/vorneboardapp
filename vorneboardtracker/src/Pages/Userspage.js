@@ -3,17 +3,22 @@ import * as ReactBootStrap from 'react-bootstrap';
 import '../Css/Userspage.css';
 import { useNavigate } from 'react-router-dom';
 import { usercontext } from '../contexts/usercontext';
-import Toolbar from '../Components/Createtoolbar';
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import 'react-notifications/lib/notifications.css';
+import { NotificationContainer, NotificationManager } from 'react-notifications';
 import { faArrowLeft, faCheck, faGear, faTrashCan, faUserPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
-
+import { Toolbarcontext } from '../Components/Navbar/Toolbarcontext';
+import DeleteConfirmation from '../Components/DeleteConfirmation';
 
 function Userspage() {
     const navigate = useNavigate();
     const { userdata, setuserdata } = useContext(usercontext);
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [users, setusers] = useState([])
+    const [selectedindex, setselectedindex] = useState(0);
     const { localipaddr } = useContext(ipaddrcontext);
+    const { settoolbarinfo } = useContext(Toolbarcontext)
     const [editedData, setEditedData] = useState({
         userid: 0,
         username: '',
@@ -47,6 +52,7 @@ function Userspage() {
     const [addLineMessage, setAddLineMessage] = useState('');
 
     useEffect(() => {
+        settoolbarinfo([{ Title: 'Vorne User Page' }])
         const userDataFromLocalStorage = sessionStorage.getItem('userdata');
         let parsedUserData;
         if (userDataFromLocalStorage) {
@@ -85,7 +91,9 @@ function Userspage() {
     const handleEditClick = (index) => {
         setAddLineMessage('');
         setEditedData(users[index])
+        setselectedindex(index)
         setshowEditModal(true);
+
 
     };
 
@@ -100,9 +108,22 @@ function Userspage() {
         fetchlines()
     }, []);
 
-    const handledeleteClick = (index) => {
-        handledelete(users[index].userid);
+    const handledeleteClick = () => {
+        closeEditModal()
+        setShowDeleteConfirmation(true)    
     };
+
+    const handleDelete = () => {
+        handledelete(users[selectedindex].userid);
+        setShowDeleteConfirmation(false);
+      };
+
+      const handleClosed = () => {
+        setEditedData(users[selectedindex])
+        setshowEditModal(true);
+        setShowDeleteConfirmation(false);
+      };
+
 
     const handledelete = async (userid) => {
         try {
@@ -117,12 +138,16 @@ function Userspage() {
             // Handle response
             if (response.ok) {
                 // Line deleted successfully
+                NotificationManager.success(`Delete Successful!`)
+
 
                 fetchlines(); // Refresh the line data
             } else {
+                NotificationManager.error('Deleted Failed')
                 console.error('Delete failed');
             }
         } catch (error) {
+            NotificationManager.error('Deleted Failed')
             console.error('Error:', error);
         }
     };
@@ -255,11 +280,13 @@ function Userspage() {
             // Handle response and update the data if needed
             if (response.ok) {
                 fetchlines()
+                NotificationManager.success(`${updatedData.first_name} ${updatedData.last_name} Updated!`)
 
                 // Close the edit pop-up
                 closeEditModal();
             }
         } catch (error) {
+            NotificationManager.error('Update Failed')
             console.error('Error:', error);
         }
     };
@@ -306,6 +333,7 @@ function Userspage() {
             const data = await response.json();
             if (data.createdauthenticated) {
                 // Reset newData to initial state
+                NotificationManager.success(`${updatedData.first_name} ${updatedData.last_name} Added!`)
                 setNewData({
                     userid: 0,
                     username: '',
@@ -329,6 +357,7 @@ function Userspage() {
             // Close the add modal
             closeAddModal();
         } catch (error) {
+            NotificationManager.error('Add Failed')
             console.error('Error:', error);
         }
     };
@@ -344,8 +373,8 @@ function Userspage() {
 
     return (
         <div className="userpage">
-            <Toolbar />
             <div className="userpagetable-container">
+                <NotificationContainer />
                 <div style={{ display: 'flex' }}>
                     <button className="userpagebutton" onClick={handleAddClick}>
                         <div className="usericon-wrapper">
@@ -368,20 +397,16 @@ function Userspage() {
                             <th style={{ width: '8%' }}>Super Admin</th>
                             <th style={{ width: '10%' }}>Password Change</th>
                             <th style={{ width: '10%' }}>Pin Change</th>
-                            <th style={{ width: '3%' }}>Edit</th>
-                            <th style={{ width: '3%' }}>Delete</th>
                         </tr>
                     </thead>
                     <tbody>
                         {users.map((rowData, index) => (
-                            <tr key={index} className={index % 2 === 0 ? 'even' : 'odd'}>
+                            <tr key={index} className={index % 2 === 0 ? 'even' : 'odd'} onClick={() => handleEditClick(index, rowData.Part_ID)}>
                                 <td>{rowData.first_name} {rowData.last_name}</td>
                                 <td>{getvalues(rowData.admin)}</td>
                                 <td>{getvalues(rowData.superadmin)}</td>
                                 <td>{getvalues(rowData.passwordchange)}</td>
                                 <td>{getvalues(rowData.pinchange)}</td>
-                                <td><p className='userpageeditdeletebutton' onClick={() => handleEditClick(index, rowData.Part_ID)}><FontAwesomeIcon icon={faGear} /></p></td>
-                                <td><p className='userpageeditdeletebutton' onClick={() => handledeleteClick(index)}><FontAwesomeIcon icon={faTrashCan} /></p></td>
                             </tr>
                         ))}
                     </tbody>
@@ -647,11 +672,24 @@ function Userspage() {
                                 <div className="usertext">Cancel</div>
                             </button>
                         </div>
-
+                        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                            <button className="userpagebutton" onClick={handledeleteClick}>
+                                <div className="usericon-wrapper">
+                                    <FontAwesomeIcon icon={faTrashCan} className="usericon" />
+                                </div>
+                                <div className="usertext">Delete</div>
+                            </button>
+                        </div>
                         {/* Display the message */}
                     </div>
                 </div>
             )}
+            <DeleteConfirmation
+                show={showDeleteConfirmation}
+                handleDelete={handleDelete}
+                handleClose={handleClosed}
+                message={`Are you sure you want to delete user ${editedData.first_name}?`}
+            />
         </div>
     );
 }

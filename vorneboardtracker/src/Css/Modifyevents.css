@@ -1,0 +1,378 @@
+.modifyeventspage {
+  background: linear-gradient(#0f1626, #262d3b);
+  min-height: 100vh;
+  font-size: calc(10px + 1vmin);
+  color: white;
+}
+
+.modifyevents-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  width: 98%;
+}
+
+.shiftcheckboxes-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  width: 98%;
+  flex-wrap: wrap;
+}
+.showcheckboxes-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  width: 98%;
+}
+
+.shiftcheckboxesinner-container {
+  display: flex;
+  margin-top: 10px;
+}
+.shiftcheckboxesinnerdropdown-container {
+  display: flex;
+  margin-top: 30px;
+  width: 30%;
+}
+
+
+.modifyeventsflexbox-item {
+  width: 100%;
+  min-height: 2vh;
+  align-items: center;
+}
+
+.process-state-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.process-state-header td {
+  border-bottom: none !important;
+  /* Remove the bottom border */
+}
+
+.modifyevents-container table {
+  width: 98%;
+  /* Adjust the width as needed */
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.modifyevents-container th,
+.modifyevents-container td {
+  border: 1px solid #f5f5f5;
+  /* Border color for cells */
+  padding: 5px;
+  /* Adjust padding as needed */
+  text-align: center;
+  /* Center-align content */
+  vertical-align: middle;
+  /* Vertically center content */
+  box-shadow: 0 0 0 1px #f5f5f5;
+}
+
+.modifyevents-container tbody tr:nth-child(even) {
+  background-color: #262d3b;
+  /* Set the background color for even rows */
+}
+
+.modifyevents-container tbody tr:nth-child(even):hover {
+  background-color: #0f1626;
+  /* Set the background color for even rows on hover */
+}
+
+.modifyevents-container tbody tr:nth-child(odd) {
+  background-color: #3e4451;
+  /* Set the background color for odd rows */
+}
+
+.modifyevents-container tbody tr:nth-child(odd):hover {
+  background-color: #0f1626;
+  /* Set the background color for odd rows on hover */
+}
+
+.modifyevents-container thead {
+  background-color: #FF533d;
+  /* Set the background color for the header row */
+  color: #f5f5f5;
+  /* Set the font color for the header row */
+}
+
+.modifyevents-container .modifyeventstablebutton {
+  background-color: inherit;
+  /* Set the background color to inherit from the row */
+  color: #f5f5f5;
+  /* Set the font color for the buttons */
+  border: none;
+  margin: 10px;
+}
+
+.modifyevents-container .modifyeventstablebutton:hover {
+  color: #FF533d;
+  /* Set the font color for the buttons on row hover */
+}
+
+.popup-textbox-container {
+  width: 100%;
+  height: 20vh;
+  display: flex;
+  align-items: flex-start;
+  /* Aligns text to the top of the textbox */
+}
+
+.popup-textbox {
+  width: 98%;
+  height: 19vh;
+  resize: none;
+  /* Prevents the user from resizing the textbox */
+  overflow: auto;
+  /* Enables vertical scrolling if the content overflows the textbox */
+  word-wrap: break-word;
+  /* Allows long words to be able to break and wrap onto the next line */
+  overflow-wrap: break-word;
+  /* Handles the overflow when the word cannot be broken at the end of the line */
+}
+
+.modifyfilterbuttons {
+  font-size: large;
+  color: black;
+  background: #FF533d;
+  padding: 30px;
+  border-radius: 50%;
+  font-weight: normal;
+  text-transform: uppercase;
+  transition: all 0.2s ease-in-out;
+  width: 90px;
+  height: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.modifyfilterbuttons:hover {
+  color: black;
+  box-shadow: 0 5px 15px #f5f5f5;
+}
+
+.modifyfilterbuttons-selected {
+  font-size: large;
+  color: black;
+  background: green;
+  padding: 30px;
+  border-radius: 50%;
+  font-weight: normal;
+  text-transform: uppercase;
+  transition: all 0.2s ease-in-out;
+  width: 90px;
+  height: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.modifyfilterbuttons-selected:hover {
+  color: black;
+  box-shadow: 0 5px 15px #f5f5f5;
+}
+
+.modifyfiltericon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.modifyfiltericon {
+  color: #f5f5f5;
+  height: 25px;
+  width: 25px;
+}
+
+.modifyfiltertext {
+  font-weight: bold;
+  font-size: x-small;
+  color: #f5f5f5;
+}
+
+.modifydatadropdown{
+  font-weight: bold;
+  font-size: large;
+  color:#f5f5f5;
+  background: #575b67;
+  padding: 15px 40px;
+  border-radius: 4px;
+  font-weight: normal;
+  text-transform: uppercase;
+  transition: all 0.2s ease-in-out;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 45px;
+}
+.modifydatadropdown:hover{
+  color: #f5f5f5;
+  box-shadow: 0 5px 15px white;
+}
+.modifydataedit-buttion-container{
+  display: flex;
+  justify-content: space-around;
+}
+.modifydataeditdropdown{
+  font-weight: bold;
+  font-size: large;
+  color:#f5f5f5;
+  background: #575b67;
+  padding: 15px 40px;
+  border-radius: 4px;
+  font-weight: normal;
+  text-transform: uppercase;
+  transition: all 0.2s ease-in-out;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 45px;
+}
+.modifydataeditdropdown:hover{
+  color: #f5f5f5;
+  box-shadow: 0 5px 15px white;
+}
+@media (max-width: 600px) {
+
+
+  .modifyevents-container table {
+    width: 98%;
+    /* Adjust the table width as needed */
+    border-collapse: collapse;
+    /* Collapse borders for a cleaner look */
+    font-size: 8px;
+    /* Set the font size to make text smaller */
+  }
+
+  .modifyevents-container th,
+  .modifyevents-container td {
+    border: 1px solid #dee2e6;
+    padding: 1px;
+    /* Adjust padding as needed */
+    text-align: center;
+    vertical-align: middle;
+    box-shadow: 0 0 0 1px #dee2e6;
+  }
+
+  .modifyeventspage {
+    background: linear-gradient(#0f1626, #262d3b);
+    min-height: 100vh;
+    font-size: 10px;
+    color: white;
+  }
+
+  .modifyfilterbuttons {
+    font-size: large;
+    color: black;
+    background: #FF533d;
+    padding: 30px;
+    border-radius: 50%;
+    font-weight: normal;
+    text-transform: uppercase;
+    transition: all 0.2s ease-in-out;
+    width: 70px;
+    height: 70px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .modifyfilterbuttons:hover {
+    color: black;
+    box-shadow: 0 5px 15px #f5f5f5;
+  }
+  
+  .modifyfilterbuttons-selected {
+    font-size: large;
+    color: black;
+    background: green;
+    padding: 30px;
+    border-radius: 50%;
+    font-weight: normal;
+    text-transform: uppercase;
+    transition: all 0.2s ease-in-out;
+    width: 70px;
+    height: 70px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .modifyfilterbuttons-selected:hover {
+    color: black;
+    box-shadow: 0 5px 15px #f5f5f5;
+  }
+  
+  .modifyfiltericon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+  }
+  
+  .modifyfiltericon {
+    color: #f5f5f5;
+    height: 20px;
+    width: 20px;
+  }
+  
+  .modifyfiltertext {
+    font-weight: bold;
+    font-size: 8px;
+    color: #f5f5f5;
+  }
+  .shiftcheckboxesinnerdropdown-container {
+    display: flex;
+    margin-top: 30px;
+    width: 100%;
+  }
+
+  .shiftcheckboxesinner-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    width: 100%;
+  }
+  /* Additional styles for other elements if needed */
+}

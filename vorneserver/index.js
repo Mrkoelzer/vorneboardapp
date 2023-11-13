@@ -195,6 +195,27 @@ appApi.post('/updatebreak', (req, res) => {
       });
   });
 
+  appApi.post('/updatepastdata', (req, res) => {
+    const { ipaddress, changes } = req.body;
+    const apiUrl = `http://${ipaddress}/api/v0/process_state/change-process-state`;
+    const requestData = {
+      changes: changes.map(change => ({
+        record_id: change.record_id,
+        process_state: `${change.process_state}`,
+        reason: `${change.reason}`
+      }))
+    };
+    axios.post(apiUrl, requestData)
+      .then((response) => {
+        console.log('API call success:');
+        res.json({ message: 'API call successful', changed: true });
+      })
+      .catch((error) => {
+        console.error('API call error:', error.message);
+        res.status(500).json({ message: 'API call failed', changed: false });
+      });
+  });
+
   appApi.post('/updategoodcount', (req, res) => {
     const { ipaddress } = req.body;
     const apiUrl = `http://${ipaddress}/api/v0/inputs/1`;
@@ -427,6 +448,59 @@ appSql.post('/api/insertnewline', async (req, res) => {
     }
 
     sql.close();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+appSql.get('/api/geterrorlog', async (req, res) => {
+  let pool;
+  try {
+    pool = await sql.connect(config);
+    const request = pool.request(); // Create a request object from the connection pool
+
+    const query = `SELECT * FROM error_log`;
+    const result = await request.query(query);
+
+    if (result) {
+      res.json(result.recordset); // Send the result's recordset without wrapping it in an object
+    } else {
+      res.json({ authenticated: false });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+appSql.post('/api/inserterrorlog', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const requestData = req.body;
+    const query = `INSERT INTO error_log ([error_message], [error_type])VALUES('${requestData[0].error_message}','${requestData[0].error_type}')`;
+    const result = await sql.query(query);
+    if (result) {
+      res.json({ errorcreated: true });
+    } else {
+      res.json({ errorcreated: false });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+appSql.delete('/api/deleteerrorlog', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const { error_id } = req.body; // Get the lineid from the URL parameter
+    const result = await sql.query`delete from [error_log] where [error_id] = ${error_id}`;
+    
+    if (result.rowsAffected[0] === 1) {
+      res.json({ deleted: true });
+    } else {
+      res.json({ deleted: false });
+    }
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -928,6 +1002,101 @@ appSql.get('/api/getpdfs', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
+appSql.post('/api/getpastnotesdata', async (req, res) => {
+  try {
+      await sql.connect(config);
+      const requestData = req.body.record_id; // Extract the record_id from the JSON object
+      const query = `select * from PastNotesData where record_id = ${requestData}`;
+      const result = await sql.query(query);
+      if (result.recordset.length > 0) {
+          res.json({ result: result.recordset, checked: true });
+      } else {
+          res.json({ result: result.recordset, checked: false });
+      }
+      await sql.close();
+  } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Server error' });
+  }
+});
+
+appSql.post('/api/updatepastnotesdata', async (req, res) => {
+  try {
+      await sql.connect(config);
+      const requestData = req.body.editedData;
+
+      // Convert the JavaScript date to a SQL-formatted date
+      const formattedLastUpdate = new Date(requestData.last_update).toISOString().slice(0, 19).replace('T', ' ');
+
+      const query = `update PastNotesData
+      set notes = '${requestData.notes}', 
+      last_update = '${formattedLastUpdate}',
+      process_state = '${requestData.process_state}', 
+      process_state_reason = '${requestData.process_state_reason}', 
+      user_update = '${requestData.user_update}'
+      where record_id = ${requestData.record_id}`;
+      console.log(query);
+      const result = await sql.query(query);
+      if (result.rowsAffected[0] > 0) {
+          res.json({ result: result.recordset, checked: true });
+      } else {
+          res.json({ result: result.recordset, checked: false });
+      }
+      await sql.close();
+  } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Server error' });
+  }
+});
+
+appSql.post('/api/insertpastnotesdata', async (req, res) => {
+  try {
+      await sql.connect(config);
+      const requestData = req.body.editedData;
+
+      // Convert the JavaScript date to a SQL-formatted date
+      const formattedLastUpdate = new Date(requestData.last_update).toISOString().slice(0, 19).replace('T', ' ');
+
+      const query = `insert into PastNotesData ([record_id]
+        ,[process_state_event_id]
+        ,[notes]
+        ,[start_time]
+        ,[end_time]
+        ,[note_created]
+        ,[last_update]
+        ,[user_created]
+        ,[process_state]
+        ,[process_state_reason]
+        ,[user_update]
+        ,[linename])
+      values
+      (${requestData.record_id},
+        ${requestData.process_state_event_id},
+        '${requestData.notes}',
+        '${requestData.start_time}',
+        '${requestData.end_time}',
+        '${requestData.note_created}',
+        '${formattedLastUpdate}',
+        '${requestData.user_created}',
+        '${requestData.process_state}',
+        '${requestData.process_state_reason}',
+        '${requestData.user_update}',
+        '${requestData.linename}')`;
+      const result = await sql.query(query);
+      if (result.rowsAffected[0] > 0) {
+          res.json({ result: result.recordset, checked: true });
+      } else {
+          res.json({ result: result.recordset, checked: false });
+      }
+      await sql.close();
+  } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
 
 appSql.post('/api/insertpdf', async (req, res) => {
   try {

@@ -6,11 +6,11 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircle, faCircleInfo, faArrowLeft, faVideo } from '@fortawesome/free-solid-svg-icons';
 import '../Css/tracker.css';
-import Trackertoolbar from '../Components/Trackertoolbar';
 import { linescontext } from '../contexts/linescontext';
 import { selectedlinecontext } from '../contexts/selectedlinecontext';
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
 import { usercontext } from '../contexts/usercontext';
+import { Toolbarcontext } from '../Components/Navbar/Toolbarcontext';
 
 function Tracker() {
   const { partruntable, setpartruntable } = useContext(partruncontext);
@@ -20,6 +20,11 @@ function Tracker() {
   const [isLoading, setIsLoading] = useState(true); // Add isLoading state
   const { localipaddr } = useContext(ipaddrcontext);
   const { userdata, setuserdata } = useContext(usercontext);
+  const { settoolbarinfo } = useContext(Toolbarcontext)
+
+  useEffect(() => {
+    settoolbarinfo([{Title: 'Vorne Tracker Page'}])
+  }, []);
 
   const handleNavigate = (index) => {
     setselectedline(lines[index].Linename);
@@ -42,7 +47,8 @@ function Tracker() {
             navigate('/Changepasswordpin');
         }
     } else {
-        navigate('/');
+      sessionStorage.setItem('LastPage', 'Tracker')
+        navigate('/login');
     }
 }, [setuserdata, navigate]);
   // Load data from local storage when the component mounts
@@ -50,27 +56,22 @@ function Tracker() {
     saveDataToLocalStorage('selectedline', '')
   }, []);
   const fetchlines = async () => {
-    try {
-      const response = await fetch(`http://${localipaddr}:1435/api/getlines`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(),
-      });
-
-      const data = await response.json();
-      if (data) {
-        setlines(data.result.recordset)
-        return fetchAllLineData(data.result.recordset)
-      } else {
-        console.log("error")
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
+    if (lines.length === 0) {
+      const storedLines = localStorage.getItem('lines');
+      // Parse the retrieved string back into an array
+      const parsedLines = storedLines ? JSON.parse(storedLines) : [];
+      console.log(parsedLines)
+      // Set the retrieved data into useState
+      setlines(parsedLines);
+      return fetchAllLineData(parsedLines)
+  }
+  else{
+    console.log(lines)
+    return fetchAllLineData(lines)
+  }
   };
   const fetchAllLineData = async (data) => {
+    console.log(data)
     const lineDataPromises = data.map(async (line) => {
       const linename = line.Linename;
       const partrunData = await getpartrun(line.ipaddress);
@@ -193,7 +194,6 @@ function Tracker() {
 
   return (
     <div className="tracker">
-      <Trackertoolbar />
       <br />
       <div className="table-container">
         {isLoading ? (
@@ -202,17 +202,16 @@ function Tracker() {
           <ReactBootStrap.Table striped bordered hover>
             <thead>
               <tr className="header-row">
-                <th>X</th>
+                <th><FontAwesomeIcon icon={faCircle} style={{ color: 'white' }} /></th>
                 <th>Line Name</th>
                 <th>Part ID</th>
                 <th>Process State</th>
                 <th>Process State Reason</th>
-                <th style={{ width: '10%' }}>More Information</th>
               </tr>
             </thead>
             <tbody>
               {partruntable.map((rowData, index) => (
-                <tr key={index} className={index % 2 === 0 ? 'even' : 'odd'}>
+                <tr key={index} className={index % 2 === 0 ? 'even' : 'odd'} onClick={() => handleNavigate(index)}>
                   <td className="icon-cell">
                     {rowData.processStateDetailsData === 'Running' ? (
                       <FontAwesomeIcon icon={faCircle} style={{ color: 'green' }} />
@@ -236,7 +235,6 @@ function Tracker() {
                   <td>{rowData.partrunData.part_id.replace(/j/g, '-')}</td>
                   <td>{rowData.processStateDetailsData}</td>
                   <td>{rowData.processStateReasonData}</td>
-                  <td><p className='trackermorebutton' onClick={() => handleNavigate(index)}><FontAwesomeIcon icon={faCircleInfo} /></p></td>
                 </tr>
               ))}
             </tbody>

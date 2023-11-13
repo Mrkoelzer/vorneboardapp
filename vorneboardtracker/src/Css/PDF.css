@@ -1,8 +1,9 @@
 .pdf-container{
     display: flex;
     flex-direction: column;
-    background-color: #282c34;
+    background: linear-gradient(#0f1626, #262d3b);
     flex-wrap: wrap;
+    min-height: 100vh;
 }
 
 .page {
@@ -10,7 +11,6 @@
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  background-color: hsl(220, 13%, 18%);
 }
 .buttonlayout{
   display: flex;

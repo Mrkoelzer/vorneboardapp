@@ -8,8 +8,9 @@
   .partpdfs-flexbox-container{
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content:space-around;
     flex-wrap: wrap;
-    justify-content: center;
   }
   .ppflexbox-item{
     width: 100%;
@@ -88,12 +89,14 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    width: 100%;
+    margin-bottom: 10px;
 }
 
 .partpdfstable-container table {
     width: 98%; /* Adjust the table width as needed */
     border-collapse: collapse; /* Collapse borders for a cleaner look */
-    font-size: 12px; /* Set the font size to make text smaller */
+    font-size: 16px; /* Set the font size to make text smaller */
 }
 
 .partpdfstable-container th,

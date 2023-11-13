@@ -1,28 +1,33 @@
-import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useContext, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { usercontext } from '../contexts/usercontext';
 import '../Css/login.css'
-import Logintoobar from '../Components/Logintoobar';
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faRightToBracket, faArrowLeft} from '@fortawesome/free-solid-svg-icons';
-
+import { Toolbarcontext } from '../Components/Navbar/Toolbarcontext';
 
 function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [authenticated, setAuthenticated] = useState('');
   const { userdata, setuserdata } = useContext(usercontext);
   const { localipaddr } = useContext(ipaddrcontext);
+  const { settoolbarinfo } = useContext(Toolbarcontext)
 
+  useEffect(() => {
+    settoolbarinfo([{Title: 'Vorne Login Page'}])
+  }, []);
 
   const hangleNavigate = (pass, pin) => {
     if (pass === 1 || pin === 1) {
       navigate('/changepasswordpin')
     }
     else {
-      navigate('/')
+      const lastpage = sessionStorage.getItem('LastPage')
+      navigate(`/${lastpage}`)
     }
   }
 
@@ -51,7 +56,7 @@ function Login() {
           ...prevUserData,
           loggedin: 1
         }));
-        hangleNavigate(data.result.recordset[0].passwordchange, data.result.recordset[0].pinchage)
+        hangleNavigate(data.result.recordset[0].passwordchange, data.result.recordset[0].pinchange)
       } else {
         setAuthenticated("Wrong Password or Username");
       }
@@ -63,7 +68,6 @@ function Login() {
 
   return (
     <div className="loginpage">
-      <Logintoobar />
       <div className='login-container'>
         <h1>Login</h1>
         <p>Username:</p>

@@ -6,6 +6,7 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import Trackertoolbar from '../Components/Selecttablettoolbar';
 import { linescontext } from '../contexts/linescontext';
 import { usercontext } from '../contexts/usercontext';
+import { Toolbarcontext } from '../Components/Navbar/Toolbarcontext';
 
 function Selecttablet() {
   const navigate = useNavigate();
@@ -13,8 +14,10 @@ function Selecttablet() {
   const [currentline, setcurrentline] = useState(localStorage.getItem('selectedtabletline') || '');
   const [message, setMessage] = useState('');
   const { userdata, setuserdata } = useContext(usercontext);
+  const { settoolbarinfo } = useContext(Toolbarcontext)
 
   useEffect(() => {
+    settoolbarinfo([{Title: 'Vorne Select Tablet'}])
     const userDataFromLocalStorage = sessionStorage.getItem('userdata');
     let parsedUserData;
     if (userDataFromLocalStorage) {
@@ -48,7 +51,6 @@ function Selecttablet() {
 
   return (
     <div className="tracker">
-      <Trackertoolbar />
       <br />
       <div className="table-container">
         Tablet's Currently Selected Line: 

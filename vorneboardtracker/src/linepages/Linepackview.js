@@ -11,6 +11,8 @@ import { partnumbercontext } from '../contexts/partnumbercontext';
 import { linescontext } from '../contexts/linescontext';
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import 'react-notifications/lib/notifications.css';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 import { faBone, faDownLong, faGear, faHillRockslide, faMugSaucer, faPlay, faRoadBarrier, faScrewdriver, faScrewdriverWrench, faSliders, faStop, faUserSlash, faUsersSlash, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 function Line3packview() {
@@ -96,9 +98,11 @@ function Line3packview() {
       // Make the API call based on selected action and row
       await Axios.post(selectedEndpoint, requestData)
         .then((response) => {
+          NotificationManager.success('Updating Production State!')
           console.log('API call success:', response.data);
         })
         .catch((error) => {
+          NotificationManager.error('Updating Production State Failed!')
           console.error('API call error:', error);
         });
     }
@@ -121,9 +125,11 @@ function Line3packview() {
     // Make the API call based on selected action and row
     await Axios.post(selectedEndpoint, requestData)
       .then((response) => {
+        NotificationManager.success('Updating to Break!')
         console.log('API call success:', response.data);
       })
       .catch((error) => {
+        NotificationManager.error('Updating to Break Failed!')
         console.error('API call error:', error);
       });
   };
@@ -182,9 +188,11 @@ function Line3packview() {
     // Make the API call based on selected action and row
     await Axios.post(selectedEndpoint, requestData)
       .then((response) => {
+        NotificationManager.success(`Updating Down State!`)
         console.log('API call success:', response.data);
       })
       .catch((error) => {
+        NotificationManager.error('Updating Down State Failed!')
         console.error('API call error:', error);
       });
   };
@@ -315,6 +323,7 @@ function Line3packview() {
   return (
     <div className='pdf-container'>
       <br />
+      <NotificationContainer/>
       {isLoading ? (
         <p>Loading...</p>
       ) : (

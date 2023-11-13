@@ -6,12 +6,14 @@ import { linescontext } from '../contexts/linescontext';
 import React, { useContext, useEffect, useState } from 'react';
 import * as ReactBootStrap from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import Toolbar from '../Components/Linepagetoolbar';
 import '../Css/linepages.css'
 import { selectedlinecontext } from '../contexts/selectedlinecontext';
+import 'react-notifications/lib/notifications.css';
+import { NotificationContainer, NotificationManager } from 'react-notifications';
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMinus, faPlus, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faMinus, faPlus, faArrowLeft, faCircle } from '@fortawesome/free-solid-svg-icons';
+import { Toolbarcontext } from '../Components/Navbar/Toolbarcontext';
 
 function Line3() {
   const [linepagedata, setlinepagedata] = useState([]);
@@ -23,6 +25,7 @@ function Line3() {
   const [goodcount, setgoodcount] = useState(1);
   const [rejectcount, setrejectcount] = useState(1);
   const { localipaddr } = useContext(ipaddrcontext);
+  const { settoolbarinfo } = useContext(Toolbarcontext)
 
   const navigate = useNavigate();
   const apiEndpoints = {
@@ -73,7 +76,6 @@ function Line3() {
   const handleproductionSelect = async (selectedAction) => {
     const selectedEndpointIdentifier = apiEndpoints[selectedAction];
     let ipaddress = linepagedata[0].lineip
-    console.log(linepagedata)
     if (selectedEndpointIdentifier) {
       // Map the endpoint identifier to the full URL
       const selectedEndpoint = `http://${localipaddr}:1433/${selectedEndpointIdentifier}`;
@@ -94,9 +96,11 @@ function Line3() {
       // Make the API call based on selected action and row
       await Axios.post(selectedEndpoint, requestData)
         .then((response) => {
+          NotificationManager.success(`Updating Vorne Production State!`)
           console.log('API call success:', response.data);
         })
         .catch((error) => {
+          NotificationManager.error('Updating Vorne Production State Failed!')
           console.error('API call error:', error);
         });
     }
@@ -176,9 +180,11 @@ function Line3() {
     // Make the API call based on selected action and row
     await Axios.post(selectedEndpoint, requestData)
       .then((response) => {
+        NotificationManager.success(`Updating Vorne Reason to ${requestData.reason}!`)
         console.log('API call success:', response.data);
       })
       .catch((error) => {
+        NotificationManager.error(`Updating Vorne Reason Failed!`)
         console.error('API call error:', error);
       });
   };
@@ -223,9 +229,11 @@ function Line3() {
     // Make the API call based on selected action and row
     await Axios.post(selectedEndpoint, requestData)
       .then((response) => {
+        NotificationManager.success(`Updating Vorne to Part ${requestData.part_id}!`)
         console.log('API call success:', response.data);
       })
       .catch((error) => {
+        NotificationManager.error('Updating Vorne to Part Failed!')
         console.error('API call error:', error);
       });
   };
@@ -251,27 +259,23 @@ function Line3() {
     var timeString = date.toISOString().substring(11, 19);
     return timeString
   }
-  const fetchlines = async () => {
-    try {
-      const response = await fetch(`http://${localipaddr}:1435/api/getlines`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(),
-      });
 
-      const data = await response.json();
-      if (data) {
-        setlines(data.result.recordset)
-        return fetchAllLineData(data.result.recordset)
-      } else {
-        console.log("error")
-      }
-    } catch (error) {
-      console.error('Error:', error);
+  const fetchlines = async () => {
+    if (lines.length === 0) {
+      const storedLines = localStorage.getItem('lines');
+      // Parse the retrieved string back into an array
+      const parsedLines = storedLines ? JSON.parse(storedLines) : [];
+      console.log(parsedLines)
+      // Set the retrieved data into useState
+      setlines(parsedLines);
+      return fetchAllLineData(parsedLines)
+    }
+    else {
+      console.log(lines)
+      return fetchAllLineData(lines)
     }
   };
+
   const fetchAllLineData = async (data) => {
     const lineDataPromises = data.map(async (line) => {
       const linename = line.Linename;
@@ -411,9 +415,11 @@ function Line3() {
     }
     await Axios.post(`http://${localipaddr}:1433/updategoodcount`, requestData)
       .then((response) => {
+        NotificationManager.success(`Adding ${requestData.count} to In Count!`)
         setgoodcount(1)
       })
       .catch((error) => {
+        NotificationManager.error('Failed to Add Count to In Count')
         console.error('Error fetching data:', error);
       });
   };
@@ -424,9 +430,11 @@ function Line3() {
     }
     Axios.post(`http://${localipaddr}:1433/updaterejectcount`, requestData)
       .then((response) => {
+        NotificationManager.success(`Adding ${requestData.count} to Reject Count!`)
         setrejectcount(1)
       })
       .catch((error) => {
+        NotificationManager.error('Failed to Add Count to Reject Count')
         console.error('Error fetching data:', error);
       });
   };
@@ -499,6 +507,8 @@ function Line3() {
         if (lineData) {
           // Call the getprocessstate function here
           setlinepagedata(lineData);
+          console.log(lineData)
+          settoolbarinfo([{ Title: `Vorne ${lineData[0].linename}` }])
           getPartNumbers(selectedline);
           saveDataToLocalStorage('selectedline', selectedline)
         }
@@ -524,14 +534,34 @@ function Line3() {
 
   return (
     <div className="linepage">
+      <NotificationContainer />
       {isLoading ? (
         <p>Loading...</p>
       ) : (
         <>
-          <Toolbar line={linepagedata} />
           <br />
+          <div className='lineinfo'>
+            <p className="icon-cell-line">
+              {linepagedata[0].processStateDetailsData === 'Running' ? (
+                <FontAwesomeIcon icon={faCircle} style={{ color: 'green' }} />
+              ) : linepagedata[0].processStateDetailsData === 'Down' ? (
+                <FontAwesomeIcon icon={faCircle} style={{ color: 'red' }} />
+              ) : linepagedata[0].processStateDetailsData === 'No Production' ? (
+                <FontAwesomeIcon icon={faCircle} style={{ color: 'blue' }} />
+              ) : linepagedata[0].processStateDetailsData === 'Not Monitored' ? (
+                <FontAwesomeIcon icon={faCircle} style={{ color: 'lightblue' }} />
+              ) : linepagedata[0].processStateDetailsData === 'Detecting State' ? (
+                <FontAwesomeIcon icon={faCircle} style={{ color: 'grey' }} />
+              ) : linepagedata[0].processStateDetailsData === 'Changeover' ? (
+                <FontAwesomeIcon icon={faCircle} style={{ color: 'yellow' }} />
+              ) : linepagedata[0].processStateDetailsData === 'Break' ? (
+                <FontAwesomeIcon icon={faCircle} style={{ color: 'darkblue' }} />
+              ) : (
+                <FontAwesomeIcon icon={faCircle} />
+              )}</p>
+            <p>{linepagedata[0].processStateDetailsData}</p>
+          </div>
           <div className='lineflexbox-container'>
-
             <div className='lineflexbox-item'>
               <p className='linetextinboxes'>Part ID and Name </p>
               {linepagedata[0].partrunData.part_id.replace(/j/g, '-')}
