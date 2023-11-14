@@ -209,7 +209,7 @@ function Pdfs() {
                             </div>
                             <div className="pdfstext">Add PDF</div>
                         </button>
-                        <button className="pdfsbutton" onClick={() => navigate('/Account')}>
+                        <button className="pdfsbutton" onClick={() => navigate('/Updater')}>
                             <div className="pdfsicon-wrapper">
                                 <FontAwesomeIcon icon={faArrowLeft} className="pdfsicon" />
                             </div>
