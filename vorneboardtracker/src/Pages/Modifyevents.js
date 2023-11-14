@@ -12,12 +12,12 @@ import Axios from 'axios';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import 'react-notifications/lib/notifications.css';
-import {NotificationContainer, NotificationManager} from 'react-notifications';
+import { NotificationContainer, NotificationManager } from 'react-notifications';
 import { Toolbarcontext } from '../Components/Navbar/Toolbarcontext';
 
 function Modifyevents() {
     useEffect(() => {
-        settoolbarinfo([{Title: 'Vorne Modify Events'}])
+        settoolbarinfo([{ Title: 'Vorne Modify Events' }])
         if (lines.length === 0) {
             const storedLines = localStorage.getItem('lines');
             // Parse the retrieved string back into an array
@@ -28,7 +28,7 @@ function Modifyevents() {
             setselectedline(parsedLines[0].Linename)
             setselectedip(parsedLines[0].ipaddress)
         }
-        else{
+        else {
             setselectedline(lines[0].Linename)
             setselectedip(lines[0].ipaddress)
         }
@@ -476,10 +476,10 @@ function Modifyevents() {
         const endDate = date[1];
         const maxDate = new Date(endDate);
         maxDate.setMonth(maxDate.getMonth() - 1);
-    
+
         const timeDiff = Math.abs(endDate.getTime() - startDate.getTime());
         const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-    
+
         if (endDate < startDate) {
             // If the end date is before the start date, switch the dates
             setselecteddate([endDate, startDate]);
@@ -490,14 +490,14 @@ function Modifyevents() {
         } else {
             setselecteddate([startDate, endDate]);
         }
-    
+
         setIsLoading(true);
         setShowCalanderModal(false);
         gettodaysproductionday(date);
     };
-    
-    
-      
+
+
+
 
     const handleSelectedLine = (line) => {
         setselectedline(line)
@@ -606,6 +606,19 @@ function Modifyevents() {
         return (timeHours >= startHour && timeHours < endHour);
     };
 
+    const isTimeInRangeThird = (time) => {
+        const timeHours = new Date(time).getHours();
+        if(timeHours >= 23 && timeHours < 24){
+            return true;
+        }
+        else if(timeHours >= 0 && timeHours < 7){
+            return true;
+        }
+        else{
+            return false;
+        }
+    };
+
     useEffect(() => {
         gettodaysproductionday(selecteddate);
     }, [selectedip]);
@@ -613,7 +626,7 @@ function Modifyevents() {
     return (
         <div className="modifyeventspage">
             <div className='modifyevents-container'>
-            <NotificationContainer/>
+                <NotificationContainer />
                 <div className='button-container'>
                     <p style={{ marginTop: '30px', fontSize: '24px' }}>
                         Selected Days: {selecteddate[0].toLocaleDateString()} -{' '}
@@ -721,21 +734,19 @@ function Modifyevents() {
                                 <th>In Count</th>
                                 <th>Good Count</th>
                                 <th>Reject Count</th>
-
-                                <th style={{ width: '10%' }}>Modify Data</th>
                             </tr>
                         </thead>
                         <tbody>
                             {Array.isArray(pastevents) &&
                                 pastevents.map((rowData, index) => {
+
                                     if (
                                         (firstShift && !isTimeInRange(rowData.start_time, 7, 15)) ||
-                                        (secondShift && !isTimeInRange(rowData.start_time, 15, 23)) ||
-                                        (thirdShift && !isTimeInRange(rowData.start_time, 23, 7))
+                                        (secondShift && !isTimeInRange(rowData.start_time, 15, 23))||
+                                        (thirdShift && !isTimeInRangeThird(rowData.start_time))
                                     ) {
                                         return null;
                                     }
-
                                     if (
                                         (rowData.process_state.toLowerCase() === 'running' && !showRunning) ||
                                         (rowData.process_state.toLowerCase() === 'no_production' && !showNoProduction) ||
@@ -745,7 +756,7 @@ function Modifyevents() {
                                         return null;
                                     }
                                     return (
-                                        <tr key={index} className={index % 2 === 0 ? 'even' : 'odd'}>
+                                        <tr key={index} className={index % 2 === 0 ? 'even' : 'odd'} onClick={() => handleEditClick(rowData.process_state_event_id)}>
                                             <td>{formatDateTime(rowData.start_time)}</td>
                                             <td>{formatDateTime(rowData.end_time)}</td>
                                             <td>{formatDuration(rowData.duration)}</td>
@@ -773,9 +784,6 @@ function Modifyevents() {
                                             <td>{rowData.in_count}</td>
                                             <td>{rowData.good_count}</td>
                                             <td>{rowData.reject_count}</td>
-                                            <td>
-                                                <p className='modifyeventstablebutton' onClick={() => handleEditClick(rowData.process_state_event_id)}><FontAwesomeIcon icon={faPenToSquare} /></p>
-                                            </td>
                                         </tr>
                                     );
                                 })}
@@ -796,7 +804,7 @@ function Modifyevents() {
                                         <div>
                                             Production State
                                             <select
-                                            className='modifydataeditdropdown'
+                                                className='modifydataeditdropdown'
                                                 value={editedData.process_state}
                                                 onChange={(e) => handleprocessstatechange(e.target.value)}
                                             >
@@ -807,7 +815,7 @@ function Modifyevents() {
                                             </select>
                                             Process State Reason
                                             <select
-                                            className='modifydataeditdropdown'
+                                                className='modifydataeditdropdown'
                                                 value={editedData.process_state_reason}
                                                 onChange={(e) => handleprocessstatereasonchange(e.target.value)}
                                             >

@@ -596,7 +596,7 @@ function Addeditpartnumbers() {
                             </div>
                             <div className="editletext">Add Part</div>
                         </button>
-                        <button className="editlebutton" onClick={() => navigate('/Account')}>
+                        <button className="editlebutton" onClick={() => navigate('/Updater')}>
                             <div className="aepartnumbericon-wrapper">
                                 <FontAwesomeIcon icon={faArrowLeft} className="aepartnumbericon" />
                             </div>

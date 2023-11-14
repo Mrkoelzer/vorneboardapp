@@ -275,7 +275,7 @@ function Partpdfs() {
                             />
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-                            <button className="partpdfbutton" onClick={() => navigate('/Account')}>
+                            <button className="partpdfbutton" onClick={() => navigate('/Updater')}>
                                 <div className="partpdficon-wrapper">
                                     <FontAwesomeIcon icon={faArrowLeft} className="partpdficon" />
                                 </div>

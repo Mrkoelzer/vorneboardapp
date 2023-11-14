@@ -5,11 +5,17 @@
   }
 
 .rbc-today{
-    background-color: #202e50;
+    background-color: #202e50 !important;
+}
+.rbc-today:hover{
+    background-color: #25375e !important;
 }
 
 .rbc-off-range-bg{
-    background-color: #4767b3;
+    background-color: #4767b3 !important;
+}
+.rbc-off-range-bg:hover{
+    background-color: #25375e !important;
 }
 
 .rbc-month-header{

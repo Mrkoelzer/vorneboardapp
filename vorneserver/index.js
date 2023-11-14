@@ -937,7 +937,7 @@ appSql.get('/api/getlinepartnumbers', async (req, res) => {
       res.json({ authenticated: false });
     }
 
-    pool.close(); // Close the SQL Server connection
+   // pool.close(); // Close the SQL Server connection
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -996,7 +996,6 @@ appSql.get('/api/getpdfs', async (req, res) => {
       res.json({ result });
     }
 
-    sql.close();
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
