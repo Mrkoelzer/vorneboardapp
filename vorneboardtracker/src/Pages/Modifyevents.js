@@ -182,7 +182,6 @@ function Modifyevents() {
             ],
             ipaddress: selectedip
         }
-        console.log(requestData)
         if (
             editedData.process_state === 'running' || editedData.process_state === 'no_production' &&
             isTimeWithinRange(editedData.start_time, [7, 15, 23]) // Check if the time is 7 am, 3 pm, or 11 pm
@@ -830,7 +829,7 @@ function Modifyevents() {
                                                         <option value="adjustment">Adjustment</option>
                                                         <option value="breakdown">Breakdown</option>
                                                         <option value="jam">Jam</option>
-                                                        <option value="maintenance">Maintenance</option>
+                                                        <option value="autonomous_maintenance">Maintenance</option>
                                                         <option value="no_material">No Material</option>
                                                         <option value="no_operator">No Operator</option>
                                                         <option value="Short_Down">Short Down</option>
