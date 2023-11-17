@@ -1,5 +1,4 @@
 import React from "react";
-import { Modal, Button } from "react-bootstrap";
 import '../Css/DeleteConfirmation.css';
 
 function DeleteConfirmation({ message, show, handleClose, handleDelete }) {

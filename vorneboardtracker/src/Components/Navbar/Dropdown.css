@@ -9,6 +9,7 @@
   border-left: #b3a186 solid 5px;
   border-right: #b3a186 solid 5px;
   border-bottom: #b3a186 solid 5px;
+  z-index: 999;
 }
 .dropdown-menu li {
   background: #AB987a;

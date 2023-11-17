@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Css/mainpage.css';
-import Mainpagetoolbar from '../Components/Mainpagetoobar';
 import { linescontext } from '../contexts/linescontext';
 import { selectedlinecontext } from '../contexts/selectedlinecontext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
