@@ -6,8 +6,12 @@
   align-items: center;
   font-size: 1.2rem;
   border-bottom: #b3a186 solid 5px;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1000; 
 }
-
 .navbar-logo {
   display: flex;
   color: #0f1626;

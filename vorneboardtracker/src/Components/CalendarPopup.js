@@ -1,9 +1,21 @@
 import React from "react";
 import '../Css/CalendarPopup.css';
+import moment from 'moment';
 
 function CalendarPopup({ data, show, handleClose, handleDelete }) {
-  console.log(data);
+  const getdateheader = () => {
+    if (data.length !== 0) {
+      const formattedDate = moment(data[0].start_time).format('MM-DD-YYYY');
+      const formattedDay = moment(data[0].start_time).format('ddd');
 
+      // Concatenate the day of the week at the end of the formatted date
+      const formattedDateWithDay = `${formattedDate} ${formattedDay}`;
+      return formattedDateWithDay
+    }
+    else {
+      return moment(new Date).format('MM-DD-YYYY')
+    }
+  }
   // Function to group data by shift
   const groupDataByShift = () => {
     const groupedData = {};
@@ -28,16 +40,16 @@ function CalendarPopup({ data, show, handleClose, handleDelete }) {
   const formatRunTime = (secondsWithFractions) => {
     const seconds = Math.floor(secondsWithFractions);
     const milliseconds = (secondsWithFractions % 1) * 1000;
-  
+
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const remainingSeconds = seconds % 60;
-  
+
     const formattedHours = String(hours).padStart(2, '0');
     const formattedMinutes = String(minutes).padStart(2, '0');
     const formattedSeconds = String(remainingSeconds).padStart(2, '0');
     const formattedMilliseconds = String(Math.floor(milliseconds)).padStart(3, '0');
-  
+
     return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
   };
 
@@ -60,7 +72,7 @@ function CalendarPopup({ data, show, handleClose, handleDelete }) {
               <th>In Count</th>
               <th>Good Count</th>
               <th>Reject Count</th>
-              
+
               {/* Add more table headers as needed */}
             </tr>
           </thead>
@@ -90,6 +102,7 @@ function CalendarPopup({ data, show, handleClose, handleDelete }) {
       <div className="Calendar-Popup-modal-popup">
         <div className="Calendar-Popup-modal-header">
           <h2>Day's Shift Information</h2>
+          <h3>{getdateheader()}</h3>
         </div>
         <div className="Calendar-Popup-modal-body">
           {renderTables()}

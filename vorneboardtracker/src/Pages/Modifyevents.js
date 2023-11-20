@@ -19,7 +19,7 @@ function Modifyevents() {
     useEffect(() => {
         settoolbarinfo([{ Title: 'Vorne Modify Events' }])
         if (lines.length === 0) {
-            const storedLines = localStorage.getItem('lines');
+            const storedLines = sessionStorage.getItem('lines');
             // Parse the retrieved string back into an array
             const parsedLines = storedLines ? JSON.parse(storedLines) : [];
 

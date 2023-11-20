@@ -63,7 +63,6 @@ justify-content: space-evenly;
   align-items: center;
   transition: opacity 0.3s, transform 0.3s;
   opacity: 0;
-  transform: scale(0.8);
   z-index: 999;
 }
 
@@ -164,3 +163,24 @@ justify-content: space-evenly;
   color: #FF533d; /* Set the font color for the buttons on row hover */
 }
 
+@media (max-width: 767px) {
+
+   .Calendar-Popup-modal table {
+     width: 98%;
+     /* Adjust the table width as needed */
+     border-collapse: collapse;
+     /* Collapse borders for a cleaner look */
+     font-size: 8px;
+     /* Set the font size to make text smaller */
+   }
+ 
+   .Calendar-Popup-modal th,
+   .Calendar-Popup-modal td {
+     border: 1px solid #dee2e6;
+     padding: 1px;
+     /* Adjust padding as needed */
+     text-align: center;
+     vertical-align: middle;
+     box-shadow: 0 0 0 1px #dee2e6;
+   }
+  }

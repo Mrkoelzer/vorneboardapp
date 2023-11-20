@@ -2,20 +2,15 @@
     background: linear-gradient( #0f1626,  #262d3b);
     min-height: 100vh;
     color: #f5f5f5;
+    padding-top: 80px;
   }
 
 .rbc-today{
     background-color: #202e50 !important;
 }
-.rbc-today:hover{
-    background-color: #25375e !important;
-}
 
 .rbc-off-range-bg{
     background-color: #4767b3 !important;
-}
-.rbc-off-range-bg:hover{
-    background-color: #25375e !important;
 }
 
 .rbc-month-header{
@@ -37,15 +32,24 @@
     height: 5px;
 }
 
-.rbc-day-bg:hover{
-    background-color: #25375e;
-}
 .rbc-event-content{
     background-color: #FF533d !important;
     color: #f5f5f5 !important;
     font-weight: 600;
     
 }
+.rbc-event-content:hover{
+    background-color: #ff1e00 !important;
+}
 .rbc-event, .rbc-day-slot .rbc-background-event{
     background-color: #FF533d !important;
+}
+
+.rbc-event:hover, .rbc-day-slot .rbc-background-event{
+    background-color: #f71d00 !important;
+}
+
+.rbc-show-more {
+    color: #f5f5f5 !important;
+    background-color: inherit !important;
 }
