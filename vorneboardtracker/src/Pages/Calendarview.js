@@ -8,6 +8,7 @@ import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
 import { Toolbarcontext } from '../Components/Navbar/Toolbarcontext';
 import CalendarPopup from '../Components/CalendarPopup';
+import CalendarAddEvent from '../Components/CalendarAddEvent';
 import Axios from 'axios';
 import { linescontext } from '../contexts/linescontext';
 
@@ -19,6 +20,7 @@ function Calendarview() {
   const { settoolbarinfo } = useContext(Toolbarcontext);
   const { lines, setlines } = useContext(linescontext);
   const [showCalendarPopup, setshowCalendarPopup] = useState(false);
+  const [showCalendarAddPopup, setshowCalendarAddPopup] = useState(false);
   const [shiftData, setShitdata] = useState([]);
   const [dayshiftdata, setdayshiftdata] = useState([]);
   const [currentMonthRange, setCurrentMonthRange] = useState({ start: null, end: null });
@@ -112,6 +114,7 @@ function Calendarview() {
             title: linename,
             start,
             end,
+            state: 'Past'
           };
         });
         return acc.concat(newEvents);
@@ -232,8 +235,17 @@ function Calendarview() {
       setshowCalendarPopup(true);
     }
   }, [dayshiftdata]);
+
   const handleClosed = () => {
     setshowCalendarPopup(false);
+  };
+
+  const handleAddClosed = () => {
+    setshowCalendarAddPopup(false);
+  };
+
+  const handleAddShow = () => {
+    setshowCalendarAddPopup(true);
   };
 
   const handleNavigate = (date) => {
@@ -270,6 +282,7 @@ function Calendarview() {
             style={{ height: "90vh" }}
             events={events}
             selectable
+            onSelectSlot={handleAddShow}
             onSelectEvent={(event, e) => handleshowCalendarEventPopup(event)}
             onNavigate={(date) => handleNavigate(date)}
             popup
@@ -278,6 +291,10 @@ function Calendarview() {
             show={showCalendarPopup}
             handleClose={handleClosed}
             data={dayshiftdata}
+          />
+          <CalendarAddEvent
+          show={showCalendarAddPopup}
+          handleClose={handleAddClosed}
           />
         </>
       )}

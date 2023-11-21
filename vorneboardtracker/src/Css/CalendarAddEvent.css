@@ -1,0 +1,17 @@
+.Calendar-Add-Event-dropdown {
+    font-weight: bold;
+    font-size: large;
+    color: black;
+    background: whitesmoke;
+    width: 100%;
+    font-weight: normal;
+    transition: all 0.2s ease-in-out;
+    text-align: center;
+    min-height: 2vh;
+    margin-top: 10px;
+  }
+  
+  .Calendar-Add-Event-dropdown:hover {
+    color: black;
+    box-shadow: 0 5px 15px #f5f5f5;
+  }
