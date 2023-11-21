@@ -32,7 +32,7 @@ function Tracker() {
   };
   const saveDataToLocalStorage = (key, data) => {
     if (key === 'selectedline') {
-      localStorage.setItem(key, data); // Store as a string without quotes
+      sessionStorage.setItem(key, data); // Store as a string without quotes
     }
   };
   useEffect(() => {
@@ -57,7 +57,7 @@ function Tracker() {
   }, []);
   const fetchlines = async () => {
     if (lines.length === 0) {
-      const storedLines = localStorage.getItem('lines');
+      const storedLines = sessionStorage.getItem('lines');
       // Parse the retrieved string back into an array
       const parsedLines = storedLines ? JSON.parse(storedLines) : [];
       console.log(parsedLines)

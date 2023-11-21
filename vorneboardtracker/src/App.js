@@ -4,7 +4,6 @@ import MainPage from './Pages/MainPage';
 import Tracker from './Pages/Tracker';
 import Updater from './Pages/Updater';
 import Linepackview from './linepages/Linepackview';
-import Line3setup from './Pages/Line3setup'
 import Login from './Pages/Login';
 import Userspage from './Pages/Userspage';
 import Account from './Pages/Account';
@@ -137,7 +136,6 @@ function App() {
                             <Route path="/Updater" element={<Updater />} />
                             <Route path="/Lineeditor" element={<Lineeditor />} />
                             <Route path="/Linepackview" element={<Linepackview />} />
-                            <Route path="/Line3setup" element={<Line3setup />} />
                             <Route path="/Login" element={<Login />} />
                             <Route path="/Account" element={<Account />} />
                             <Route path="/Createaccount" element={<Createaccount />} />

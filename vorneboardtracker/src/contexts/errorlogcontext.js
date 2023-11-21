@@ -43,7 +43,7 @@ const ErrorlogcontextProvider = ({ children }) => {
                 const failedLinesData = [];
                 const promises = data.result.recordset.map(async (record) => {
                     try {
-                        const updateddata = await Axios.get(`http://${record.ipaddress}/rest/cpe/attributes`, { timeout: 1000 });
+                        const updateddata = await Axios.get(`http://${record.ipaddress}/rest/cpe/attributes`, { timeout: 2000 });
                         let message = `${record.Linename} Connection Failed`;
                         if (updateddata.status === 200) {
                             if (errordata.length === 0) {
