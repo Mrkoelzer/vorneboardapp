@@ -25,6 +25,7 @@ function Dropdown() {
             if ((userdata && userdata.passwordchange === 1) || (parsedUserData && parsedUserData.pinchange === 1)) {
                 navigate('/Changepasswordpin');
             }else{
+              sessionStorage.setItem('selectedline', lines[index].Linename)
               setselectedline(lines[index].Linename);
               navigate('/Lineeditor');
             }
