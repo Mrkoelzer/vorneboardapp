@@ -44,12 +44,15 @@ function MainPage() {
 
   if (!selectedTabletLine) {
     lineButtons = lines.map((line, index) => (
-      <button key={index} className="mainpagebutton" onClick={() => handleNavigate(index)}>
-        <div className="icon-wrapper">
-          <FontAwesomeIcon icon={faClipboard} className="icon" />
-        </div>
-        <div className="text">{line.Linename} Pack View</div>
-      </button>
+      // Check if extruder is not equal to 1 before rendering the button
+      line.extruder !== 1 && (
+        <button key={index} className="mainpagebutton" onClick={() => handleNavigate(index)}>
+          <div className="icon-wrapper">
+            <FontAwesomeIcon icon={faClipboard} className="icon" />
+          </div>
+          <div className="text">{line.Linename} Pack View</div>
+        </button>
+      )
     ));
   } else {
     const selectedIndex = lines.findIndex((line) => line.Linename === selectedTabletLine);
