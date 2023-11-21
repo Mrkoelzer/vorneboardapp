@@ -28,6 +28,7 @@ function Tracker() {
 
   const handleNavigate = (index) => {
     setselectedline(lines[index].Linename);
+    saveDataToLocalStorage('selectedline', lines[index].Linename)
     navigate('/lineeditor');
   };
   const saveDataToLocalStorage = (key, data) => {

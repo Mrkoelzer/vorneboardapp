@@ -482,9 +482,9 @@ function Line3() {
   // Initialize an interval reference using a ref
   const saveDataToLocalStorage = (key, data) => {
     if (key === 'selectedline') {
-      localStorage.setItem(key, data); // Store as a string without quotes
+      sessionStorage.setItem(key, data); // Store as a string without quotes
     } else {
-      localStorage.setItem(key, JSON.stringify(data)); // Store other data as JSON strings
+      sessionStorage.setItem(key, JSON.stringify(data)); // Store other data as JSON strings
     }
   };
 
@@ -493,11 +493,11 @@ function Line3() {
   };
 
   useEffect(() => {
-    const savedSelectedLine = localStorage.getItem('selectedline');
+    const savedSelectedLine = sessionStorage.getItem('selectedline');
     if (savedSelectedLine) {
       setselectedline(savedSelectedLine);
     }
-  }, [localStorage.getItem('selectedline')]);
+  }, [sessionStorage.getItem('selectedline')]);
 
   useEffect(() => {
     // Ensure selectedline is set before fetching data
@@ -510,7 +510,7 @@ function Line3() {
           console.log(lineData)
           settoolbarinfo([{ Title: `Vorne ${lineData[0].linename}` }])
           getPartNumbers(selectedline);
-          saveDataToLocalStorage('selectedline', selectedline)
+          //saveDataToLocalStorage('selectedline', selectedline)
         }
       };
 

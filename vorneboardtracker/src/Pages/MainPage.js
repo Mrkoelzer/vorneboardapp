@@ -26,9 +26,9 @@ function MainPage() {
   // Create an array of buttons based on the lines data
   const saveDataToLocalStorage = (key, data) => {
     if (key === 'selectedline') {
-      localStorage.setItem(key, data); // Store as a string without quotes
+      sessionStorage.setItem(key, data); // Store as a string without quotes
     } else {
-      localStorage.setItem(key, JSON.stringify(data)); // Store other data as JSON strings
+      sessionStorage.setItem(key, JSON.stringify(data)); // Store other data as JSON strings
     }
   };
   // Load data from local storage when the component mounts
@@ -36,6 +36,7 @@ function MainPage() {
     saveDataToLocalStorage('partInfo', []);
     saveDataToLocalStorage('selectedline', '')
     saveDataToLocalStorage('processState', '');
+    saveDataToLocalStorage('selectedline', '')
   }, []);
 
   let lineButtons;

@@ -236,27 +236,27 @@ function Line3packview() {
 
   const saveDataToLocalStorage = (key, data) => {
     if (key === 'selectedline') {
-      localStorage.setItem(key, data); // Store as a string without quotes
+      sessionStorage.setItem(key, data); // Store as a string without quotes
     } else {
-      localStorage.setItem(key, JSON.stringify(data)); // Store other data as JSON strings
+      sessionStorage.setItem(key, JSON.stringify(data)); // Store other data as JSON strings
     }
   };
 
   // Load data from local storage when the component mounts
   useEffect(() => {
-    const savedPartInfo = localStorage.getItem('partInfo');
+    const savedPartInfo = sessionStorage.getItem('partInfo');
     if (savedPartInfo) {
       const parsedPartInfo = JSON.parse(savedPartInfo);
       setpartinfo(parsedPartInfo);
     }
 
-    const savedProcessState = localStorage.getItem('processState');
+    const savedProcessState = sessionStorage.getItem('processState');
     if (savedProcessState) {
       setprocessstate(savedProcessState);
     }
 
-    const savedSelectedLine = localStorage.getItem('selectedline');
-    if (savedSelectedLine) {
+    const savedSelectedLine = sessionStorage.getItem('selectedline');
+    if (savedSelectedLine && !selectedline) {
       setselectedline(savedSelectedLine);
     }
 
