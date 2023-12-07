@@ -7,7 +7,7 @@ const ShowNavBar = ({ children }) => {
     const [showNavBar, setShowNavBar] = useState(false);
     
     useEffect(() => {
-        if (location.pathname === '/Linepackview') {
+        if (location.pathname === '/LineView') {
             setShowNavBar(false);
         } else {
             setShowNavBar(true);

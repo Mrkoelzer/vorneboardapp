@@ -182,7 +182,9 @@ appApi.post('/updatebreak', (req, res) => {
       down_threshold: requestData.down_threshold,
       count_multipliers: requestData.count_multipliers,
       Target_multipliers: requestData.Target_multipliers,
-      start_with_changeover: false}
+      start_with_changeover: true,
+      disable_when: { "type": "metric", "channel": "production_metric", "metric": "run_confidence", "at_least": 1.0 }
+    }
     axios.post(apiUrl, updatedrequestData)
       .then((response) => {
         console.log('API call success:');
@@ -653,7 +655,7 @@ appSql.post('/api/addnewtable', async (req, res) => {
         [Count_Multiplier_7] [int] NULL,
         [Count_Multiplier_8] [int] NULL,
         [Target_Multiplier] [int] NULL,
-        [Start_with_Changeover] [nvarchar](2) NULL,
+        [Start_with_Changeover] [nvarchar](5) NULL,
         [The_changeover_reason_is] [nvarchar](11) NULL,
         [Set_a_target_time_of_s] [nvarchar](4) NULL,
         [End_event] [nvarchar](21) NULL
@@ -1001,6 +1003,41 @@ appSql.get('/api/getpdfs', async (req, res) => {
   }
 });
 
+appSql.get('/api/getfutureevents', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const query = `select * from Events order by [order]`
+    const result = await sql.query(query);
+    if (result) {
+      res.json({ result });
+    } else {
+      res.json({ result });
+    }
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+appSql.delete('/api/deletefutureevent', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const { event_id } = req.body; // Get the lineid from the URL parameter
+    const result = await sql.query`delete from [Events] where [event_id] = ${event_id}`;
+    
+    if (result.rowsAffected[0] === 1) {
+      res.json({ deleted: true });
+    } else {
+      res.json({ deleted: false });
+    }
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 appSql.post('/api/getpastnotesdata', async (req, res) => {
   try {
       await sql.connect(config);
@@ -1094,7 +1131,41 @@ appSql.post('/api/insertpastnotesdata', async (req, res) => {
   }
 });
 
+appSql.post('/api/insertevent', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const requestData = req.body;
+    const query = `INSERT INTO Events ([title], [part], [start], [end], [order], [state])VALUES('${requestData.title}', '${requestData.part}', '${requestData.start}', '${requestData.end}',${requestData.order}, '${requestData.state}')`;
+    const result = await sql.query(query)
+    if (result) {
+      res.json({ eventadded: true });
+    } else {
+      res.json({ eventadded: false });
+    }
 
+    sql.close();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+appSql.post('/api/updateevent', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const requestData = req.body;
+    const query = `UPDATE [Events] SET [order] = ${requestData.order} where event_id = ${requestData.event_id}`;
+    const result = await sql.query(query)
+    if (result) {
+      res.json({ eventadded: true });
+    } else {
+      res.json({ eventadded: false });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
 appSql.post('/api/insertpdf', async (req, res) => {
   try {

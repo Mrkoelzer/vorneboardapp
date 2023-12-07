@@ -1,37 +1,36 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef, forwardRef, useImperativeHandle } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { ipaddrcontext } from '../contexts/ipaddrcontext';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
+import { useReactToPrint } from 'react-to-print';
 
-function PDFViewer({ partnumber, linename }) {
+const PDFViewer = forwardRef(({ partnumber, linename }, ref) => {
   const [pageNumber, setPageNumber] = useState(1);
   const [pdfError, setPdfError] = useState(false);
-  const [pdfUrl, setPdfUrl] = useState(null); // State to store the PDF URL
+  const [pdfUrl, setPdfUrl] = useState(null);
   const { localipaddr } = useContext(ipaddrcontext);
   const [pdfs, setpdfs] = useState([]);
+  const componentRef = useRef();
 
   useEffect(() => {
     pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
   }, []);
 
   useEffect(() => {
-    // Fetch the PDF files list when the component mounts
     fetchpdfs();
   }, []);
 
   useEffect(() => {
-    // Find the matching PDF
     let requestBody = {};
     for (let i = 0; i < pdfs.length; i++) {
       if (pdfs[i].linename === linename && pdfs[i].part_id === partnumber) {
         requestBody = {
-          filename: pdfs[i].pdfname + '.pdf', // Adjust the filename as needed
+          filename: pdfs[i].pdfname + '.pdf',
         };
-        break; // Exit the loop once a match is found
+        break;
       }
     }
 
-    // Fetch the PDF file URL from the server and set it in the state
     if (Object.keys(requestBody).length !== 0) {
       fetch(`http://${localipaddr}:1433/api/pdfs`, {
         method: 'POST',
@@ -48,23 +47,22 @@ function PDFViewer({ partnumber, linename }) {
               setPdfUrl(pdfUrl);
             } catch (error) {
               console.error('Error reading response body:', error);
-              setPdfError(true); // Handle errors
+              setPdfError(true);
             }
           } else {
             console.log('Error Status:', response.status);
-            setPdfError(true); // Handle errors
+            setPdfError(true);
           }
         })
         .catch((error) => {
           console.error('Fetch error:', error);
-          setPdfError(true); // Handle errors
+          setPdfError(true);
         });
     }
   }, [partnumber, pdfs, linename, localipaddr]);
 
   const fetchpdfs = async () => {
     try {
-      // Send a POST request to the backend with the query in the request body
       const response = await fetch(`http://${localipaddr}:1435/api/getalllinepartnumbers`, {
         method: 'GET',
         headers: {
@@ -84,6 +82,7 @@ function PDFViewer({ partnumber, linename }) {
   };
 
   const onDocumentLoadSuccess = ({ numPages }) => {
+    console.log(componentRef.current)
     setPageNumber(1);
   };
 
@@ -91,17 +90,26 @@ function PDFViewer({ partnumber, linename }) {
     setPdfError(true);
   };
 
+  // Use the useReactToPrint hook
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
+  
+  useImperativeHandle(ref, () => ({
+    handlePrint, // Make handlePrint accessible from the parent component
+  }));
+
   return (
-    <div>
+    <div ref={componentRef}>
       {pdfError ? (
         <div>Error loading PDF</div>
       ) : (
         <Document file={pdfUrl} onLoadError={onDocumentLoadError} onLoadSuccess={onDocumentLoadSuccess}>
-          <Page scale={1.5} pageNumber={pageNumber} renderTextLayer={false} />
+          <Page scale={1.7} pageNumber={pageNumber} renderTextLayer={false} />
         </Document>
       )}
     </div>
   );
-}
+});
 
 export default PDFViewer;

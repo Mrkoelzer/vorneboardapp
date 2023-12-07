@@ -1,22 +1,21 @@
 import React, { useState, useEffect, useContext } from 'react';
-import './Css/App.css'
-import MainPage from './Pages/MainPage';
-import Tracker from './Pages/Tracker';
-import Updater from './Pages/Updater';
-import Linepackview from './linepages/Linepackview';
-import Login from './Pages/Login';
-import Userspage from './Pages/Userspage';
-import Account from './Pages/Account';
-import Partpdfs from './Pages/Partpdfs';
-import Createaccount from './Pages/Createaccount';
-import Editlineextruder from './Pages/Editlineextruder'
-import Addeditpartnumbers from './Pages/Addeditpartnumbers';
-import Changepasswordpin from './Pages/Changepasswordpin'
-import Livecameraviews from './Pages/Livecameraviews';
-import Selecttablet from './Pages/Selecttablet';
-import Modifyevents from './Pages/Modifyevents';
-import Pdfs from './Pages/Pdfs';
-import Calendarview from './Pages/Calendarview';
+import MainPage from './Pages/MainPage/MainPage';
+import Tracker from './Pages/Tracker/Tracker';
+import Updater from './Pages/Updater/Updater';
+import LineView from './Pages/LineView/LineView';
+import Login from './Pages/Login/Login';
+import UsersPage from './Pages/UserPage/UserPage';
+import Settings from './Pages/Settings/Settings';
+import LinkPDF from './Pages/LinkPDF/LinkPDF';
+import EditLines from './Pages/EditLines/EditLines'
+import PartNumbers from './Pages/PartNumbers/PartNumbers';
+import ChangePasswordPin from './Pages/ChangePasswordPin/ChangePasswordPin'
+import LiveCameraViews from './Pages/LiveCameraViews/LiveCameraViews';
+import SelectTablet from './Pages/SelectTablet/SelectTablet';
+import ModifyEvents from './Pages/ModifyEvents/ModifyEvents';
+import Pdfs from './Pages/PDFs/PDFs';
+import FutureRuns from './Pages/FutureRuns/FutureRuns';
+import CalendarView from './Pages/CalendarView/CalendarView';
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { partruncontext } from './contexts/partruncontext';
 import { linedatacontext } from './contexts/linedatacontext';
@@ -24,7 +23,7 @@ import { usercontext } from './contexts/usercontext';
 import { linescontext } from './contexts/linescontext';
 import { selectedlinecontext } from './contexts/selectedlinecontext';
 import { partnumbercontext } from './contexts/partnumbercontext';
-import Lineeditor from './linepages/Lineeditor';
+import LineRealTime from './Pages/LineRealTime/LineRealTime';
 import { line3partdatacontext } from './contexts/linepartdatacontext';
 import { ipaddrcontext } from './contexts/ipaddrcontext';
 import { useErrorlogcontext } from './contexts/errorlogcontext';
@@ -32,8 +31,6 @@ import { errorcontext } from './contexts/errorcontext';
 import { Toolbarcontext } from './Components/Navbar/Toolbarcontext'
 import Navbar from './Components/Navbar/Navbar';
 import ShowNavBar from './Components/Navbar/ShowNavBar';
-//import { ErrorLogProvider } from './contexts/errorlogcontext';
-import Axios from 'axios';
 
 function App() {
   const [line3items, setline3items] = useState([]);
@@ -134,21 +131,21 @@ function App() {
                             <Route path="/" element={<MainPage />} />
                             <Route path="/Tracker" element={<Tracker />} />
                             <Route path="/Updater" element={<Updater />} />
-                            <Route path="/Lineeditor" element={<Lineeditor />} />
-                            <Route path="/Linepackview" element={<Linepackview />} />
+                            <Route path="/LineRealTime" element={<LineRealTime />} />
+                            <Route path="/LineView" element={<LineView />} />
                             <Route path="/Login" element={<Login />} />
-                            <Route path="/Account" element={<Account />} />
-                            <Route path="/Createaccount" element={<Createaccount />} />
-                            <Route path="/Editlineextruder" element={<Editlineextruder />} />
-                            <Route path="/Addeditpartnumbers" element={<Addeditpartnumbers />} />
-                            <Route path="/Changepasswordpin" element={<Changepasswordpin />} />
-                            <Route path="/Users" element={<Userspage />} />
-                            <Route path="/Partpdfs" element={<Partpdfs />} />
+                            <Route path="/Settings" element={<Settings />} />
+                            <Route path="/EditLines" element={<EditLines />} />
+                            <Route path="/PartNumbers" element={<PartNumbers />} />
+                            <Route path="/ChangePasswordPin" element={<ChangePasswordPin />} />
+                            <Route path="/UsersPage" element={<UsersPage />} />
+                            <Route path="/LinkPDF" element={<LinkPDF />} />
                             <Route path="/Pdfs" element={<Pdfs />} />
-                            <Route path="/Livecameraviews" element={<Livecameraviews />} />
-                            <Route path="/Selecttablet" element={<Selecttablet />} />
-                            <Route path="/Modifyevents" element={<Modifyevents />} />
-                            <Route path="/Calendarview" element={<Calendarview />} />
+                            <Route path="/LiveCameraViews" element={<LiveCameraViews />} />
+                            <Route path="/SelectTablet" element={<SelectTablet />} />
+                            <Route path="/ModifyEvents" element={<ModifyEvents />} />
+                            <Route path="/CalendarView" element={<CalendarView />} />
+                            <Route path="/FutureRuns" element={<FutureRuns />} />
                           </Routes>
                         </Toolbarcontext.Provider>
                       </ipaddrcontext.Provider>

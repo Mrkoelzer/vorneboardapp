@@ -27,7 +27,7 @@ function Dropdown() {
             }else{
               sessionStorage.setItem('selectedline', lines[index].Linename)
               setselectedline(lines[index].Linename);
-              navigate('/Lineeditor');
+              navigate('/LineRealTime');
             }
         } else {
           console.log('here')
