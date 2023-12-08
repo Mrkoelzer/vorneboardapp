@@ -123,12 +123,13 @@
     top: 0;
     left: 0;
     margin-top: 5px;
+    bottom: 5px;
   }
 
   .menu-icon {
     display: block;
     position: absolute;
-    top: 0;
+    top: 10px;
     right: 0;
     transform: translate(-100%, 60%);
     font-size: 1.8rem;
@@ -217,7 +218,9 @@
     left: 0;
     margin-top: 5px;
     font-size: 1.2rem;
+    bottom: 5px;
   }
+
 
   .menu-icon {
     display: flex;

@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Button } from './Button';
 import { Link } from 'react-router-dom';
 import './Navbar.css';
-import logo from './jsixlogo.png'
+import logo from './KCTreats.png'
 import Dropdown from './Dropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChalkboardUser, faExclamationCircle, faGear, faHome, faMagnifyingGlassChart, faRightFromBracket, faUser, faWrench } from '@fortawesome/free-solid-svg-icons';
@@ -94,7 +94,7 @@ function Navbar() {
           </li>
           <li className='nav-item'>
             <Link
-              to='/Account'
+              to='/Settings'
               className='nav-links'
               onClick={closeMobileMenu}
             >

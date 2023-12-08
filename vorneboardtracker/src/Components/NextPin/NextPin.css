@@ -1,0 +1,126 @@
+.App {
+    text-align: center;
+  }
+  
+  .pintext{
+    font-size: 48px;
+    margin: 10px;
+  }
+
+  .App-logo {
+    height: 40vmin;
+    pointer-events: none;
+  }
+  .white-text {
+    color: #fff;
+  }
+  .home-container {
+    box-sizing: border-box;
+    background: #212a35;
+    margin: 0;
+    padding: 30px 0;
+    overflow: hidden;
+    font-family: "Source Sans Pro", sans-serif;
+  }
+  .pin {
+    min-height: calc(100vh - 44px);
+    text-align: center;
+  }
+  .pin-input {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+  
+  
+  .pin-box {
+    width: 80px; /* Adjust the width as needed */
+    height: 80px; /* Adjust the height as needed */
+    border: 1px solid #000;
+    background-color: #546171;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 64px;
+    margin-right: 10px; /* Adjust the margin as needed */
+    margin-left: 10px; /* Adjust the margin as needed */
+    border-radius: 10px; /* Add border-radius to create rounded corners */
+  }
+  
+
+  @media (max-width: 767px) {
+    .home-container {
+      box-sizing: border-box;
+      background: #212a35;
+      margin: 0;
+      padding: 30px 0;
+      overflow: hidden;
+      font-family: "Source Sans Pro", sans-serif;
+      scale: .7;
+      width: 470px;
+    }
+  }
+  .white-text h2 {
+    font-weight: 800 !important;
+    color: #fff;
+    text-align: center;
+  }
+  
+  .pincode-input-container {
+    margin: 30px 0 0;
+    text-align: center;
+  }
+  .pincode-input-container input {
+    background: #546171 !important;
+    border-radius: 15px;
+    width: 95px !important;
+    height: 95px !important;
+    color: #fff !important;
+    border: 1px solid #212a35 !important;
+    margin: 0px 10px !important;
+    font-size: 40px;
+    font-weight: 500;
+  }
+  .App-header {
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+  }
+  
+  .hg-theme-default {
+    background-color: #212a35;
+    width: 450px;
+    margin: 30px auto 0;
+  }
+  
+  .hg-theme-default .hg-button {
+    background: #3a4756;
+    color: #fff;
+    font-size: 30px;
+  }
+  
+  .hg-theme-default .hg-row .hg-button:not(:last-child) {
+    margin-right: 10px;
+  }
+  .hg-theme-default .hg-row .hg-button {
+    margin-bottom: 10px;
+  }
+  #todaysDate {
+    margin-bottom: 100px;
+  }
+  .hg-theme-default.hg-layout-numeric .hg-button {
+    height: 85px;
+    box-shadow: 0px 0px 15px #1e252e;
+    border: none;
+  }
+  
+  .App-link {
+    color: #61dafb;
+  }
+  
