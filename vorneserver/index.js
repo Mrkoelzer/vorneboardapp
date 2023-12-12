@@ -20,8 +20,8 @@ const appSql = express(); // Create another Express instance for SQL
 const cookie = 'sid=session=f7c54c700ed53d1aaa85dd93c2d89b92&user=Administrator&digest=e19e0793cf5713d70f8ece89ec2a1a41dc01ad5c'
 const config = {
   user: 'appuser',
-  password: 'Jsix1234',
-  server: '10.144.19.26',
+  password: 'Jsix112023',
+  server: 'SQL01',
   database: 'vorneboardapp',
    options: {
      trustServerCertificate: true,
