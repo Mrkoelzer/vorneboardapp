@@ -29,7 +29,9 @@ function FutureRuns() {
             start: String,
             end: String,
             order: Number,
-            state: Number
+            state: Number,
+            Pallets: Number,
+            Remaining: Number,
         }
     ]);
 

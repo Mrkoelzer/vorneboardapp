@@ -1,5 +1,4 @@
 .Calendar-Add-Event-dropdown {
-    font-weight: bold;
     font-size: large;
     color: black;
     background: whitesmoke;
@@ -18,7 +17,6 @@
   }
 
   .Calendar-Add-part-Event-dropdown {
-    font-weight: bold;
     font-size: large;
     color: black;
     background: whitesmoke;
@@ -31,6 +29,23 @@
   }
   
   .Calendar-Add-part-Event-dropdown:hover {
+    color: black;
+    box-shadow: 0 5px 15px #f5f5f5;
+  }
+
+  .Calendar-Pallets-Input {
+    font-size: large;
+    color: black;
+    background: whitesmoke;
+    width: 98%;
+    font-weight: normal;
+    transition: all 0.2s ease-in-out;
+    text-align: center;
+    min-height: 3vh;
+    margin-top: 10px;
+  }
+  
+  .Calendar-Pallets-Input:hover {
     color: black;
     box-shadow: 0 5px 15px #f5f5f5;
   }

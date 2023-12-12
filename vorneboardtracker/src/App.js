@@ -58,7 +58,6 @@ function App() {
 
     // Fetch data when the page opens
     fetchData();
-
     // Fetch data every 10 seconds
     const interval = setInterval(() => {
       fetchData();

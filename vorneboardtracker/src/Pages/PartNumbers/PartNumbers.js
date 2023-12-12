@@ -131,6 +131,10 @@ function PartNumbers() {
             setAddLineMessage(`Ideal Cycle Time Can't Be 0`)
             return
         }
+        if (newData.Alternate_Part_ID.length > 128) {
+            setAddLineMessage(`Alternate Part ID Cant be More Than 128 Charcters`)
+            return
+        }
         if (parseFloat(newData.Takt_Time_s) < parseFloat(newData.Ideal_Cycle_Time_s)) {
             setAddLineMessage(`The Takt Time must be greater than or equal to Ideal Cycle Time`)
             return
@@ -673,7 +677,7 @@ function PartNumbers() {
                                 type="text"
                                 placeholder="Part ID"
                                 value={newData.Part_ID}
-                                onChange={(e) => setNewData({ ...newData, Part_ID: e.target.value })}
+                                onChange={(e) => setNewData({ ...newData, Part_ID: e.target.value.toUpperCase() })}
                             />
                         </div>
                         <div className='aeflexbox-item'>
@@ -683,7 +687,7 @@ function PartNumbers() {
                                 type="text"
                                 placeholder="Alternate Part ID"
                                 value={newData.Alternate_Part_ID}
-                                onChange={(e) => setNewData({ ...newData, Alternate_Part_ID: e.target.value })}
+                                onChange={(e) => setNewData({ ...newData, Alternate_Part_ID: e.target.value.toUpperCase() })}
                             />
                         </div>
                         <div className='aeflexbox-item'>
@@ -784,7 +788,7 @@ function PartNumbers() {
                                 type="text"
                                 placeholder="Part ID"
                                 value={editedData.Part_ID}
-                                onChange={(e) => setEditedData({ ...editedData, Part_ID: e.target.value })}
+                                onChange={(e) => setEditedData({ ...editedData, Part_ID: e.target.value.toUpperCase() })}
                             />
                         </div>
                         <div className='aeflexbox-item'>
@@ -794,7 +798,7 @@ function PartNumbers() {
                                 type="text"
                                 placeholder="Alternate Part ID"
                                 value={editedData.Alternate_Part_ID}
-                                onChange={(e) => setEditedData({ ...editedData, Alternate_Part_ID: e.target.value })}
+                                onChange={(e) => setEditedData({ ...editedData, Alternate_Part_ID: e.target.value.toUpperCase() })}
                             />
                         </div>
                         <div className='aeflexbox-item'>

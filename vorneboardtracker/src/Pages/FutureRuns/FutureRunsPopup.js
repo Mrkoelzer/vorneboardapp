@@ -13,8 +13,9 @@ import 'react-notifications/lib/notifications.css';
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import { Box, IconButton, Tooltip } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-
+import FutureRunsEditPopup from './FutureRunsEditPopup';
 
 
 function FutureRunsPopup({ show, handleClose, handleDelete, title, passeddata }) {
@@ -22,6 +23,8 @@ function FutureRunsPopup({ show, handleClose, handleDelete, title, passeddata })
     const [selectedLine, setSelectedLine] = useState(null);
     const { localipaddr } = useContext(ipaddrcontext);
     const [deleteEvent, setdeleteEvent] = useState([])
+    const [showFutureEditPopup, setshowFutureEditPopup] = useState(false);
+    const [editRow, setEditRow] = useState(null);
     const [selectedeventid, setselectedeventid] = useState({
         "event_id": 0,
         "title": "",
@@ -127,7 +130,6 @@ function FutureRunsPopup({ show, handleClose, handleDelete, title, passeddata })
     };
 
     const handledeleteClick = (row) => {
-        console.log(row)
         const indexToDelete = data.findIndex(item => item.event_id === row.event_id);
 
         if (indexToDelete !== -1) {
@@ -146,6 +148,22 @@ function FutureRunsPopup({ show, handleClose, handleDelete, title, passeddata })
         }
     };
 
+    const handleFutureEditClosed = () => {
+        setEditRow(null)
+        getfutureruns()
+        setshowFutureEditPopup(false);
+    };
+
+    const handleFutureEditShow = (row) => {
+        setEditRow(row)
+    };
+
+    useEffect(() => {
+        if (editRow !== null) {
+            setshowFutureEditPopup(true);
+        }
+    }, [editRow]);
+
     const onDragEnd = (result) => {
         if (!result.destination) return; // Dragged outside the list
 
@@ -163,6 +181,11 @@ function FutureRunsPopup({ show, handleClose, handleDelete, title, passeddata })
 
     return (
         <div className={`Calendar-Popup-modal ${show ? 'show' : ''}`}>
+            <FutureRunsEditPopup
+                show={showFutureEditPopup}
+                handleClose={handleFutureEditClosed}
+                data={editRow}
+            />
             <div className="Calendar-Popup-modal-popup">
                 <div className="Calendar-Popup-modal-header">
                     <h2>{title} Future Runs</h2>
@@ -195,10 +218,17 @@ function FutureRunsPopup({ show, handleClose, handleDelete, title, passeddata })
                                                         top: snapshot.isDragging ? `${snapshot.draggingOver === `droppable-${title}` ? snapshot.dragVerticalOffset : 0}px` : `calc(70 * ${index} + 100px)`,
                                                     }}
                                                 >
-                                                    <div style={{ display: 'flex', alignItems: 'center', padding: '8px', border: '1px solid #ccc'}}>
+                                                    <div style={{ display: 'flex', alignItems: 'center', padding: '8px', border: '1px solid #ccc' }}>
                                                         <div style={{ cursor: 'move', marginLeft: '8px', flexShrink: 0 }}>&#x2630;</div> {/* Drag handle */}
-                                                        <div style={{ flex: 1, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginLeft: '8px' }}>{row.title}</div>
-                                                        <div style={{ flex: 1, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginLeft: '8px' }}>{row.part}</div>
+                                                        <div style={{ flex: 1, whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginLeft: '8px' }}>{row.title}</div>
+                                                        <div style={{ flex: 1, whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginLeft: '8px' }}>{row.part}</div>
+                                                        <div style={{ flexShrink: 0 }}>
+                                                            <Tooltip title="Edit">
+                                                                <IconButton color="info" onClick={() => handleFutureEditShow(row)}>
+                                                                    <ModeEditIcon />
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                        </div>
                                                         <div style={{ flexShrink: 0 }}>
                                                             <Tooltip title="Delete">
                                                                 <IconButton color="error" onClick={() => handledeleteClick(row)}>
@@ -226,6 +256,7 @@ function FutureRunsPopup({ show, handleClose, handleDelete, title, passeddata })
                     </button>
                 </div>
             </div>
+
         </div>
     );
 }
