@@ -19,7 +19,7 @@ const appApi = express(); // Create an Express instance for API calls
 const appSql = express(); // Create another Express instance for SQL
 const cookie = 'sid=session=f7c54c700ed53d1aaa85dd93c2d89b92&user=Administrator&digest=e19e0793cf5713d70f8ece89ec2a1a41dc01ad5c'
 const config = {
-  user: 'appuser',
+  user: 'sa',
   password: 'Jsix112023',
   server: 'SQL01',
   database: 'vorneboardapp',
@@ -56,7 +56,7 @@ appSql.listen(1435, () => {
 
 appApi.post('/api/pdfs', (req, res) => {
   const { filename } = req.body;
-  const pdfPath = 'C:\\Users\\Ncsadmin\\Documents\\GitHub\\vorneboardapp\\vorneserver\\public\\PDF\\' + filename;
+  const pdfPath = 'C:\\vorneboardapp\\vorneserver\\public\\PDF\\' + filename;
   // Check if the file exists
   if (fs.existsSync(pdfPath)){ 
     // Stream the file as a response
@@ -75,7 +75,7 @@ appApi.post('/api/upload-pdf', (req, res) => {
   }
 
   // Define the path where you want to save the PDF file (inside the public/PDF folder)
-  const filePath = `C:\\Users\\Ncsadmin\\Documents\\GitHub\\vorneboardapp\\vorneserver\\public\\PDF\\${uploadedFile.name}`;
+  const filePath = `C:\\vorneboardapp\\vorneserver\\public\\PDF\\${uploadedFile.name}`;
 
   // Move the uploaded file to the specified path
   uploadedFile.mv(filePath, (err) => {
@@ -1198,7 +1198,7 @@ appSql.delete('/api/delete-pdf/:pdfName', async (req, res) => {
       // SQL entry deleted successfully
 
       // Next, delete the file from the server-side folder
-      const filePath = `C:\\Users\\Ncsadmin\\Documents\\GitHub\\vorneboardapp\\vorneserver\\public\\PDF\\${pdfNameToDelete}.pdf`;
+      const filePath = `C:\\vorneboardapp\\vorneserver\\public\\PDF\\${pdfNameToDelete}.pdf`;
       fs.unlinkSync(filePath); // Delete the file synchronously
 
       res.json({ deleted: true });

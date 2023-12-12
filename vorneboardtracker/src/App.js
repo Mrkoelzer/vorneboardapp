@@ -37,7 +37,7 @@ function App() {
   const [lines, setlines] = useState([]);
   const [partnumber, setpartnumber] = useState('')
   const [selectedline, setselectedline] = useState('');
-  const [localipaddr, setlocalipaddr] = useState('10.144.18.208');
+  const [localipaddr, setlocalipaddr] = useState('192.168.22.43');
   const { Geterrorlog, Fetchlines } = useErrorlogcontext();
   const [errorlogstate, seterrorlogstate] = useState([])
   const [toolbarinfo, settoolbarinfo] = useState([
