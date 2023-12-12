@@ -77,13 +77,13 @@ function LineView() {
   const apiEndpoints = {
     action1: 'updatelinenoorders',
     action2: 'updatelinestartproduction',
-    action3: 'updatelinechangeover'
+    action3: 'updatelinechangeover',
+    action4: 'updatelinenooperators'
     // Add more mappings as needed
   };
   const handleproductionSelect = async (selectedAction) => {
     const selectedEndpointIdentifier = apiEndpoints[selectedAction];
     let ipaddress = ip
-    console.log(selectedEndpointIdentifier)
     if (selectedEndpointIdentifier) {
       // Map the endpoint identifier to the full URL
       const selectedEndpoint = `http://${localipaddr}:1433/${selectedEndpointIdentifier}`;
@@ -96,6 +96,11 @@ function LineView() {
         requestData = { value: {} }; // Do not include ipaddress here
       } else if (selectedAction === 'action3') {
         requestData = { value: "changeover" }; // Do not include ipaddress here
+      }else if (selectedAction === 'action4') {
+        requestData = {
+          enabled: true,
+          reason: "No_Operators"
+        };
       }
 
       // Add ipaddress to the requestData
@@ -369,6 +374,12 @@ function LineView() {
                 <FontAwesomeIcon icon={faStop} className="pdficon" />
               </div>
               <div className="pdftext">No Orders</div>
+            </button>
+            <button className="pdfbuttonsnooperators" onClick={() => handleproductionSelect('action4')}>
+              <div className="pdficon-wrapper">
+                <FontAwesomeIcon icon={faUserSlash} className="pdficon" />
+              </div>
+              <div className="pdftext">No Operators</div>
             </button>
             <button className="pdfbuttonsbreak" onClick={() => handleBreakSelect()}>
               <div className="pdficon-wrapper">

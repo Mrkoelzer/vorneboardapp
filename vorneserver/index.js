@@ -106,6 +106,25 @@ appApi.post('/updatelinenoorders', (req, res) => {
     });
 });
 
+appApi.post('/updatelinenooperators', (req, res) => {
+  const { ipaddress } = req.body;
+  const apiUrl = `http://${ipaddress}/api/v0/process_state/details/no_production`;
+  const requestData = {
+    "enabled": true,
+    "reason": "No_Operators"
+  }
+  axios.post(apiUrl, requestData)
+    .then((response) => {
+      console.log('API call success:');
+      res.json({ message: 'API call successful' });
+    })
+    .catch((error) => {
+      console.error('API call error:', error.message);
+      res.status(500).json({ message: 'API call failed' });
+    });
+});
+
+
 appApi.post('/updatelinestartproduction', (req, res) => {
   const { ipaddress } = req.body;
   const apiUrl = `http://${ipaddress}/api/v0/process_state/start_production`;
@@ -1136,7 +1155,7 @@ appSql.post('/api/insertevent', async (req, res) => {
   try {
     await sql.connect(config);
     const requestData = req.body;
-    const query = `INSERT INTO Events ([title], [part], [start], [end], [order], [state])VALUES('${requestData.title}', '${requestData.part}', '${requestData.start}', '${requestData.end}',${requestData.order}, '${requestData.state}')`;
+    const query = `INSERT INTO Events ([title], [part], [start], [end], [order], [state], [Pallets], [Remaining])VALUES('${requestData.title}', '${requestData.part}', '${requestData.start}', '${requestData.end}',${requestData.order}, '${requestData.state}','${requestData.Pallets}','${requestData.Remaining}')`;
     const result = await sql.query(query)
     if (result) {
       res.json({ eventadded: true });
@@ -1156,6 +1175,24 @@ appSql.post('/api/updateevent', async (req, res) => {
     await sql.connect(config);
     const requestData = req.body;
     const query = `UPDATE [Events] SET [order] = ${requestData.order} where event_id = ${requestData.event_id}`;
+    const result = await sql.query(query)
+    if (result) {
+      res.json({ eventadded: true });
+    } else {
+      res.json({ eventadded: false });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+appSql.post('/api/updatepallets', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const requestData = req.body;
+    const query = `UPDATE [Events] SET [Remaining] = ${requestData.Remaining} where event_id = ${requestData.event_id}`;
+    console.log(query)
     const result = await sql.query(query)
     if (result) {
       res.json({ eventadded: true });

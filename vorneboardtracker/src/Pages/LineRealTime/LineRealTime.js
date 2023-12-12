@@ -31,7 +31,8 @@ function LineRealTime() {
   const apiEndpoints = {
     action1: 'updatelinenoorders',
     action2: 'updatelinestartproduction',
-    action3: 'updatelinechangeover'
+    action3: 'updatelinechangeover',
+    action4: 'updatelinenooperators'
     // Add more mappings as needed
   };
 
@@ -60,10 +61,16 @@ function LineRealTime() {
     return ''; // Default to an empty value if no match is found
   }
 
-  function getInitialAction(processState) {
+  function getInitialAction(processStates) {
+    let processState= processStates.processStateDetailsData
     if (processState === 'No Production' || processState === 'Not Monitored') {
-      return 'action1'; // Assuming 'No Production' and 'Not Monitored' correspond to 'No Orders' action
-    } else if (processState === 'Running' || processState === 'Down' || processState === 'Detecting State' || processState === 'Break') {
+      if(processStates.shiftData.events[0][0] === "No Operators"){
+        return 'action4'
+      }
+      else{
+        return 'action1'; // Assuming 'No Production' and 'Not Monitored' correspond to 'No Orders' action
+      }
+       } else if (processState === 'Running' || processState === 'Down' || processState === 'Detecting State' || processState === 'Break') {
       return 'action2'; // Assuming 'Running', 'Down', 'Detecting State', and 'Break' correspond to 'Start Production' action
     }
     else if (processState === 'Changeover') {
@@ -88,6 +95,11 @@ function LineRealTime() {
         requestData = { value: {} }; // Do not include ipaddress here
       } else if (selectedAction === 'action3') {
         requestData = { value: "changeover" }; // Do not include ipaddress here
+      }else if (selectedAction === 'action4') {
+        requestData = {
+          enabled: true,
+          reason: "No_Operators"
+        }; // Do not include ipaddress here
       }
 
       // Add ipaddress to the requestData
@@ -572,12 +584,13 @@ function LineRealTime() {
               <ReactBootStrap.Form.Control
                 className='linepagebutton'
                 as="select"
-                value={getInitialAction(linepagedata[0].processStateDetailsData)}
+                value={getInitialAction(linepagedata[0])}
                 onChange={(e) => handleproductionSelect(e.target.value)}
               >
                 <option value="action1">No Orders</option>
                 <option value="action2">Running Production</option>
                 <option value="action3">Changeover</option>
+                <option value="action4">No Operators</option>
                 {/* Add more options here */}
               </ReactBootStrap.Form.Control>
             </div>
