@@ -3,7 +3,7 @@ import './FutureRuns.css';
 import { useNavigate } from 'react-router-dom';
 import { usercontext } from '../../contexts/usercontext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendar, faPenToSquare, faBarcode, faFilePdf, faFileCirclePlus, faArrowLeft, faMapLocationDot, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faPlus, faCircle } from '@fortawesome/free-solid-svg-icons';
 import { Toolbarcontext } from '../../Components/Navbar/Toolbarcontext';
 import { ipaddrcontext } from '../../contexts/ipaddrcontext';
 import CalendarAddEvent from '../../Components/CalendarAddEvent/CalendarAddEvent';
@@ -64,15 +64,15 @@ function FutureRuns() {
         const fetchDataAndSetState = async () => {
             fetchruns();
         };
-    
+
         fetchDataAndSetState();
-    
+
         // Fetch data every 10 seconds
         const interval = setInterval(fetchDataAndSetState, 10000);
-    
+
         // Clean up the interval when the component unmounts
         return () => clearInterval(interval);
-      }, []);
+    }, []);
 
     const fetchruns = async () => {
         if (lines.length === 0) {
@@ -88,18 +88,39 @@ function FutureRuns() {
         }
     }
 
+    const getprocessstate = (ipaddress) => {
+        const apiUrl = `http://${ipaddress}/api/v0/channels/shift/events/current?fields=process_state,process_state_reason_display_name`;
+
+        return Axios.get(apiUrl)
+            .then((response) => {
+                const data = response.data;
+                if (data) {
+                    // Ensure data.part_id exists before accessing it
+                    return data.data.events[0];
+                } else {
+                    // Handle the case where part_id is missing or undefined
+                    return { ...data, part_id: 'N/A' };
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching data:', error);
+                return null;
+            });
+    };
+
     const getallruns = async (data) => {
         const futurerundata = await getfutureruns();
         const runDataPromises = data.map(async (line) => {
             const linename = line.Linename;
             const currentruns = await getcurrentrun(line.ipaddress);
-
+            const processstate = await getprocessstate(line.ipaddress);
             const filteredFuturerundata = (futurerundata || []).filter((run) => run.title === linename);
 
             const combinedData = currentruns.map((run, index) => ({
                 title: linename,
                 order: index,
                 part: run,
+                events: processstate
             }));
 
             if (filteredFuturerundata.length > 0) {
@@ -114,14 +135,15 @@ function FutureRuns() {
         });
 
         const currentRunsData = await Promise.all(runDataPromises);
-        for(let i = 0; i < currentRunsData.length; i++){
-            if(currentRunsData[i].length > 1){
-                if(currentRunsData[i][0].part === currentRunsData[i][1].part){
+        for (let i = 0; i < currentRunsData.length; i++) {
+            if (currentRunsData[i].length > 1) {
+                if (currentRunsData[i][0].part === currentRunsData[i][1].part) {
                     deletefuturerun(currentRunsData[i][1])
                 }
             }
         }
         const flattenedData = currentRunsData.flat(); // Flatten the nested arrays
+        console.log(flattenedData)
         setData(flattenedData)
     };
 
@@ -202,8 +224,8 @@ function FutureRuns() {
     };
 
     const handleFutureShow = (title) => {
-        for(let i = 0; i < data.length; i++){
-            if(data[i].title === title && data[i].order !== 0){
+        for (let i = 0; i < data.length; i++) {
+            if (data[i].title === title && data[i].order !== 0) {
                 setselectedtitle(title)
                 return;
             }
@@ -254,38 +276,72 @@ function FutureRuns() {
                 </div>
 
                 {/* Iterate through unique titles and create containers with tables */}
-                {Array.from(new Set(data.map(item => item.title)))
-                    .sort()
-                    .map(title => (
-                        <div className='future-Runs-Details-Container' key={title}>
-                            <div className='Future-Runs-flexbox-item' onClick={() => handleFutureShow(title)}>
-                                <div className='future-Runs-Details-Title'>
-                                    {title}
-                                </div>
-                                <div className='future-Runs-Details-Body'>
-                                    <ReactBootStrap.Table striped bordered hover>
-                                        <thead>
-                                            <tr className="header-row">
-                                                <th style={{ width: '5%' }}>Order</th>
-                                                <th>Part Number</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {data
-                                                .filter(rowData => rowData.title === title)
-                                                .slice(0, 5) // Add this line to limit the rows to the first 5
-                                                .map((rowData, index) => (
-                                                    <tr key={index} className={index % 2 === 0 ? 'even' : 'odd'}>
-                                                        <td>{rowData.order}</td>
-                                                        <td>{rowData.part}</td>
-                                                    </tr>
-                                                ))}
-                                        </tbody>
-                                    </ReactBootStrap.Table>
-                                </div>
+                {data && Array.from(new Set(data.map(item => item.title)))?.sort().map(title => (
+                    <div className='future-Runs-Details-Container' key={title}>
+                        <div className='Future-Runs-flexbox-item' onClick={() => handleFutureShow(title)}>
+                            <div className='future-Runs-Details-Title'>
+                                {title}
+                            </div>
+                            <div className='future-Runs-Details-Title-2'>
+                                {data && data.find(item => item.title === title)?.events && (
+                                    <>
+                                        {data.find(item => item.title === title)?.events[0] === 'running' && (
+                                            <FontAwesomeIcon icon={faCircle} style={{ color: 'green' }} />
+                                        )}
+                                        {data.find(item => item.title === title)?.events[0] === 'down' && (
+                                            <FontAwesomeIcon icon={faCircle} style={{ color: 'red' }} />
+                                        )}
+                                        {data.find(item => item.title === title)?.events[0] === 'no_production' && (
+                                            <FontAwesomeIcon icon={faCircle} style={{ color: 'blue' }} />
+                                        )}
+                                        {data.find(item => item.title === title)?.events[0] === 'not_monitored' && (
+                                            <FontAwesomeIcon icon={faCircle} style={{ color: 'lightblue' }} />
+                                        )}
+                                        {data.find(item => item.title === title)?.events[0] === 'detecting_state' && (
+                                            <FontAwesomeIcon icon={faCircle} style={{ color: 'grey' }} />
+                                        )}
+                                        {data.find(item => item.title === title)?.events[0] === 'changeover' && (
+                                            <FontAwesomeIcon icon={faCircle} style={{ color: 'yellow' }} />
+                                        )}
+                                        {data.find(item => item.title === title)?.events[0] === 'break' && (
+                                            <FontAwesomeIcon icon={faCircle} style={{ color: 'darkblue' }} />
+                                        )}
+                                        {!data.find(item => item.title === title)?.events[0] && (
+                                            <FontAwesomeIcon icon={faCircle} />
+                                        )}
+                                        <p>|</p>
+                                        {data.find(item => item.title === title)?.events[1]
+                                            ?.replace(/_/g, ' ') // Replace underscores with spaces
+                                            .toLowerCase()       // Convert to lowercase
+                                            .replace(/\b\w/g, char => char.toUpperCase()) // Capitalize first letter of each word
+                                        }
+                                    </>
+                                )}
+                            </div>
+                            <div className='future-Runs-Details-Body'>
+                                <ReactBootStrap.Table striped bordered hover>
+                                    <thead>
+                                        <tr className="header-row">
+                                            <th style={{ width: '5%' }}>Order</th>
+                                            <th>Part Number</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {data
+                                            .filter(rowData => rowData.title === title)
+                                            .slice(0, 5) // Add this line to limit the rows to the first 5
+                                            .map((rowData, index) => (
+                                                <tr key={index} className={index % 2 === 0 ? 'even' : 'odd'}>
+                                                    <td>{rowData.order}</td>
+                                                    <td>{rowData.part}</td>
+                                                </tr>
+                                            ))}
+                                    </tbody>
+                                </ReactBootStrap.Table>
                             </div>
                         </div>
-                    ))}
+                    </div>
+                ))}
             </div>
         </div>
     );

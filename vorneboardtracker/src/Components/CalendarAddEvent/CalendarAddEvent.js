@@ -17,6 +17,7 @@ function CalendarAddEvent({ defaultdate, data, show, handleClose, handleDelete }
     const [totalPallets, setTotalPallets] = useState(null);
     const [selectedpartnumbers, setselectedpartnumbers] = useState(null);
     const [hidepartselect, sethidepartselect] = useState(true);
+    const [addLineMessage, setAddLineMessage] = useState('');
 
     const getPartNumbers = async (tableName) => {
         try {
@@ -41,48 +42,51 @@ function CalendarAddEvent({ defaultdate, data, show, handleClose, handleDelete }
     };
 
     const handleinsertevent = async () => {
-        let order = 0
-        if(data.length>0){
-            for(let i = 0; i<data.length; i++){
-                if(data[i].title === selectedLine.value){
-                    order++
+        if (totalPallets === null) {
+            setAddLineMessage('Pallets Must Have a Value')
+        }
+        else {
+            let order = 0
+            if (data.length > 0) {
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i].title === selectedLine.value) {
+                        order++
+                    }
                 }
             }
-        }
-
-
-        let startTime = new Date(), endTime = new Date();
-        let requestData = {
-            start: startTime,
-            end: endTime,
-            title: selectedLine.value,
-            part: selectedpartnumbers,
-            state: 1,
-            order: order,
-            Pallets: totalPallets,
-            Remaining: totalPallets
-        };
-        try {
-            const response = await fetch(`http://${localipaddr}:1435/api/insertevent`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestData),
-            });
-            const data = await response.json();
-            if (data.eventadded) {
-                setSelectedLine(null)
-                sethidepartselect(true)
-                setTotalPallets(null)
-                handleClose()
+            let startTime = new Date(), endTime = new Date();
+            let requestData = {
+                start: startTime,
+                end: endTime,
+                title: selectedLine.value,
+                part: selectedpartnumbers,
+                state: 1,
+                order: order,
+                Pallets: totalPallets,
+                Remaining: totalPallets
+            };
+            try {
+                const response = await fetch(`http://${localipaddr}:1435/api/insertevent`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData),
+                });
+                const data = await response.json();
+                if (data.eventadded) {
+                    setSelectedLine(null)
+                    sethidepartselect(true)
+                    setTotalPallets(null)
+                    handleClose()
+                }
+                else {
+                }
+                // Handle the response as needed
+                // Close the add modal
+            } catch (error) {
+                console.error('Error:', error);
             }
-            else {
-            }
-            // Handle the response as needed
-            // Close the add modal
-        } catch (error) {
-            console.error('Error:', error);
         }
     };
 
@@ -105,6 +109,7 @@ function CalendarAddEvent({ defaultdate, data, show, handleClose, handleDelete }
                 <div className="Calendar-Popup-modal-header">
                     <h2>Add Event</h2>
                 </div>
+                {addLineMessage && <p className="error-message">{addLineMessage}</p>}
                 <div className="Calendar-Popup-modal-body">
                     Select Lines
                     <Select
@@ -113,17 +118,17 @@ function CalendarAddEvent({ defaultdate, data, show, handleClose, handleDelete }
                         value={selectedLine}
                         options={options}
                     />
-                    <br/>
+                    <br />
                     {hidepartselect ? (
                         <p></p>
                     ) : (
                         <>
                             Select Part Number
                             <ReactBootStrap.Form.Control
-                            className='Calendar-Add-part-Event-dropdown'
+                                className='Calendar-Add-part-Event-dropdown'
                                 as="select"
-                            value={selectedpartnumbers}
-                            onChange={(e) => handlepartnumberchange(e.target.value)}
+                                value={selectedpartnumbers}
+                                onChange={(e) => handlepartnumberchange(e.target.value)}
                             >
                                 {partnumbers.map((item) => (
                                     <option key={item.Part_ID} value={item.Part_ID}>
@@ -132,14 +137,14 @@ function CalendarAddEvent({ defaultdate, data, show, handleClose, handleDelete }
                                 ))}
                                 {/* Add more options here */}
                             </ReactBootStrap.Form.Control>
-                            <br/>
-                            <br/>
+                            <br />
+                            <br />
                             Total Pallets
                             <input className='Calendar-Pallets-Input'
                                 type="text"
                                 placeholder="Pallets"
                                 value={totalPallets}
-                                onChange={(e) => setTotalPallets(e.target.value )}
+                                onChange={(e) => setTotalPallets(e.target.value)}
                                 onKeyPress={(event) => {
                                     if (!/[0-9]/.test(event.key)) {
                                         event.preventDefault();
@@ -150,10 +155,10 @@ function CalendarAddEvent({ defaultdate, data, show, handleClose, handleDelete }
                     )}
                 </div>
                 <div className="Calendar-Popup-modal-footer">
-                <button className="Calendar-Popup-button" onClick={() => {handleinsertevent()}}>
+                    <button className="Calendar-Popup-button" onClick={() => { handleinsertevent() }}>
                         Save
                     </button>
-                    <button className="Calendar-Popup-button" onClick={() => { handleClose(); setSelectedLine(null); sethidepartselect(true); setpartnumbers(null); setTotalPallets(null)}}>
+                    <button className="Calendar-Popup-button" onClick={() => { handleClose(); setSelectedLine(null); sethidepartselect(true); setpartnumbers(null); setTotalPallets(null) }}>
                         Close
                     </button>
                 </div>
