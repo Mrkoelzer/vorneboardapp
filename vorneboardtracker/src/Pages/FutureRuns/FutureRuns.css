@@ -31,12 +31,22 @@
   .Future-Runs-flexbox-item {
     display: flex;
     flex-direction: column;
-    min-height: 30vh;
+    min-height: 33vh;
   }
   
   .future-Runs-Details-Title {
     display: flex;
     justify-content: center;
+    margin-top: 2%;
+    width: 100%;
+    max-height: 3vh;
+    border-bottom: white 5px solid;
+  }
+
+  .future-Runs-Details-Title-2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin-top: 2%;
     width: 100%;
     max-height: 3vh;
