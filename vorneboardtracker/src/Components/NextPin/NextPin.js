@@ -51,35 +51,12 @@ function Pin({ handleClose }) {
     const futurerundata = await getfutureruns();
     const runDataPromises = data.map(async (line) => {
       const linename = line.Linename;
-      const currentruns = await getcurrentrun(line.ipaddress);
-
       const filteredFuturerundata = (futurerundata || []).filter((run) => run.title === linename);
 
-      const combinedData = currentruns.map((run, index) => ({
-        title: linename,
-        order: index,
-        part: run,
-      }));
-
-      if (filteredFuturerundata.length > 0) {
-        const futurerundataWithOrder = filteredFuturerundata.map((run, index) => ({
-          ...run,
-          order: index + currentruns.length,
-        }));
-        combinedData.push(...futurerundataWithOrder);
-      }
-
-      return combinedData;
+      return filteredFuturerundata;
     });
 
     const currentRunsData = await Promise.all(runDataPromises);
-    for (let i = 0; i < currentRunsData.length; i++) {
-      if (currentRunsData[i].length > 1) {
-        if (currentRunsData[i][0].part === currentRunsData[i][1].part) {
-          //deletefuturerun(currentRunsData[i][1])
-        }
-      }
-    }
     const flattenedData = currentRunsData.flat(); // Flatten the nested arrays
     const filteredData = flattenedData.filter(item => item.title === selectedline);
 
@@ -248,7 +225,7 @@ function Pin({ handleClose }) {
           swal(`Changeover Starting for part: ${Data[1].part}`, "Success")
           handleClose()
           handlepartidSelect(Data[1].part)
-          handledeleteClick(Data[1])
+          handledeleteClick(Data[0])
         }
       } else {
         swal("Invalid PIN!", "The PIN you entered didn't match. Try again", "error");
@@ -312,7 +289,7 @@ function Pin({ handleClose }) {
       }));
   
       // Remove the first element in the updatedDataWithNewOrder array
-      updatedDataWithNewOrder.shift();
+      //updatedDataWithNewOrder.shift();
   
       const newdata = updatedDataWithNewOrder;
       handlesave(deletedRow, newdata)

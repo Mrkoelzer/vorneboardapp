@@ -3,13 +3,14 @@ import './FutureRuns.css';
 import { useNavigate } from 'react-router-dom';
 import { usercontext } from '../../contexts/usercontext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faPlus, faCircle } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faPlus, faCircle, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { Toolbarcontext } from '../../Components/Navbar/Toolbarcontext';
 import { ipaddrcontext } from '../../contexts/ipaddrcontext';
 import CalendarAddEvent from '../../Components/CalendarAddEvent/CalendarAddEvent';
 import * as ReactBootStrap from 'react-bootstrap';
 import { linescontext } from '../../contexts/linescontext';
 import FutureRunsPopup from './FutureRunsPopup'
+import FutureRunsEditPopup from './FutureRunsEditPopup';
 import Axios from 'axios';
 
 function FutureRuns() {
@@ -21,6 +22,8 @@ function FutureRuns() {
     const [showFuturePopup, setshowFuturePopup] = useState(false);
     const [selectedtitle, setselectedtitle] = useState(null);
     const { lines, setlines } = useContext(linescontext);
+    const [showFutureEditPopup, setshowFutureEditPopup] = useState(false);
+    const [editRow, setEditRow] = useState(null);
     const [data, setData] = useState([
         {
             event_id: Number,
@@ -108,6 +111,40 @@ function FutureRuns() {
             });
     };
 
+    const handleinsertevent = async (data) => {
+        console.log(data)
+        let startTime = new Date(), endTime = new Date();
+        let requestData = {
+            start: startTime,
+            end: endTime,
+            title: data.title,
+            part: data.part,
+            state: 1,
+            order: data.order,
+            Pallets: 0,
+            Remaining: 0
+        };
+        try {
+            const response = await fetch(`http://${localipaddr}:1435/api/insertevent`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData),
+            });
+            const data = await response.json();
+            if (data.eventadded) {
+
+            }
+            else {
+            }
+            // Handle the response as needed
+            // Close the add modal
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
     const getallruns = async (data) => {
         const futurerundata = await getfutureruns();
         const runDataPromises = data.map(async (line) => {
@@ -116,6 +153,11 @@ function FutureRuns() {
             const processstate = await getprocessstate(line.ipaddress);
             const filteredFuturerundata = (futurerundata || []).filter((run) => run.title === linename);
 
+            // Add the events property to filteredFuturerundata
+            filteredFuturerundata.forEach((futureRun) => {
+                futureRun.events = [];
+            });
+
             const combinedData = currentruns.map((run, index) => ({
                 title: linename,
                 order: index,
@@ -123,15 +165,32 @@ function FutureRuns() {
                 events: processstate
             }));
 
-            if (filteredFuturerundata.length > 0) {
-                const futurerundataWithOrder = filteredFuturerundata.map((run, index) => ({
-                    ...run,
-                    order: index + currentruns.length,
-                }));
-                combinedData.push(...futurerundataWithOrder);
-            }
+            // Check if each entry in combinedData is in futurerundata
+            combinedData.forEach((currentRun) => {
+                const isCurrentRunInFutureRunData = filteredFuturerundata.some(
+                    (futureRun) => futureRun.title === currentRun.title && futureRun.part === currentRun.part && futureRun.order === currentRun.order
+                );
 
-            return combinedData;
+                // If it's not in futurerundata, call handleinsertevent()
+                if (!isCurrentRunInFutureRunData) {
+                    handleinsertevent(currentRun); // Replace with your method
+                }
+            });
+
+            filteredFuturerundata.forEach((futureRun) => {
+                const matchingCombinedData = combinedData.find(
+                    (currentRun) =>
+                        currentRun.title === futureRun.title &&
+                        currentRun.part === futureRun.part &&
+                        currentRun.order === futureRun.order
+                );
+
+                if (matchingCombinedData) {
+                    futureRun.events = matchingCombinedData.events;
+                }
+            });
+
+            return filteredFuturerundata;
         });
 
         const currentRunsData = await Promise.all(runDataPromises);
@@ -223,6 +282,25 @@ function FutureRuns() {
         getallruns(lines);
     };
 
+    const handleFutureEditClosed = () => {
+        setEditRow(null)
+        getallruns()
+        setshowFutureEditPopup(false);
+        handleFutureClosed()
+    };
+
+    const handleFutureEditShow = (row) => {
+        console.log(row)
+        setEditRow(row)
+    };
+
+    useEffect(() => {
+        if (editRow !== null) {
+            setshowFutureEditPopup(true);
+        }
+    }, [editRow]);
+
+
     const handleFutureShow = (title) => {
         for (let i = 0; i < data.length; i++) {
             if (data[i].title === title && data[i].order !== 0) {
@@ -260,6 +338,11 @@ function FutureRuns() {
                     title={selectedtitle}
                     passeddata={data}
                 />
+                <FutureRunsEditPopup
+                    show={showFutureEditPopup}
+                    handleClose={handleFutureEditClosed}
+                    data={editRow}
+                />
                 <div className='Future-Runs-Buttons'>
                     <button className='FRbutton' onClick={() => handleAddShow()}>
                         <div className="FRicon-wrapper">
@@ -278,7 +361,7 @@ function FutureRuns() {
                 {/* Iterate through unique titles and create containers with tables */}
                 {data && Array.from(new Set(data.map(item => item.title)))?.sort().map(title => (
                     <div className='future-Runs-Details-Container' key={title}>
-                        <div className='Future-Runs-flexbox-item' onClick={() => handleFutureShow(title)}>
+                        <div className='Future-Runs-flexbox-item'>
                             <div className='future-Runs-Details-Title'>
                                 {title}
                             </div>
@@ -324,6 +407,9 @@ function FutureRuns() {
                                         <tr className="header-row">
                                             <th style={{ width: '5%' }}>Order</th>
                                             <th>Part Number</th>
+                                            <th>Pallets</th>
+                                            <th>Remaining</th>
+                                            <th>Edit</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -332,8 +418,11 @@ function FutureRuns() {
                                             .slice(0, 5) // Add this line to limit the rows to the first 5
                                             .map((rowData, index) => (
                                                 <tr key={index} className={index % 2 === 0 ? 'even' : 'odd'}>
-                                                    <td>{rowData.order}</td>
-                                                    <td>{rowData.part}</td>
+                                                    <td onClick={() => handleFutureShow(title)}>{rowData.order}</td>
+                                                    <td onClick={() => handleFutureShow(title)}>{rowData.part}</td>
+                                                    <td onClick={() => handleFutureShow(title)}>{rowData.Pallets}</td>
+                                                    <td onClick={() => handleFutureShow(title)}>{rowData.Remaining}</td>
+                                                    <td><p className='futureeditdeletebutton' onClick={() => handleFutureEditShow(rowData)}><FontAwesomeIcon icon={faPenToSquare} /></p></td>
                                                 </tr>
                                             ))}
                                     </tbody>

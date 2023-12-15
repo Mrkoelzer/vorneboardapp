@@ -1154,15 +1154,13 @@ appSql.post('/api/insertevent', async (req, res) => {
   try {
     await sql.connect(config);
     const requestData = req.body;
-    const query = `INSERT INTO Events ([title], [part], [start], [end], [order], [state], [Pallets], [Remaining])VALUES('${requestData.title}', '${requestData.part}', '${requestData.start}', '${requestData.end}',${requestData.order}, '${requestData.state}','${requestData.Pallets}','${requestData.Remaining}')`;
+    const query = `INSERT INTO [Events] ([title], [part], [start], [end], [order], [state], [Pallets], [Remaining])VALUES('${requestData.title}', '${requestData.part}', '${requestData.start}', '${requestData.end}',${requestData.order}, ${requestData.state},${requestData.Pallets},${requestData.Remaining})`;
     const result = await sql.query(query)
     if (result) {
       res.json({ eventadded: true });
     } else {
       res.json({ eventadded: false });
     }
-
-    sql.close();
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -1190,8 +1188,7 @@ appSql.post('/api/updatepallets', async (req, res) => {
   try {
     await sql.connect(config);
     const requestData = req.body;
-    const query = `UPDATE [Events] SET [Remaining] = ${requestData.Remaining} where event_id = ${requestData.event_id}`;
-    console.log(query)
+    const query = `UPDATE [Events] SET [Remaining] = ${requestData.Remaining}, [Pallets] = ${requestData.Pallets} where event_id = ${requestData.event_id}`;
     const result = await sql.query(query)
     if (result) {
       res.json({ eventadded: true });
