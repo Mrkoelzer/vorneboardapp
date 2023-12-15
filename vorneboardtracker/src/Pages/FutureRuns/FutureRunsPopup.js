@@ -15,7 +15,6 @@ import { Box, IconButton, Tooltip } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import FutureRunsEditPopup from './FutureRunsEditPopup';
 
 
 function FutureRunsPopup({ show, handleClose, handleDelete, title, passeddata }) {
@@ -23,8 +22,6 @@ function FutureRunsPopup({ show, handleClose, handleDelete, title, passeddata })
     const [selectedLine, setSelectedLine] = useState(null);
     const { localipaddr } = useContext(ipaddrcontext);
     const [deleteEvent, setdeleteEvent] = useState([])
-    const [showFutureEditPopup, setshowFutureEditPopup] = useState(false);
-    const [editRow, setEditRow] = useState(null);
     const [selectedeventid, setselectedeventid] = useState({
         "event_id": 0,
         "title": "",
@@ -61,7 +58,7 @@ function FutureRunsPopup({ show, handleClose, handleDelete, title, passeddata })
 
             const data = await response.json();
             if (data) {
-                const filteredData = data.result.recordset.filter(item => item.title === title);
+                const filteredData = data.result.recordset.filter(item => item.title === title && item.order !== 0);
                 setData(filteredData);
             } else {
                 console.log('error');
@@ -139,7 +136,7 @@ function FutureRunsPopup({ show, handleClose, handleDelete, title, passeddata })
 
             const updatedDataWithNewOrder = updatedData.map((item, index) => ({
                 ...item,
-                order: index + 1,
+                order: index+1,
             }));
             setdeleteEvent(prevDeleteEvent => [...prevDeleteEvent, deletedRow]);
             setData(updatedDataWithNewOrder);
@@ -147,22 +144,6 @@ function FutureRunsPopup({ show, handleClose, handleDelete, title, passeddata })
             console.error("Row not found in data array");
         }
     };
-
-    const handleFutureEditClosed = () => {
-        setEditRow(null)
-        getfutureruns()
-        setshowFutureEditPopup(false);
-    };
-
-    const handleFutureEditShow = (row) => {
-        setEditRow(row)
-    };
-
-    useEffect(() => {
-        if (editRow !== null) {
-            setshowFutureEditPopup(true);
-        }
-    }, [editRow]);
 
     const onDragEnd = (result) => {
         if (!result.destination) return; // Dragged outside the list
@@ -173,19 +154,17 @@ function FutureRunsPopup({ show, handleClose, handleDelete, title, passeddata })
 
         // Update the order property based on the new order of rows
         items.forEach((row, index) => {
-            row.order = index + 1;
+            row.order = index+1;
         });
+
+        console.log('Before:', data);
+        console.log('After:', items);
 
         setData(items);
     };
 
     return (
         <div className={`Calendar-Popup-modal ${show ? 'show' : ''}`}>
-            <FutureRunsEditPopup
-                show={showFutureEditPopup}
-                handleClose={handleFutureEditClosed}
-                data={editRow}
-            />
             <div className="Calendar-Popup-modal-popup">
                 <div className="Calendar-Popup-modal-header">
                     <h2>{title} Future Runs</h2>
@@ -222,13 +201,6 @@ function FutureRunsPopup({ show, handleClose, handleDelete, title, passeddata })
                                                         <div style={{ cursor: 'move', marginLeft: '8px', flexShrink: 0 }}>&#x2630;</div> {/* Drag handle */}
                                                         <div style={{ flex: 1, whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginLeft: '8px' }}>{row.title}</div>
                                                         <div style={{ flex: 1, whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginLeft: '8px' }}>{row.part}</div>
-                                                        <div style={{ flexShrink: 0 }}>
-                                                            <Tooltip title="Edit">
-                                                                <IconButton color="info" onClick={() => handleFutureEditShow(row)}>
-                                                                    <ModeEditIcon />
-                                                                </IconButton>
-                                                            </Tooltip>
-                                                        </div>
                                                         <div style={{ flexShrink: 0 }}>
                                                             <Tooltip title="Delete">
                                                                 <IconButton color="error" onClick={() => handledeleteClick(row)}>
