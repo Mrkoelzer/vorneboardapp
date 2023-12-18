@@ -190,6 +190,21 @@ function FutureRuns() {
                 }
             });
 
+            filteredFuturerundata.forEach((futureRun) => {
+                if (futureRun.order === 0) {
+                    const isFutureRunInCombinedData = combinedData.some(
+                        (currentRun) =>
+                            currentRun.title === futureRun.title &&
+                            currentRun.part === futureRun.part &&
+                            currentRun.order === futureRun.order
+                    );
+        
+                    if (!isFutureRunInCombinedData) {
+                        deletefuturerun(futureRun);
+                    }
+                }
+            });
+
             return filteredFuturerundata;
         });
 
@@ -201,6 +216,7 @@ function FutureRuns() {
                 }
             }
         }
+        
         const flattenedData = currentRunsData.flat(); // Flatten the nested arrays
         console.log(flattenedData)
         setData(flattenedData)
