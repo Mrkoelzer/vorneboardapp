@@ -257,18 +257,18 @@ function Pin({ handleClose }) {
       await Promise.all(updatePromises);
 
       // Handle deleted rows
-        const event_id = deletedevent.event_id
-        const response = await fetch(`http://${localipaddr}:1435/api/deletefutureevent`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ event_id }),
-        });
+      const event_id = deletedevent.event_id
+      const response = await fetch(`http://${localipaddr}:1435/api/deletefutureevent`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ event_id }),
+      });
 
-        if (!response.ok) {
-          throw new Error('Run Order Delete Failed');
-        }
+      if (!response.ok) {
+        throw new Error('Run Order Delete Failed');
+      }
     } catch (error) {
       NotificationManager.error('Save failed');
       console.error('Error:', error);
@@ -277,27 +277,27 @@ function Pin({ handleClose }) {
 
   const handledeleteClick = (row) => {
     const indexToDelete = Data.findIndex(item => item.event_id === row.event_id);
-  
+
     if (indexToDelete !== -1) {
       const updatedData = [...Data.slice(0, indexToDelete), ...Data.slice(indexToDelete + 1)];
-  
+
       const deletedRow = Data[indexToDelete];
-  
+
       const updatedDataWithNewOrder = updatedData.map((item, index) => ({
         ...item,
         order: index,
       }));
-  
+
       // Remove the first element in the updatedDataWithNewOrder array
       //updatedDataWithNewOrder.shift();
-  
+
       const newdata = updatedDataWithNewOrder;
       handlesave(deletedRow, newdata)
     } else {
       console.error("Row not found in data array");
     }
   };
-  
+
 
   useEffect(() => {
     getPartNumbers(selectedline)
@@ -311,7 +311,7 @@ function Pin({ handleClose }) {
       {context => {
         const { localipaddr } = context;
         return (
-          <div className="Pin home-container">
+          <div className="Pin home-container-Next">
             <div className="text white-text">
               <h2 id="todaysDate"> </h2>
             </div>

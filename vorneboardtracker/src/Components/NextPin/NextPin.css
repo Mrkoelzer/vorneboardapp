@@ -14,12 +14,12 @@
   .white-text {
     color: #fff;
   }
-  .home-container {
+  .home-container-Next {
     box-sizing: border-box;
     background: #212a35;
     margin: 0;
     padding: 30px 0;
-    overflow: hidden;
+    
     font-family: "Source Sans Pro", sans-serif;
   }
   .pin {
@@ -50,12 +50,11 @@
   
 
   @media (max-width: 767px) {
-    .home-container {
+    .home-container-Next {
       box-sizing: border-box;
       background: #212a35;
       margin: 0;
       padding: 30px 0;
-      overflow: hidden;
       font-family: "Source Sans Pro", sans-serif;
       scale: .7;
       width: 470px;

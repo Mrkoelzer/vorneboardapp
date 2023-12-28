@@ -127,7 +127,7 @@ function ModifyEvents() {
     }
 
     const getprocessstatepastevents = (daynumber1, daynumber2, ip) => {
-        const apiUrl = `http://${ip}/api/v0/channels/production_metric/events?fields=duration,process_state,process_state_reason,run_time,unplanned_stop_time,planned_stop_time,in_count,good_count,reject_count,process_state_event_id,start_time,record_id,end_time,record_order&group=process_state_event_id&query_name=multisession-table-6916-production_metric&filter=(production_day_number%20ge%20${daynumber1})%20and%20(production_day_number%20le%20${daynumber2})`;
+        const apiUrl = `http://${ip}/api/v0/channels/production_metric/events?fields=duration,process_state,process_state_reason,run_time,unplanned_stop_time,planned_stop_time,in_count,good_count,reject_count,process_state_event_id,start_time,record_id,end_time,record_order,part&group=process_state_event_id&query_name=multisession-table-6916-production_metric&filter=(production_day_number%20ge%20${daynumber1})%20and%20(production_day_number%20le%20${daynumber2})`;
 
         return Axios.get(apiUrl)
             .then((response) => {
@@ -329,6 +329,7 @@ function ModifyEvents() {
                     record_id: data[11],
                     end_time: data[12],
                     record_order: data[13],
+                    part: data[14]
                 };
             });
             setpastevents(formattedData);
@@ -729,6 +730,7 @@ function ModifyEvents() {
                                 <th>Duration</th>
                                 <th>Process State</th>
                                 <th>Process State Reason</th>
+                                <th>Part</th>
                                 <th>In Count</th>
                                 <th>Good Count</th>
                                 <th>Reject Count</th>
@@ -779,6 +781,7 @@ function ModifyEvents() {
                                                 {formattext(rowData.process_state)}
                                             </td>
                                             <td>{formattextreason(rowData.process_state_reason)}</td>
+                                            <td>{rowData.part.replace(/j/g, '-')}</td>
                                             <td>{rowData.in_count}</td>
                                             <td>{rowData.good_count}</td>
                                             <td>{rowData.reject_count}</td>
