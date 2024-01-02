@@ -41,6 +41,17 @@ function CalendarAddEvent({ defaultdate, data, show, handleClose, handleDelete }
         }
     };
 
+    const getMaxIdentity = async () => {
+        try {
+          const response = await fetch(`http://${localipaddr}:1435/api/getMaxIdentity`);
+          const data = await response.json();
+          const maxIdentity = data.maxIdentity;
+          return maxIdentity;
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      };
+
     const handleinsertevent = async () => {
         if (totalPallets === null) {
             setAddLineMessage('Pallets Must Have a Value')
@@ -66,28 +77,50 @@ function CalendarAddEvent({ defaultdate, data, show, handleClose, handleDelete }
                 Remaining: totalPallets
             };
             try {
-                const response = await fetch(`http://${localipaddr}:1435/api/insertevent`, {
+                const eventResponse = await fetch(`http://${localipaddr}:1435/api/insertevent`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(requestData),
                 });
-                const data = await response.json();
-                if (data.eventadded) {
-                    setSelectedLine(null)
-                    sethidepartselect(true)
-                    setTotalPallets(null)
-                    handleClose()
+
+                const eventData = await eventResponse.json();
+
+                if (eventData.eventadded) {
+                    // Insert event history
+                    let id = await getMaxIdentity()
+                    const requestDataHistory = {
+                        event_History_id: id,
+                        ...requestData,
+                    };
+                        
+                    const eventHistoryResponse = await fetch(`http://${localipaddr}:1435/api/inserteventhistory`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(requestDataHistory),
+                    });
+
+                    const dataHistory = await eventHistoryResponse.json();
+
+                    if (dataHistory.eventhistoryadded) {
+                        // Reset state and close modal
+                        setSelectedLine(null);
+                        sethidepartselect(true);
+                        setTotalPallets(null);
+                        handleClose();
+                    }
+                } else {
+                    // Handle case where event was not added
+                    console.error('Event not added:', eventData);
                 }
-                else {
-                }
-                // Handle the response as needed
-                // Close the add modal
+
             } catch (error) {
                 console.error('Error:', error);
             }
-        }
+        };
     };
 
     const handlepartnumberchange = (e) => {

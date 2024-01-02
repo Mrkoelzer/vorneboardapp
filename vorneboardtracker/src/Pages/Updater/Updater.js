@@ -3,7 +3,7 @@ import './Updater.css';
 import { useNavigate } from 'react-router-dom';
 import { usercontext } from '../../contexts/usercontext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendar, faPenToSquare, faBarcode, faFilePdf, faFileCirclePlus, faArrowLeft, faMapLocationDot } from '@fortawesome/free-solid-svg-icons';
+import { faCalendar, faPenToSquare, faBarcode, faFilePdf, faFileCirclePlus, faArrowLeft, faMapLocationDot, faClockRotateLeft } from '@fortawesome/free-solid-svg-icons';
 import { Toolbarcontext } from '../../Components/Navbar/Toolbarcontext';
 
 function Updater() {
@@ -52,6 +52,12 @@ function Updater() {
             <FontAwesomeIcon icon={faMapLocationDot} className="icon" />
           </div>
           <div className="text">Future Runs</div>
+        </button>
+        <button className='accountbutton' onClick={() => navigate('/PastRuns')}>
+          <div className="icon-wrapper">
+            <FontAwesomeIcon icon={faClockRotateLeft} className="icon" />
+          </div>
+          <div className="text">Past Runs</div>
         </button>
         <button className='accountbutton' onClick={() => navigate('/PartNumbers')}>
           <div className="icon-wrapper">

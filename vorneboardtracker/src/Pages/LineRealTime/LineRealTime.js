@@ -14,6 +14,7 @@ import { ipaddrcontext } from '../../contexts/ipaddrcontext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faPlus, faArrowLeft, faCircle } from '@fortawesome/free-solid-svg-icons';
 import { Toolbarcontext } from '../../Components/Navbar/Toolbarcontext';
+import LoadingOverlay from '../../Components/LoadingOverlay/LoadingOverlay';
 
 function LineRealTime() {
   const [linepagedata, setlinepagedata] = useState([]);
@@ -21,6 +22,7 @@ function LineRealTime() {
   const [lineparts, setlineparts] = useState([]);
   const { selectedline, setselectedline } = useContext(selectedlinecontext)
   const [isLoading, setIsLoading] = useState(true); // Add isLoading state
+  const [UpdateLoading, setUpdateLoading] = useState(false);
   const { lines, setlines } = useContext(linescontext);
   const [goodcount, setgoodcount] = useState(1);
   const [rejectcount, setrejectcount] = useState(1);
@@ -62,15 +64,15 @@ function LineRealTime() {
   }
 
   function getInitialAction(processStates) {
-    let processState= processStates.processStateDetailsData
+    let processState = processStates.processStateDetailsData
     if (processState === 'No Production' || processState === 'Not Monitored') {
-      if(processStates.shiftData.events[0][0] === "No Operators"){
+      if (processStates.shiftData.events[0][0] === "No Operators") {
         return 'action4'
       }
-      else{
+      else {
         return 'action1'; // Assuming 'No Production' and 'Not Monitored' correspond to 'No Orders' action
       }
-       } else if (processState === 'Running' || processState === 'Down' || processState === 'Detecting State' || processState === 'Break') {
+    } else if (processState === 'Running' || processState === 'Down' || processState === 'Detecting State' || processState === 'Break') {
       return 'action2'; // Assuming 'Running', 'Down', 'Detecting State', and 'Break' correspond to 'Start Production' action
     }
     else if (processState === 'Changeover') {
@@ -81,6 +83,7 @@ function LineRealTime() {
   }
 
   const handleproductionSelect = async (selectedAction) => {
+    setUpdateLoading(true)
     const selectedEndpointIdentifier = apiEndpoints[selectedAction];
     let ipaddress = linepagedata[0].lineip
     if (selectedEndpointIdentifier) {
@@ -95,7 +98,7 @@ function LineRealTime() {
         requestData = { value: {} }; // Do not include ipaddress here
       } else if (selectedAction === 'action3') {
         requestData = { value: "changeover" }; // Do not include ipaddress here
-      }else if (selectedAction === 'action4') {
+      } else if (selectedAction === 'action4') {
         requestData = {
           enabled: true,
           reason: "No_Operators"
@@ -109,6 +112,7 @@ function LineRealTime() {
       await Axios.post(selectedEndpoint, requestData)
         .then((response) => {
           NotificationManager.success(`Updating Vorne Production State!`)
+          fetchDataAndSetState()
           console.log('API call success:', response.data);
         })
         .catch((error) => {
@@ -139,6 +143,7 @@ function LineRealTime() {
   };
 
   const handlereasonSelect = async (selectedAction) => {
+    setUpdateLoading(true)
     // Map the endpoint identifier to the full URL
     const selectedEndpoint = `http://${localipaddr}:1433/updateprocessstatereason`;
 
@@ -193,6 +198,7 @@ function LineRealTime() {
     await Axios.post(selectedEndpoint, requestData)
       .then((response) => {
         NotificationManager.success(`Updating Vorne Reason to ${requestData.reason}!`)
+        fetchDataAndSetState()
         console.log('API call success:', response.data);
       })
       .catch((error) => {
@@ -202,6 +208,7 @@ function LineRealTime() {
   };
 
   const handlepartidSelect = async (selectedAction) => {
+    setUpdateLoading(true)
     // Map the endpoint identifier to the full URL
     const selectedEndpoint = `http://${localipaddr}:1433/updatepartidline`;
 
@@ -242,6 +249,7 @@ function LineRealTime() {
     await Axios.post(selectedEndpoint, requestData)
       .then((response) => {
         NotificationManager.success(`Updating Vorne to Part ${requestData.part_id}!`)
+        fetchDataAndSetState()
         console.log('API call success:', response.data);
       })
       .catch((error) => {
@@ -421,6 +429,7 @@ function LineRealTime() {
   };
 
   const handlegoodcount = async () => {
+    setUpdateLoading(true)
     let requestData = {
       count: parseInt(goodcount),
       ipaddress: linepagedata[0].lineip
@@ -428,6 +437,7 @@ function LineRealTime() {
     await Axios.post(`http://${localipaddr}:1433/updategoodcount`, requestData)
       .then((response) => {
         NotificationManager.success(`Adding ${requestData.count} to In Count!`)
+        fetchDataAndSetState()
         setgoodcount(1)
       })
       .catch((error) => {
@@ -436,6 +446,7 @@ function LineRealTime() {
       });
   };
   const handlerejectcount = () => {
+    setUpdateLoading(true)
     let requestData = {
       count: parseInt(rejectcount),
       ipaddress: linepagedata[0].lineip
@@ -443,6 +454,7 @@ function LineRealTime() {
     Axios.post(`http://${localipaddr}:1433/updaterejectcount`, requestData)
       .then((response) => {
         NotificationManager.success(`Adding ${requestData.count} to Reject Count!`)
+        fetchDataAndSetState()
         setrejectcount(1)
       })
       .catch((error) => {
@@ -511,6 +523,20 @@ function LineRealTime() {
     }
   }, [sessionStorage.getItem('selectedline')]);
 
+
+  const fetchDataAndSetState = async () => {
+    if (selectedline) {
+      const lineData = await fetchlines();
+      if (lineData) {
+        // Call the getprocessstate function here
+        setlinepagedata(lineData);
+        getPartNumbers(selectedline);
+        //saveDataToLocalStorage('selectedline', selectedline)
+        setUpdateLoading(false)
+      }
+    }
+  };
+
   useEffect(() => {
     // Ensure selectedline is set before fetching data
     if (selectedline) {
@@ -522,6 +548,7 @@ function LineRealTime() {
           console.log(lineData)
           settoolbarinfo([{ Title: `Vorne ${lineData[0].linename}` }])
           getPartNumbers(selectedline);
+          setUpdateLoading(false)
           //saveDataToLocalStorage('selectedline', selectedline)
         }
       };
@@ -547,6 +574,7 @@ function LineRealTime() {
   return (
     <div className="linepage">
       <NotificationContainer />
+      <LoadingOverlay isLoading={UpdateLoading} />
       {isLoading ? (
         <p>Loading...</p>
       ) : (

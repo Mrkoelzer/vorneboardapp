@@ -3,7 +3,7 @@ import './FutureRuns.css';
 import { useNavigate } from 'react-router-dom';
 import { usercontext } from '../../contexts/usercontext'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faPlus, faCircle, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faPlus, faCircle, faPenToSquare, faClockRotateLeft } from '@fortawesome/free-solid-svg-icons';
 import { Toolbarcontext } from '../../Components/Navbar/Toolbarcontext';
 import { ipaddrcontext } from '../../contexts/ipaddrcontext';
 import CalendarAddEvent from '../../Components/CalendarAddEvent/CalendarAddEvent';
@@ -11,6 +11,7 @@ import * as ReactBootStrap from 'react-bootstrap';
 import { linescontext } from '../../contexts/linescontext';
 import FutureRunsPopup from './FutureRunsPopup'
 import FutureRunsEditPopup from './FutureRunsEditPopup';
+import FutureRunsPastEventsPopup from './FutureRunsPastEventsPopup';
 import Axios from 'axios';
 
 function FutureRuns() {
@@ -19,6 +20,7 @@ function FutureRuns() {
     const { settoolbarinfo } = useContext(Toolbarcontext)
     const { localipaddr } = useContext(ipaddrcontext);
     const [showCalendarAddPopup, setshowCalendarAddPopup] = useState(false);
+    const [showAddPastEvents, setshowAddPastEvents] = useState(false);
     const [showFuturePopup, setshowFuturePopup] = useState(false);
     const [selectedtitle, setselectedtitle] = useState(null);
     const { lines, setlines } = useContext(linescontext);
@@ -112,7 +114,6 @@ function FutureRuns() {
     };
 
     const handleinsertevent = async (data) => {
-        console.log(data)
         let startTime = new Date(), endTime = new Date();
         let requestData = {
             start: startTime,
@@ -151,11 +152,18 @@ function FutureRuns() {
             const linename = line.Linename;
             const currentruns = await getcurrentrun(line.ipaddress);
             const processstate = await getprocessstate(line.ipaddress);
+            const historyruns = await gethistoryruns();
             const filteredFuturerundata = (futurerundata || []).filter((run) => run.title === linename);
 
             // Add the events property to filteredFuturerundata
             filteredFuturerundata.forEach((futureRun) => {
                 futureRun.events = [];
+                futureRun.Editable = false;
+                for (let i = 0; i < historyruns.length; i++) {
+                    if (historyruns[i].event_History_id === futureRun.event_id) {
+                        futureRun.Editable = true;
+                    }
+                }
             });
 
             const combinedData = currentruns.map((run, index) => ({
@@ -166,16 +174,22 @@ function FutureRuns() {
             }));
 
             // Check if each entry in combinedData is in futurerundata
-            combinedData.forEach((currentRun) => {
+            await Promise.all(combinedData.map(async (currentRun) => {
                 const isCurrentRunInFutureRunData = filteredFuturerundata.some(
-                    (futureRun) => futureRun.title === currentRun.title && futureRun.part === currentRun.part && futureRun.order === currentRun.order
+                    (futureRun) =>
+                        futureRun.title === currentRun.title &&
+                        futureRun.part === currentRun.part &&
+                        futureRun.order === currentRun.order
                 );
 
                 // If it's not in futurerundata, call handleinsertevent()
                 if (!isCurrentRunInFutureRunData) {
-                    handleinsertevent(currentRun); // Replace with your method
+                    await handleinsertevent(currentRun);
+                    const updatedFuturerundata = await getfutureruns();
+                    filteredFuturerundata = updatedFuturerundata.filter((run) => run.title === linename);
+
                 }
-            });
+            }));
 
             filteredFuturerundata.forEach((futureRun) => {
                 const matchingCombinedData = combinedData.find(
@@ -198,7 +212,7 @@ function FutureRuns() {
                             currentRun.part === futureRun.part &&
                             currentRun.order === futureRun.order
                     );
-        
+
                     if (!isFutureRunInCombinedData) {
                         deletefuturerun(futureRun);
                     }
@@ -216,7 +230,7 @@ function FutureRuns() {
                 }
             }
         }
-        
+
         const flattenedData = currentRunsData.flat(); // Flatten the nested arrays
         console.log(flattenedData)
         setData(flattenedData)
@@ -225,6 +239,28 @@ function FutureRuns() {
     const getfutureruns = async () => {
         try {
             const response = await fetch(`http://${localipaddr}:1435/api/getfutureevents`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const data = await response.json();
+            if (data) {
+                //setData(data.result.recordset);
+                return data.result.recordset
+
+            } else {
+                console.log('error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    const gethistoryruns = async () => {
+        try {
+            const response = await fetch(`http://${localipaddr}:1435/api/gethistoryruns`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -289,6 +325,14 @@ function FutureRuns() {
         }
     };
 
+    const handleAddPastEventShow = () => {
+        setshowAddPastEvents(true);
+    };
+
+    const handleAddPastEventClosed = () => {
+        setshowAddPastEvents(false);
+        getallruns(lines);
+    };
 
     const handleAddShow = () => {
         setshowCalendarAddPopup(true);
@@ -359,12 +403,23 @@ function FutureRuns() {
                     handleClose={handleFutureEditClosed}
                     data={editRow}
                 />
+
+                <FutureRunsPastEventsPopup
+                    show={showAddPastEvents}
+                    handleClose={handleAddPastEventClosed}
+                />
                 <div className='Future-Runs-Buttons'>
                     <button className='FRbutton' onClick={() => handleAddShow()}>
                         <div className="FRicon-wrapper">
                             <FontAwesomeIcon icon={faPlus} className="FRicon" />
                         </div>
                         <div className="FRtext">Add Event</div>
+                    </button>
+                    <button className='FRbutton' onClick={() => handleAddPastEventShow()}>
+                        <div className="FRicon-wrapper">
+                            <FontAwesomeIcon icon={faClockRotateLeft} className="FRicon" />
+                        </div>
+                        <div className="FRtext">Add Past Event</div>
                     </button>
                     <button className='FRbutton' onClick={() => navigate('/Updater')}>
                         <div className="FRicon-wrapper">
@@ -438,7 +493,13 @@ function FutureRuns() {
                                                     <td onClick={() => handleFutureShow(title)}>{rowData.part}</td>
                                                     <td onClick={() => handleFutureShow(title)}>{rowData.Pallets}</td>
                                                     <td onClick={() => handleFutureShow(title)}>{rowData.Remaining}</td>
-                                                    <td><p className='futureeditdeletebutton' onClick={() => handleFutureEditShow(rowData)}><FontAwesomeIcon icon={faPenToSquare} /></p></td>
+                                                    <td>
+                                                        {rowData.Editable ? (
+                                                            <p className='futureeditdeletebutton' onClick={() => handleFutureEditShow(rowData)}>
+                                                                <FontAwesomeIcon icon={faPenToSquare} />
+                                                            </p>
+                                                        ) : null}
+                                                    </td>
                                                 </tr>
                                             ))}
                                     </tbody>

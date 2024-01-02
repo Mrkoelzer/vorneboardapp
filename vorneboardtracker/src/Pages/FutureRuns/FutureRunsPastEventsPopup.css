@@ -1,0 +1,192 @@
+.PastRuns-Popup-modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index:auto;
+    background-color: #AB987a;
+    padding: 15px;
+    border: #ffffff solid 5px;
+    color: #0f1626;
+    overflow-y: auto;
+  }
+  .PastRuns-Popup-header{
+      font-weight: bold;
+      font-size: larger;
+  }
+  .PastRuns-Popup-button-spacing{
+  display: flex;
+  justify-content: space-evenly;
+  }
+  .PastRuns-Pallets-Input{
+    width: 100%;
+    min-height: 30px;
+    text-align: center;
+    font-size: large;
+  }
+  
+  .PastRuns-Popup-button {
+      font-size: large;
+      color: black;
+      background: #FF533d;
+      padding: 30px;
+      border-radius: 50%;
+      font-weight: normal;
+      text-transform: uppercase;
+      transition: all 0.2s ease-in-out;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      margin-left: 10px;
+      margin-right: 10px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    .PastRuns-Popup-button:hover{
+      color: black;
+      box-shadow: 0 5px 15px #f5f5f5;
+    }
+  
+   .PastRuns-Popup-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.3s, transform 0.3s;
+    opacity: 0;
+    z-index: 999;
+  }
+  
+  .PastRuns-Popup-modal.show {
+    display: flex;
+    opacity: 1;
+    transform: scale(1);
+    border: none;
+  }
+  
+  .PastRuns-Popup-modal-popup {
+    background-color: #AB987a;
+    padding: 15px;
+    border: #ffffff solid 5px;
+    color: #0f1626;
+    transition: opacity 0.3s, transform 0.3s;
+    width: 40%;
+  }
+  
+  .PastRuns-Popup-modal.show .PastRuns-Popup-modal-popup {
+    opacity: 1;
+    transform: scale(1);
+  }
+  
+  .PastRuns-Popup-modal-header {
+    text-align: center;
+  }
+  
+  .PastRuns-Popup-modal-body {
+    margin: 10px 0;
+  }
+  
+  .PastRuns-Popup-modal-footer {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .PastRuns-Popup-modal-button {
+    margin: 0 10px;
+    padding: 10px 15px;
+    background-color: #ffffff;
+    color: #0f1626;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .PastRuns-Popup-modal-button:hover {
+    background-color: #ddd;
+  }
+  
+  .PastRuns-Popup-modal table {
+    width: 98%; /* Adjust the width as needed */
+    border-collapse: collapse;
+    color:#f5f5f5;
+  }
+  
+  .PastRuns-Popup-modal th,
+  .PastRuns-Popup-modal td {
+      border: 1px solid #f5f5f5;
+      /* Border color for cells */
+      padding: 5px;
+      /* Adjust padding as needed */
+      text-align: center;
+      /* Center-align content */
+      vertical-align: middle;
+      /* Vertically center content */
+      box-shadow: 0 0 0 1px #f5f5f5;
+  }
+  .PastRuns-Popup-modal tr.even {
+    background-color: #262d3b; /* Set the background color for even rows */
+  }
+  
+  .PastRuns-Popup-modal tr.even:hover {
+    background-color: #0f1626; /* Set the background color for even rows on hover */
+  }
+  
+  .PastRuns-Popup-modal tr.odd {
+    background-color: #3e4451; /* Set the background color for odd rows */
+  }
+  
+  .PastRuns-Popup-modal tr.odd:hover {
+    background-color: #0f1626; /* Set the background color for odd rows on hover */
+  }
+  
+  .PastRuns-Popup-modal .header-row {
+    background-color: #FF533d; /* Set the background color for the header row */
+    color: #f5f5f5; /* Set the font color for the header row */
+  }
+  
+  .PastRuns-Popup-modal tr.even .userpageeditdeletebutton,
+  .PastRuns-Popup-modal tr.odd .userpageeditdeletebutton {
+    background-color: inherit; /* Set the background color to inherit from the row */
+    color: #f5f5f5; /* Set the font color for the buttons */
+    border: none;
+    margin: 10px;
+  }
+  
+  .PastRuns-Popup-modal tr.even .userpageeditdeletebutton:hover,
+  .PastRuns-Popup-modal tr.odd .userpageeditdeletebutton:hover {
+    color: #FF533d; /* Set the font color for the buttons on row hover */
+  }
+  
+  @media (max-width: 767px) {
+  
+     .PastRuns-Popup-modal table {
+       width: 98%;
+       /* Adjust the table width as needed */
+       border-collapse: collapse;
+       /* Collapse borders for a cleaner look */
+       font-size: 8px;
+       /* Set the font size to make text smaller */
+     }
+   
+     .PastRuns-Popup-modal th,
+     .PastRuns-Popup-modal td {
+       border: 1px solid #dee2e6;
+       padding: 1px;
+       /* Adjust padding as needed */
+       text-align: center;
+       vertical-align: middle;
+       box-shadow: 0 0 0 1px #dee2e6;
+     }
+    }
+  

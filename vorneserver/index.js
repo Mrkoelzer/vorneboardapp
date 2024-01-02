@@ -1022,6 +1022,23 @@ appSql.get('/api/getpdfs', async (req, res) => {
   }
 });
 
+appSql.get('/api/gethistoryruns', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const query = `select * from Events_History`
+    const result = await sql.query(query);
+    if (result) {
+      res.json({ result });
+    } else {
+      res.json({ result });
+    }
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 appSql.get('/api/getfutureevents', async (req, res) => {
   try {
     await sql.connect(config);
@@ -1166,6 +1183,74 @@ appSql.post('/api/insertevent', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+appSql.post('/api/inserteventidentity', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const requestData = req.body;
+    const query = `
+    SET IDENTITY_INSERT [Events] ON; INSERT INTO [Events] ([event_id], [title], [part], [start], [end], [order], [state], [Pallets], [Remaining])
+      VALUES (${requestData.event_History_id}, '${requestData.title}', '${requestData.part}', '${requestData.start}', '${requestData.end}', ${requestData.order}, ${requestData.state}, ${requestData.Pallets}, ${requestData.Remaining});
+      SET IDENTITY_INSERT [Events] OFF;`;
+
+    const result = await sql.query(query);
+
+    if (result) {
+      res.json({ eventadded: true });
+    } else {
+      res.json({ eventadded: false });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  } finally {
+    // Make sure to close the SQL connection
+    await sql.close();
+  }
+});
+
+appSql.get('/api/getMaxIdentity', async (req, res) => {
+  try {
+    console.log('here')
+    await sql.connect(config);
+    const query = 'SELECT IDENT_CURRENT(\'events\') AS maxIdentity';
+    const result = await sql.query(query);
+
+    if (result.recordset.length > 0) {
+      const maxIdentity = result.recordset[0].maxIdentity;
+      res.json({ maxIdentity });
+    } else {
+      res.json({ maxIdentity: 0 });
+    }
+  } catch (err) {
+    console.error('Error executing query:', err.message);
+    res.status(500).json({ error: 'Server error' });
+  } finally {
+    try {
+      await sql.close();
+    } catch (err) {
+      console.error('Error closing connection:', err.message);
+    }
+  }
+});
+
+
+
+appSql.post('/api/inserteventhistory', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const requestData = req.body;
+    const query = `INSERT INTO [Events_History] ([event_History_id],[title], [part], [start], [end], [state], [Pallets], [Remaining])VALUES(${requestData.event_History_id},'${requestData.title}', '${requestData.part}', '${requestData.start}', '${requestData.end}', ${requestData.state},${requestData.Pallets},${requestData.Remaining})`;
+    const result = await sql.query(query)
+    if (result) {
+      res.json({ eventhistoryadded: true });
+    } else {
+      res.json({ eventhistoryadded: false });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
 appSql.post('/api/updateevent', async (req, res) => {
   try {
@@ -1189,6 +1274,40 @@ appSql.post('/api/updatepallets', async (req, res) => {
     await sql.connect(config);
     const requestData = req.body;
     const query = `UPDATE [Events] SET [Remaining] = ${requestData.Remaining}, [Pallets] = ${requestData.Pallets} where event_id = ${requestData.event_id}`;
+    const result = await sql.query(query)
+    if (result) {
+      res.json({ eventadded: true });
+    } else {
+      res.json({ eventadded: false });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+appSql.post('/api/updatehistoryruns', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const requestData = req.body;
+    const query = `UPDATE [Events_History] SET [Remaining] = ${requestData.Remaining}, [Pallets] = ${requestData.Pallets}, [state] = ${requestData.state} where event_History_id = ${requestData.event_id}`;
+    const result = await sql.query(query)
+    if (result) {
+      res.json({ eventadded: true });
+    } else {
+      res.json({ eventadded: false });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+appSql.post('/api/updatehistorypallets', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const requestData = req.body;
+    const query = `UPDATE [Events_History] SET [Remaining] = ${requestData.Remaining}, [Pallets] = ${requestData.Pallets} where event_History_id = ${requestData.event_id}`;
     const result = await sql.query(query)
     if (result) {
       res.json({ eventadded: true });

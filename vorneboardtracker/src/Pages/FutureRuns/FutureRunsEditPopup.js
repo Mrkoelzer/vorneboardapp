@@ -50,7 +50,19 @@ function FutureRunsEditPopup({ data, show, handleClose }) {
                     throw new Error('Run Order Update Failed');
                 }
                 else {
-                    handleClose()
+                    const response = await fetch(`http://${localipaddr}:1435/api/updatehistorypallets`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(requesteddata),
+                    });
+                    if (!response.ok) {
+                        throw new Error('Run Order Update Failed');
+                    }
+                    else{
+                        handleClose()
+                    }
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -64,18 +76,18 @@ function FutureRunsEditPopup({ data, show, handleClose }) {
     };
 
     return (
-        <div className={`Calendar-Popup-modal ${show ? "show" : ""}`}>
-            <div className="Calendar-Popup-modal-popup">
-                <div className="Calendar-Popup-modal-header">
+        <div className={`PastRuns-Popup-modal ${show ? "show" : ""}`}>
+            <div className="PastRuns-Popup-modal-popup">
+                <div className="PastRuns-Popup-modal-header">
                     <h2>Edit Pallets</h2>
                     <h3>{data && data.title !== null ? data.title : ''}</h3>
                 </div>
-                <div className="Calendar-Popup-modal-body">
+                <div className="PastRuns-Popup-modal-body">
                     {addLineMessage && <p className="error-message">{addLineMessage}</p>}
                     <br />
                     Total Pallets
                     <input
-                        className='Calendar-Pallets-Input'
+                        className='PastRuns-Pallets-Input'
                         type="text"
                         placeholder="Pallets"
                         value={pallets}
@@ -88,7 +100,7 @@ function FutureRunsEditPopup({ data, show, handleClose }) {
                     />
                     Remaining Pallets
                     <input
-                        className='Calendar-Pallets-Input'
+                        className='PastRuns-Pallets-Input'
                         type="text"
                         placeholder="Remaining"
                         value={remaining}
@@ -100,11 +112,11 @@ function FutureRunsEditPopup({ data, show, handleClose }) {
                         }}
                     />
                 </div>
-                <div className="Calendar-Popup-modal-footer">
-                    <button className="Calendar-Popup-button" onClick={() => { handlesave() }}>
+                <div className="PastRuns-Popup-modal-footer">
+                    <button className="PastRuns-Popup-button" onClick={() => { handlesave() }}>
                         Save
                     </button>
-                    <button className="Calendar-Popup-button" onClick={() => { handleClose(); setRemaining(null); setPallets(null) }}>
+                    <button className="PastRuns-Popup-button" onClick={() => { handleClose(); setRemaining(null); setPallets(null) }}>
                         Close
                     </button>
                 </div>
