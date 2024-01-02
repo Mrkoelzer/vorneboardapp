@@ -12,8 +12,9 @@ import { ipaddrcontext } from '../../contexts/ipaddrcontext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import 'react-notifications/lib/notifications.css';
 import { NotificationContainer, NotificationManager } from 'react-notifications';
-import { faBone, faCheck, faDownLong, faForwardStep, faGear, faHillRockslide, faListCheck, faMugSaucer, faPlay, faRoadBarrier, faScrewdriver, faScrewdriverWrench, faSliders, faStop, faUserSlash, faUsersSlash, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faBone, faCheck, faDownLong, faForwardStep, faGear, faHillRockslide, faListCheck, faMugSaucer, faPlay, faPrint, faRoadBarrier, faScrewdriver, faScrewdriverWrench, faSliders, faStop, faUserSlash, faUsersSlash, faXmark } from '@fortawesome/free-solid-svg-icons';
 import NextJobsPopup from './NextJobsPopup';
+import LoadingOverlay from '../../Components/LoadingOverlay/LoadingOverlay';
 
 function LineView() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -26,6 +27,7 @@ function LineView() {
   //const [partnumber, setpartnumber] = useContext(partnumbercontext)
   const [partinfo, setpartinfo] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [UpdateLoading, setUpdateLoading] = useState(false);
   const { localipaddr } = useContext(ipaddrcontext);
   const [showNextJobsPopup, setshowNextJobsPopup] = useState(false);
   const pdfViewerRef = useRef();
@@ -82,6 +84,7 @@ function LineView() {
     // Add more mappings as needed
   };
   const handleproductionSelect = async (selectedAction) => {
+    setUpdateLoading(true)
     const selectedEndpointIdentifier = apiEndpoints[selectedAction];
     let ipaddress = ip
     if (selectedEndpointIdentifier) {
@@ -110,6 +113,7 @@ function LineView() {
       await Axios.post(selectedEndpoint, requestData)
         .then((response) => {
           NotificationManager.success('Updating Production State!')
+          setUpdateLoading(false)
           console.log('API call success:', response.data);
         })
         .catch((error) => {
@@ -120,6 +124,7 @@ function LineView() {
   };
 
   const handleBreakSelect = async () => {
+    setUpdateLoading(true)
     let ipaddress = ip
     // Map the endpoint identifier to the full URL
     const selectedEndpoint = `http://${localipaddr}:1433/updatebreak`;
@@ -137,6 +142,7 @@ function LineView() {
     await Axios.post(selectedEndpoint, requestData)
       .then((response) => {
         NotificationManager.success('Updating to Break!')
+        setUpdateLoading(false)
         console.log('API call success:', response.data);
       })
       .catch((error) => {
@@ -147,6 +153,7 @@ function LineView() {
 
   const handlereasonSelect = async (selectedAction) => {
     // Map the endpoint identifier to the full URL
+    setUpdateLoading(true)
     const selectedEndpoint = `http://${localipaddr}:1433/updateprocessstatereason`;
     let ipaddress = ip;
     // Construct requestData based on the selected action
@@ -200,6 +207,8 @@ function LineView() {
     await Axios.post(selectedEndpoint, requestData)
       .then((response) => {
         NotificationManager.success(`Updating Down State!`)
+        setUpdateLoading(false)
+        setIsPopupOpen(!isPopupOpen);
         console.log('API call success:', response.data);
       })
       .catch((error) => {
@@ -348,6 +357,7 @@ function LineView() {
     <div className='pdf-container no-print'>
       <br />
       <NotificationContainer />
+      <LoadingOverlay isLoading={UpdateLoading} />
       {isLoading ? (
         <p>Loading...</p>
       ) : (
@@ -403,7 +413,7 @@ function LineView() {
                 <div style={{ display: 'flex' }}>
                   <button className="pdf2buttons no-print" onClick={handlePrint}>
                     <div className="pdf2icon-wrapper">
-                      <FontAwesomeIcon icon={faCheck} className="pdf2icon" />
+                      <FontAwesomeIcon icon={faPrint} className="pdf2icon" />
                     </div>
                     <div className="pdf2text">Print</div>
                   </button>

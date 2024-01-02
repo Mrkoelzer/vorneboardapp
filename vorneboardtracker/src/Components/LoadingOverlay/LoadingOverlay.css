@@ -1,0 +1,44 @@
+/* CustomLoadingOverlay.css */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none;
+    z-index: 999;
+  }
+  
+  .loading-overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .overlay-content {
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .fa-circle-notch {
+    color: whitesmoke; /* You can change the color */
+    font-size: 50px; /* You can change the size */
+    align-items: center;
+    display: flex;
+    justify-content: center;
+  }
+
+  .loading-overlay-Text{
+    color: whitesmoke;
+  }
+  
+  span {
+    margin-top: 10px; /* Add some space between the spinner and the text */
+  }
+  

@@ -16,6 +16,7 @@ import ModifyEvents from './Pages/ModifyEvents/ModifyEvents';
 import Pdfs from './Pages/PDFs/PDFs';
 import FutureRuns from './Pages/FutureRuns/FutureRuns';
 import CalendarView from './Pages/CalendarView/CalendarView';
+import PastRuns from './Pages/PastRuns/PastRuns';
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { partruncontext } from './contexts/partruncontext';
 import { linedatacontext } from './contexts/linedatacontext';
@@ -145,6 +146,7 @@ function App() {
                             <Route path="/ModifyEvents" element={<ModifyEvents />} />
                             <Route path="/CalendarView" element={<CalendarView />} />
                             <Route path="/FutureRuns" element={<FutureRuns />} />
+                            <Route path="/PastRuns" element={<PastRuns />} />
                           </Routes>
                         </Toolbarcontext.Provider>
                       </ipaddrcontext.Provider>

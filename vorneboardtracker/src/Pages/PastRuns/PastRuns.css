@@ -1,0 +1,199 @@
+
+.PastRunsDropdown{
+    display: flex;
+    font-weight: bold;
+    font-size: large;
+    color:#f5f5f5;
+    background: #575b67;
+    padding: 15px 40px;
+    border-radius: 4px;
+    font-weight: normal;
+    text-transform: uppercase;
+    transition: all 0.2s ease-in-out;
+    width: 101%;
+    text-align: center;
+    margin-bottom: 45px;
+  }
+  .PastRunsDropdown:hover{
+    color: #f5f5f5;
+    box-shadow: 0 5px 15px white;
+  }
+
+  .PREvents-Popup-header{
+      font-weight: bold;
+      font-size: larger;
+  }
+  .PREvents-Popup-button-spacing{
+  display: flex;
+  justify-content: space-evenly;
+  }
+  
+  .PREvents-Pallets-Input{
+    width: 100%;
+    min-height: 30px;
+    text-align: center;
+    font-size: large;
+  }
+  
+  .PREvents-Popup-button {
+      font-size: large;
+      color: black;
+      background: #FF533d;
+      padding: 30px;
+      border-radius: 50%;
+      font-weight: normal;
+      text-transform: uppercase;
+      transition: all 0.2s ease-in-out;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      margin-left: 10px;
+      margin-right: 10px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    .PREvents-Popup-button:hover{
+      color: black;
+      box-shadow: 0 5px 15px #f5f5f5;
+    }
+  
+   .PREvents-Popup-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.3s, transform 0.3s;
+    opacity: 0;
+    z-index: 999;
+  }
+  
+  .PREvents-Popup-modal.show {
+    display: flex;
+    opacity: 1;
+    transform: scale(1);
+    border: none;
+  }
+  
+  .PREvents-Popup-modal-popup {
+    background-color: #AB987a;
+    padding: 15px;
+    border: #ffffff solid 5px;
+    color: #0f1626;
+    transition: opacity 0.3s, transform 0.3s;
+    width: 20%;
+  }
+  
+  .PREvents-Popup-modal.show .PREvents-Popup-modal-popup {
+    opacity: 1;
+    transform: scale(1);
+  }
+  
+  .PREvents-Popup-modal-header {
+    text-align: center;
+  }
+  
+  .PREvents-Popup-modal-body {
+    margin: 10px 0;
+  }
+  
+  .PREvents-Popup-modal-footer {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .PREvents-Popup-modal-button {
+    margin: 0 10px;
+    padding: 10px 15px;
+    background-color: #ffffff;
+    color: #0f1626;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .PREvents-Popup-modal-button:hover {
+    background-color: #ddd;
+  }
+  
+  .PREvents-Popup-modal table {
+    width: 98%; /* Adjust the width as needed */
+    border-collapse: collapse;
+    color:#f5f5f5;
+  }
+  
+  .PREvents-Popup-modal th,
+  .PREvents-Popup-modal td {
+      border: 1px solid #f5f5f5;
+      /* Border color for cells */
+      padding: 5px;
+      /* Adjust padding as needed */
+      text-align: center;
+      /* Center-align content */
+      vertical-align: middle;
+      /* Vertically center content */
+      box-shadow: 0 0 0 1px #f5f5f5;
+  }
+  .PREvents-Popup-modal tr.even {
+    background-color: #262d3b; /* Set the background color for even rows */
+  }
+  
+  .PREvents-Popup-modal tr.even:hover {
+    background-color: #0f1626; /* Set the background color for even rows on hover */
+  }
+  
+  .PREvents-Popup-modal tr.odd {
+    background-color: #3e4451; /* Set the background color for odd rows */
+  }
+  
+  .PREvents-Popup-modal tr.odd:hover {
+    background-color: #0f1626; /* Set the background color for odd rows on hover */
+  }
+  
+  .PREvents-Popup-modal .header-row {
+    background-color: #FF533d; /* Set the background color for the header row */
+    color: #f5f5f5; /* Set the font color for the header row */
+  }
+  
+  .PREvents-Popup-modal tr.even .userpageeditdeletebutton,
+  .PREvents-Popup-modal tr.odd .userpageeditdeletebutton {
+    background-color: inherit; /* Set the background color to inherit from the row */
+    color: #f5f5f5; /* Set the font color for the buttons */
+    border: none;
+    margin: 10px;
+  }
+  
+  .PREvents-Popup-modal tr.even .userpageeditdeletebutton:hover,
+  .PREvents-Popup-modal tr.odd .userpageeditdeletebutton:hover {
+    color: #FF533d; /* Set the font color for the buttons on row hover */
+  }
+  
+  @media (max-width: 767px) {
+  
+     .PREvents-Popup-modal table {
+       width: 98%;
+       /* Adjust the table width as needed */
+       border-collapse: collapse;
+       /* Collapse borders for a cleaner look */
+       font-size: 8px;
+       /* Set the font size to make text smaller */
+     }
+   
+     .PREvents-Popup-modal th,
+     .PREvents-Popup-modal td {
+       border: 1px solid #dee2e6;
+       padding: 1px;
+       /* Adjust padding as needed */
+       text-align: center;
+       vertical-align: middle;
+       box-shadow: 0 0 0 1px #dee2e6;
+     }
+    }
+  
