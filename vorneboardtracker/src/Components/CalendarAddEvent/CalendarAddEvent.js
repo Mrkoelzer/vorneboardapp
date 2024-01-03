@@ -11,13 +11,17 @@ import { faCheck, faXmark, faCircleInfo, faCircle, faCalendarDays, fa1, faTimeli
 
 function CalendarAddEvent({ defaultdate, data, show, handleClose, handleDelete }) {
     const { lines, setlines } = useContext(linescontext);
-    const [selectedLine, setSelectedLine] = useState(null);
+    const [selectedLine, setSelectedLine] = useState('Line 3');
     const { localipaddr } = useContext(ipaddrcontext);
     const [partnumbers, setpartnumbers] = useState(null);
     const [totalPallets, setTotalPallets] = useState(null);
     const [selectedpartnumbers, setselectedpartnumbers] = useState(null);
     const [hidepartselect, sethidepartselect] = useState(true);
     const [addLineMessage, setAddLineMessage] = useState('');
+
+    useEffect(() => {
+        getPartNumbers(selectedLine)
+    }, [show]);
 
     const getPartNumbers = async (tableName) => {
         try {
@@ -33,24 +37,27 @@ function CalendarAddEvent({ defaultdate, data, show, handleClose, handleDelete }
                 setselectedpartnumbers(data.result.recordset[0].Part_ID)
                 setpartnumbers(data.result.recordset);
                 sethidepartselect(false)
+                setAddLineMessage('')
             } else {
                 console.log('error');
             }
         } catch (error) {
-            console.error('Error:', error);
+            //console.error('Error:', error);
+            setAddLineMessage("No Parts")
+            sethidepartselect(true)
         }
     };
 
     const getMaxIdentity = async () => {
         try {
-          const response = await fetch(`http://${localipaddr}:1435/api/getMaxIdentity`);
-          const data = await response.json();
-          const maxIdentity = data.maxIdentity;
-          return maxIdentity;
+            const response = await fetch(`http://${localipaddr}:1435/api/getMaxIdentity`);
+            const data = await response.json();
+            const maxIdentity = data.maxIdentity;
+            return maxIdentity;
         } catch (error) {
-          console.error('Error fetching data:', error);
+            console.error('Error fetching data:', error);
         }
-      };
+    };
 
     const handleinsertevent = async () => {
         if (totalPallets === null) {
@@ -60,7 +67,7 @@ function CalendarAddEvent({ defaultdate, data, show, handleClose, handleDelete }
             let order = 0
             if (data.length > 0) {
                 for (let i = 0; i < data.length; i++) {
-                    if (data[i].title === selectedLine.value) {
+                    if (data[i].title === selectedLine) {
                         order++
                     }
                 }
@@ -69,7 +76,7 @@ function CalendarAddEvent({ defaultdate, data, show, handleClose, handleDelete }
             let requestData = {
                 start: startTime,
                 end: endTime,
-                title: selectedLine.value,
+                title: selectedLine,
                 part: selectedpartnumbers,
                 state: 1,
                 order: order,
@@ -94,7 +101,7 @@ function CalendarAddEvent({ defaultdate, data, show, handleClose, handleDelete }
                         event_History_id: id,
                         ...requestData,
                     };
-                        
+
                     const eventHistoryResponse = await fetch(`http://${localipaddr}:1435/api/inserteventhistory`, {
                         method: 'POST',
                         headers: {
@@ -107,7 +114,7 @@ function CalendarAddEvent({ defaultdate, data, show, handleClose, handleDelete }
 
                     if (dataHistory.eventhistoryadded) {
                         // Reset state and close modal
-                        setSelectedLine(null);
+                        setSelectedLine('Line 3');
                         sethidepartselect(true);
                         setTotalPallets(null);
                         handleClose();
@@ -128,14 +135,10 @@ function CalendarAddEvent({ defaultdate, data, show, handleClose, handleDelete }
     }
 
     const handleSelectChange = (selectedOptions) => {
-        getPartNumbers(selectedOptions.value)
+        getPartNumbers(selectedOptions)
         setSelectedLine(selectedOptions);
     };
 
-    const options = lines.map((line, index) => ({
-        value: line.Linename,
-        label: line.Linename,
-    }));
     return (
         <div className={`Calendar-Popup-modal ${show ? "show" : ""}`}>
             <div className="Calendar-Popup-modal-popup">
@@ -145,12 +148,18 @@ function CalendarAddEvent({ defaultdate, data, show, handleClose, handleDelete }
                 {addLineMessage && <p className="error-message">{addLineMessage}</p>}
                 <div className="Calendar-Popup-modal-body">
                     Select Lines
-                    <Select
+                    <ReactBootStrap.Form.Control
                         className='Calendar-Add-Event-dropdown'
-                        onChange={handleSelectChange}
+                        as="select"
+                        onChange={(e) => handleSelectChange(e.target.value)}
                         value={selectedLine}
-                        options={options}
-                    />
+                    >
+                    {lines.map((line) => (
+                            <option key={line.Linename} value={line.Linename}>
+                                {line.Linename}
+                            </option>
+                        ))}
+                    </ReactBootStrap.Form.Control>
                     <br />
                     {hidepartselect ? (
                         <p></p>
@@ -191,7 +200,7 @@ function CalendarAddEvent({ defaultdate, data, show, handleClose, handleDelete }
                     <button className="Calendar-Popup-button" onClick={() => { handleinsertevent() }}>
                         Save
                     </button>
-                    <button className="Calendar-Popup-button" onClick={() => { handleClose(); setSelectedLine(null); sethidepartselect(true); setpartnumbers(null); setTotalPallets(null) }}>
+                    <button className="Calendar-Popup-button" onClick={() => { handleClose(); setSelectedLine('Line 3'); sethidepartselect(true); setpartnumbers(null); setTotalPallets(null) }}>
                         Close
                     </button>
                 </div>
