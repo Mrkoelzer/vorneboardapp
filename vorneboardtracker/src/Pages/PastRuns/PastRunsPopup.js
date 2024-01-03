@@ -154,7 +154,7 @@ function PastRunsPopup({ data, show, handleClose }) {
                                 event.preventDefault();
                             }
                         }}
-                        readOnly={data.state === 0}
+                        readOnly={data.state === 0 || data.state === 1}
                     />
                     Remaining Pallets
                     <input
@@ -168,7 +168,7 @@ function PastRunsPopup({ data, show, handleClose }) {
                                 event.preventDefault();
                             }
                         }}
-                        readOnly={data.state === 0}
+                        readOnly={data.state === 0 || data.state === 1}
                     />
                 </div>
                 <button className={`PastRunsFinishedButton ${finished ? "finished" : ""}`}
