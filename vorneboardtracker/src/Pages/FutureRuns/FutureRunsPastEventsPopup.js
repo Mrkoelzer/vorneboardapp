@@ -11,7 +11,6 @@ function FutureRunsPastEventsPopup({ show, handleClose }) {
     const { lines } = useContext(linescontext);
     const [addLineMessage, setAddLineMessage] = useState('');
     const [selectedtitle, setselectedtitle] = useState('Line 3');
-    const [uniqueTitles, setUniqueTitles] = useState([]);
     const [futureruns, setfutureruns] = useState([]);
     const [data, setData] = useState([
         {
@@ -27,10 +26,11 @@ function FutureRunsPastEventsPopup({ show, handleClose }) {
     ]);
 
     useEffect(() => {
-        getpastruns(lines);
+        getpastruns();
+        console.log(selectedtitle)
     }, [show]);
 
-    const getpastruns = async (data) => {
+    const getpastruns = async () => {
         const historyruns = await gethistoryruns();
         const futureruns = await getfutureruns();
         setfutureruns(futureruns)
@@ -43,9 +43,6 @@ function FutureRunsPastEventsPopup({ show, handleClose }) {
         const filteredRemaining = filteredHistoryRuns.filter(run => run.Remaining !== 0);
 
         const filteredfinalruns = filteredRemaining.filter(run => !futureruns.some(futureRun => futureRun.part === run.part));
-       
-        const uniqueTitles = [...new Set(filteredfinalruns.map(run => run.title))];
-        setUniqueTitles(uniqueTitles);
 
         setData(filteredfinalruns);
     }
@@ -103,16 +100,14 @@ function FutureRunsPastEventsPopup({ show, handleClose }) {
     };
 
     const handleInsertEventIdentity = async (requestData) => {
-        console.log(requestData);
-    
         // Find the highest order for the given title in futureruns
         const highestOrder = Math.max(...futureruns
             .filter(run => run.title === requestData.title)
             .map(run => run.order), 0);
-    
+
         // Set the order in requestData to be one greater than the highest order
         requestData.order = highestOrder + 1;
-    
+
         try {
             const response = await fetch(`http://${localipaddr}:1435/api/inserteventidentity`, {
                 method: 'POST',
@@ -121,34 +116,34 @@ function FutureRunsPastEventsPopup({ show, handleClose }) {
                 },
                 body: JSON.stringify(requestData),
             });
-    
+
             const data = await response.json();
-    
+
             if (data.eventadded) {
                 requestData.state = 1
                 requestData.event_id = requestData.event_History_id
 
                 const response = await fetch(`http://${localipaddr}:1435/api/updatehistoryruns`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestData),
-            });
-            const updatedata = await response.json();
-                if(updatedata.eventadded){
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData),
+                });
+                const updatedata = await response.json();
+                if (updatedata.eventadded) {
                     getpastruns()
                 }
             } else {
                 // Handle failure
             }
-    
+
             // Additional handling as needed
         } catch (error) {
             console.error('Error:', error);
         }
     };
-    
+
 
     return (
         <div className={`PastRuns-Popup-modal ${show ? "show" : ""}`}>
@@ -161,13 +156,11 @@ function FutureRunsPastEventsPopup({ show, handleClose }) {
                         value={selectedtitle}
                         onChange={(e) => handleselectedtitle(e.target.value)}
                     >
-                        {uniqueTitles
-                            .sort((a, b) => a.localeCompare(b)) // Sort the titles
-                            .map((title) => (
-                                <option key={title} value={title}>
-                                    {title}
-                                </option>
-                            ))}
+                        {lines.map((line) => (
+                            <option key={line.Linename} value={line.Linename}>
+                                {line.Linename}
+                            </option>
+                        ))}
                     </ReactBootStrap.Form.Control>
 
                 </div>
