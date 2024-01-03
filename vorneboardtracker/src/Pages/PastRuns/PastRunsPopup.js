@@ -12,22 +12,31 @@ function PastRunsPopup({ data, show, handleClose }) {
     const [remaining, setRemaining] = useState(null);
     const [pallets, setPallets] = useState(null);
     const [addLineMessage, setAddLineMessage] = useState('');
-    const [selectedState, setSelectedState] = useState(0)
+    const [finished, setFinished] = useState(0);
+    const [selectedState, setSelectedState] = useState(false)
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
     useEffect(() => {
         setAddLineMessage('')
         setRemaining(data.Remaining)
         setPallets(data.Pallets)
-        setSelectedState(data.state)
+        console.log('here')
+        if(data.state === 0){
+            setFinished(true)
+        }
+        else{
+            setFinished(false)
+        }
     }, [data]);
 
     const handleSelectedState = (e) => {
         setSelectedState(e)
-        if (e === '0') {
+        if (e === true) {
+            setFinished(true)
             setAddLineMessage("Warning: Finishing a run will set remaining to 0 and WON'T be editable or useable in future runs.")
         }
         else {
+            setFinished(false)
             setAddLineMessage('')
         }
     }
@@ -35,12 +44,12 @@ function PastRunsPopup({ data, show, handleClose }) {
     const handlesave = async () => {
         if (remaining !== data.Remaining || pallets !== data.Pallets || selectedState !== data.state) {
             let requesteddata;
-            if (selectedState === '0') {
+            if (selectedState === true) {
                 requesteddata = {
                     event_id: data.event_History_id,
                     Remaining: 0,
                     Pallets: pallets,
-                    state: selectedState,
+                    state: 0,
                     end: new Date()
                 }
             }
@@ -49,7 +58,7 @@ function PastRunsPopup({ data, show, handleClose }) {
                     event_id: data.event_History_id,
                     Remaining: remaining,
                     Pallets: pallets,
-                    state: selectedState,
+                    state: data.state,
                     end: data.end
                 }
             }
@@ -104,6 +113,18 @@ function PastRunsPopup({ data, show, handleClose }) {
         }
     };
 
+    const getstate = (info) => {
+        if(info === 0){
+            return 'Finished'
+        }
+        else if(info === 1){
+            return 'Active'
+        }
+        else{
+            return 'Pending'
+        }
+    };
+
     const handleDeleteConfirmation = async () => {
         setShowDeleteConfirmation(true)
     }
@@ -116,6 +137,7 @@ function PastRunsPopup({ data, show, handleClose }) {
                 <div className="PREvents-Popup-modal-header">
                     <h2>Past Event</h2>
                     <h3>{data.part}</h3>
+                    <h3>State: {getstate(data.state)}</h3>
                 </div>
                 <div className="PREvents-Popup-modal-body">
                     {addLineMessage && <p className="error-message">{addLineMessage}</p>}
@@ -149,23 +171,11 @@ function PastRunsPopup({ data, show, handleClose }) {
                         readOnly={data.state === 0}
                     />
                 </div>
-                <ReactBootStrap.Form.Control
-                    className='PastRunsDropdown'
-                    as="select"
-                    value={selectedState}
-                    onChange={(e) => handleSelectedState(e.target.value)}
-                    disabled={data.state === 0}
-                >
-                    <option key={0} value={0}>
-                        Finished
-                    </option>
-                    <option key={1} value={1}>
-                        Active
-                    </option>
-                    <option key={2} value={2}>
-                        Pending
-                    </option>
-                </ReactBootStrap.Form.Control>
+                <button className={`PastRunsFinishedButton ${finished ? "finished" : ""}`}
+                 onClick={() => { handleSelectedState(!finished) }} 
+                 hidden={data.state != 2}>
+                    Finished
+                </button>
                 <div className="PREvents-Popup-modal-footer">
                     {data.state !== 0 && (
                         <button className="PREvents-Popup-button" onClick={() => { handlesave() }}>
