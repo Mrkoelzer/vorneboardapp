@@ -20,6 +20,7 @@ function PastRuns() {
     const { settoolbarinfo } = useContext(Toolbarcontext)
     const [pastruns, setpastruns] = useState([]);
     const [showPopup, setshowPopup] = useState(false);
+    const [searchValue, setSearchValue] = useState("");
     const [selectedData, setSelctedData] = useState({
         event_History_id: 0,
         title: '',
@@ -61,7 +62,7 @@ function PastRuns() {
     };
 
     useEffect(() => {
-        if (selectedData !== null && selectedData.event_History_id !== 0){
+        if (selectedData !== null && selectedData.event_History_id !== 0) {
             setshowPopup(true);
         }
         else {
@@ -120,19 +121,31 @@ function PastRuns() {
         else if (state === 1) {
             return `Active`;
         }
-        else if (state === 2){
+        else if (state === 2) {
             return 'Pending'
         }
     }
 
     const formatDateTime = (dateTimeString) => {
         const dateTime = new Date(dateTimeString);
-        const month = dateTime.getMonth() + 1; // Months are 0-based
-        const day = dateTime.getDate();
-        const year = dateTime.getFullYear().toString().slice(-2); // Get the last two digits of the year
+        const month = dateTime.getUTCMonth() + 1; // Months are 0-based
+        const day = dateTime.getUTCDate();
+        const year = dateTime.getUTCFullYear().toString().slice(-2);
 
         return `${month}/${day}/${year}`;
     };
+
+    const filteredHistory = pastruns.filter((rowData) => {
+        const searchText = searchValue.toLowerCase();
+        return (
+            (rowData.part && rowData.part.toLowerCase().includes(searchText))
+            //(rowData.Ideal_Cycle_Time_s && typeof rowData.Ideal_Cycle_Time_s === 'string' && rowData.Ideal_Cycle_Time_s.toLowerCase().includes(searchText))
+            // Add more fields as needed for searching
+            // Example: ||
+            // (rowData.OtherField && rowData.OtherField.toLowerCase().includes(searchText))
+        );
+    });
+
     return (
         <div className="userpage">
             <div className="userpagetable-container">
@@ -145,34 +158,45 @@ function PastRuns() {
                         <div className="usertext">Go Back</div>
                     </button>
                 </div>
-                <ReactBootStrap.Form.Control
-                    className='linepagebutton'
-                    as="select"
-                    value={selectedtitle}
-                    onChange={(e) => handleselectedtitle(e.target.value)}
-                >
-                    {lines.map((line) => (
-                        <option key={line.Linename} value={line.Linename}>
-                            {line.Linename}
-                        </option>
-                    ))}
-                </ReactBootStrap.Form.Control>
+                <div className='PastRuns-Filters'>
+                    <ReactBootStrap.Form.Control
+                        className='PastRunsDrop'
+                        as="select"
+                        value={selectedtitle}
+                        onChange={(e) => handleselectedtitle(e.target.value)}
+                    >
+                        {lines.map((line) => (
+                            <option key={line.Linename} value={line.Linename}>
+                                {line.Linename}
+                            </option>
+                        ))}
+                    </ReactBootStrap.Form.Control>
+                    <input
+                        className='PastRuns-search'
+                        type="text"
+                        placeholder="Search..."
+                        value={searchValue}
+                        onChange={(e) => setSearchValue(e.target.value)}
+                    />
+                </div>
                 <ReactBootStrap.Table striped bordered hover>
                     <thead>
                         <tr className="header-row">
                             <th style={{ width: '10%' }}>Part</th>
                             <th style={{ width: '10%' }}>Start</th>
+                            <th style={{ width: '10%' }}>End</th>
                             <th style={{ width: '10%' }}>Pallets</th>
                             <th style={{ width: '10%' }}>Remaining</th>
                             <th style={{ width: '10%' }}>State</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {pastruns.filter(rowData => rowData.title === selectedtitle)
+                        {filteredHistory.filter(rowData => rowData.title === selectedtitle)
                             .map((rowData, index) => (
                                 <tr key={index} className={index % 2 === 0 ? 'even' : 'odd'} onClick={() => handlePopupOpen(rowData)}>
                                     <td>{rowData.part}</td>
                                     <td>{formatDateTime(rowData.start)}</td>
+                                    <td>{formatDateTime(rowData.end)}</td>
                                     <td>{rowData.Pallets}</td>
                                     <td>{rowData.Remaining}</td>
                                     <td>{getstate(rowData.state)}</td>

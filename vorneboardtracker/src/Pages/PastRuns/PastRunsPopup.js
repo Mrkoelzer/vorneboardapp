@@ -2,6 +2,10 @@ import React, { useContext, useEffect, useState } from 'react';
 import './PastRuns.css';
 import { ipaddrcontext } from '../../contexts/ipaddrcontext';
 import * as ReactBootStrap from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck, faTrashCan, faXmark } from '@fortawesome/free-solid-svg-icons';
+import DeleteConfirmation from '../../Components/DeleteConfirmation/DeleteConfirmation';
+import { NotificationContainer, NotificationManager } from 'react-notifications';
 
 function PastRunsPopup({ data, show, handleClose }) {
     const { localipaddr } = useContext(ipaddrcontext);
@@ -9,6 +13,7 @@ function PastRunsPopup({ data, show, handleClose }) {
     const [pallets, setPallets] = useState(null);
     const [addLineMessage, setAddLineMessage] = useState('');
     const [selectedState, setSelectedState] = useState(0)
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
     useEffect(() => {
         setAddLineMessage('')
@@ -35,7 +40,8 @@ function PastRunsPopup({ data, show, handleClose }) {
                     event_id: data.event_History_id,
                     Remaining: 0,
                     Pallets: pallets,
-                    state: selectedState
+                    state: selectedState,
+                    end: new Date()
                 }
             }
             else {
@@ -43,7 +49,8 @@ function PastRunsPopup({ data, show, handleClose }) {
                     event_id: data.event_History_id,
                     Remaining: remaining,
                     Pallets: pallets,
-                    state: selectedState
+                    state: selectedState,
+                    end: data.end
                 }
             }
             try {
@@ -70,6 +77,39 @@ function PastRunsPopup({ data, show, handleClose }) {
         }
     };
 
+    const handleDelete = async () => {
+        try {
+            let event_History_id = data.event_History_id
+            const response = await fetch(`http://${localipaddr}:1435/api/deletehistoryevent`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ event_History_id }), // Pass the id in the request body
+            });
+
+            // Handle response
+            if (response.ok) {
+                // Line deleted successfully
+                NotificationManager.success(`Delete Successful!`)
+                handleClose()
+                handleClosed()
+            } else {
+                NotificationManager.error('Deleted Failed')
+                console.error('Delete failed');
+            }
+        } catch (error) {
+            NotificationManager.error('Deleted Failed')
+            console.error('Error:', error);
+        }
+    };
+
+    const handleDeleteConfirmation = async () => {
+        setShowDeleteConfirmation(true)
+    }
+    const handleClosed = () => {
+        setShowDeleteConfirmation(false);
+    };
     return (
         <div className={`PREvents-Popup-modal ${show ? "show" : ""}`}>
             <div className="PREvents-Popup-modal-popup">
@@ -129,14 +169,36 @@ function PastRunsPopup({ data, show, handleClose }) {
                 <div className="PREvents-Popup-modal-footer">
                     {data.state !== 0 && (
                         <button className="PREvents-Popup-button" onClick={() => { handlesave() }}>
-                            Save
+                            <div className="PastRunsicon-wrapper">
+                                <FontAwesomeIcon icon={faCheck} className="PastRunsicon" />
+                            </div>
+                            <div className="PastRunstext">Save</div>
                         </button>
                     )}
                     <button className="PREvents-Popup-button" onClick={() => { handleClose() }}>
-                        Close
+                        <div className="PastRunsicon-wrapper">
+                            <FontAwesomeIcon icon={faXmark} className="PastRunsicon" />
+                        </div>
+                        <div className="PastRunstext">Close</div>
                     </button>
                 </div>
+                {data.state !== 0 && data.state !== 1 && (
+                    <div className="PREvents-Popup-modal-footer">
+                        <button className="PastRunsbutton" onClick={() => handleDeleteConfirmation()}>
+                            <div className="PastRunsicon-wrapper">
+                                <FontAwesomeIcon icon={faTrashCan} className="PastRunsicon" />
+                            </div>
+                            <div className="PastRunstext">Delete</div>
+                        </button>
+                    </div>
+                )}
             </div>
+            <DeleteConfirmation
+                show={showDeleteConfirmation}
+                handleDelete={handleDelete}
+                handleClose={handleClosed}
+                message={`Are you sure you want to Part: ${data.part} from History on ${data.title}?`}
+            />
         </div>
     );
 }

@@ -1074,6 +1074,24 @@ appSql.delete('/api/deletefutureevent', async (req, res) => {
   }
 });
 
+appSql.delete('/api/deletehistoryevent', async (req, res) => {
+  try {
+    await sql.connect(config);
+    const { event_History_id } = req.body; // Get the lineid from the URL parameter
+    const result = await sql.query`delete from [Events_History] where [event_History_id] = ${event_History_id}`;
+    
+    if (result.rowsAffected[0] === 1) {
+      res.json({ deleted: true });
+    } else {
+      res.json({ deleted: false });
+    }
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 appSql.post('/api/getpastnotesdata', async (req, res) => {
   try {
       await sql.connect(config);
@@ -1107,7 +1125,6 @@ appSql.post('/api/updatepastnotesdata', async (req, res) => {
       process_state_reason = '${requestData.process_state_reason}', 
       user_update = '${requestData.user_update}'
       where record_id = ${requestData.record_id}`;
-      console.log(query);
       const result = await sql.query(query);
       if (result.rowsAffected[0] > 0) {
           res.json({ result: result.recordset, checked: true });
@@ -1210,7 +1227,6 @@ appSql.post('/api/inserteventidentity', async (req, res) => {
 
 appSql.get('/api/getMaxIdentity', async (req, res) => {
   try {
-    console.log('here')
     await sql.connect(config);
     const query = 'SELECT IDENT_CURRENT(\'events\') AS maxIdentity';
     const result = await sql.query(query);
@@ -1290,7 +1306,7 @@ appSql.post('/api/updatehistoryruns', async (req, res) => {
   try {
     await sql.connect(config);
     const requestData = req.body;
-    const query = `UPDATE [Events_History] SET [Remaining] = ${requestData.Remaining}, [Pallets] = ${requestData.Pallets}, [state] = ${requestData.state} where event_History_id = ${requestData.event_id}`;
+    const query = `UPDATE [Events_History] SET [Remaining] = ${requestData.Remaining}, [Pallets] = ${requestData.Pallets}, [state] = ${requestData.state}, [end] = '${requestData.end}' where event_History_id = ${requestData.event_id}`;
     const result = await sql.query(query)
     if (result) {
       res.json({ eventadded: true });

@@ -232,7 +232,6 @@ function FutureRuns() {
         }
 
         const flattenedData = currentRunsData.flat(); // Flatten the nested arrays
-        console.log(flattenedData)
         setData(flattenedData)
     };
 

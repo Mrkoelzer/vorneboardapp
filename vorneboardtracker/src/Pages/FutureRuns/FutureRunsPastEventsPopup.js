@@ -43,7 +43,7 @@ function FutureRunsPastEventsPopup({ show, handleClose }) {
         const filteredRemaining = filteredHistoryRuns.filter(run => run.Remaining !== 0);
 
         const filteredfinalruns = filteredRemaining.filter(run => !futureruns.some(futureRun => futureRun.part === run.part));
-
+       
         const uniqueTitles = [...new Set(filteredfinalruns.map(run => run.title))];
         setUniqueTitles(uniqueTitles);
 
@@ -125,7 +125,20 @@ function FutureRunsPastEventsPopup({ show, handleClose }) {
             const data = await response.json();
     
             if (data.eventadded) {
-                getpastruns()
+                requestData.state = 1
+                requestData.event_id = requestData.event_History_id
+
+                const response = await fetch(`http://${localipaddr}:1435/api/updatehistoryruns`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData),
+            });
+            const updatedata = await response.json();
+                if(updatedata.eventadded){
+                    getpastruns()
+                }
             } else {
                 // Handle failure
             }
