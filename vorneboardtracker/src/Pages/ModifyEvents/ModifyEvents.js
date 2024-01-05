@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { usercontext } from '../../contexts/usercontext'
 import { linescontext } from '../../contexts/linescontext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faXmark, faCircleInfo, faCircle, faCalendarDays, fa1, faTimeline, faPlay, faStop, faMugSaucer, faDownLong, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faXmark, faCircleInfo, faCircle, faCalendarDays, fa1, faTimeline, faPlay, faStop, faMugSaucer, faDownLong, faPenToSquare, faHourglassEnd } from '@fortawesome/free-solid-svg-icons';
 import { ipaddrcontext } from '../../contexts/ipaddrcontext';
 import Axios from 'axios';
 import Calendar from 'react-calendar';
@@ -39,6 +39,7 @@ function ModifyEvents() {
     const [showNoProduction, setshowNoProduction] = useState(true);
     const [showBreak, setshowBreak] = useState(true);
     const [showDown, setshowDown] = useState(true);
+    const [showShortDown, setshowShortDown] = useState(false);
     const [showCalanderModal, setShowCalanderModal] = useState(false);
     const [addLineMessage, setAddLineMessage] = useState('');
     const [showEditModal, setShowEditModal] = useState(false);
@@ -332,6 +333,7 @@ function ModifyEvents() {
                     part: data[14]
                 };
             });
+            console.log(formattedData)
             setpastevents(formattedData);
             setIsLoading(false); // Data has been loaded, set isLoading to false
         }
@@ -396,6 +398,9 @@ function ModifyEvents() {
     const toggleShowDown = () => {
         setshowDown(!showDown);
     };
+    const toggleShowShortDown = () => {
+        setshowShortDown(!showShortDown)
+    }
 
     const handleCalanderClick = () => {
         setShowCalanderModal(true);
@@ -715,7 +720,13 @@ function ModifyEvents() {
                         <div className="modifyfiltericon-wrapper">
                             <FontAwesomeIcon icon={faDownLong} className="modifyfiltericon" />
                         </div>
-                        <div className="modifyfiltertext">Show Down</div>
+                        <div className="modifyfiltertext">Show Downs</div>
+                    </button>
+                    <button className={showShortDown ? "modifyfilterbuttons-selected" : "modifyfilterbuttons"} onClick={toggleShowShortDown}>
+                        <div className="modifyfiltericon-wrapper">
+                            <FontAwesomeIcon icon={faHourglassEnd} className="modifyfiltericon" />
+                        </div>
+                        <div className="modifyfiltertext">Show Short Downs</div>
                     </button>
                 </div>
                 {isLoading ? (
@@ -751,7 +762,8 @@ function ModifyEvents() {
                                         (rowData.process_state.toLowerCase() === 'running' && !showRunning) ||
                                         (rowData.process_state.toLowerCase() === 'no_production' && !showNoProduction) ||
                                         (rowData.process_state.toLowerCase() === 'break' && !showBreak) ||
-                                        (rowData.process_state.toLowerCase() === 'down' && !showDown)
+                                        (rowData.process_state.toLowerCase() === 'down' && !showDown) ||
+                                        (rowData.process_state_reason.toLowerCase() === 'short_down' && !showShortDown)
                                     ) {
                                         return null;
                                     }
@@ -781,7 +793,7 @@ function ModifyEvents() {
                                                 {formattext(rowData.process_state)}
                                             </td>
                                             <td>{formattextreason(rowData.process_state_reason)}</td>
-                                            <td>{rowData.part.replace(/j/g, '-')}</td>
+                                            <td>{Array.isArray(rowData.part) ? rowData.part.join('').replace(/j/g, '-') : rowData.part.replace(/j/g, '-')}</td>
                                             <td>{rowData.in_count}</td>
                                             <td>{rowData.good_count}</td>
                                             <td>{rowData.reject_count}</td>

@@ -300,7 +300,7 @@ appSql.post('/api/authenticate', async (req, res) => {
       res.json({ authenticated: false });
     }
 
-    sql.close();
+      
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -319,7 +319,7 @@ appSql.post('/api/getpin', async (req, res) => {
       res.json({ pinauthenticated: false });
     }
 
-    sql.close();
+      
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -341,7 +341,7 @@ appSql.post('/api/updatepin', async (req, res) => {
       res.json({ pinupdated: false });
     }
 
-    sql.close();
+      
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -363,7 +363,7 @@ appSql.post('/api/updatepassword', async (req, res) => {
       res.json({ passupdated: false });
     }
 
-    sql.close();
+      
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -382,7 +382,7 @@ appSql.post('/api/getuserdata', async (req, res) => {
       res.json('error');
     }
 
-    sql.close();
+      
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -400,7 +400,7 @@ appSql.post('/api/createaccount', async (req, res) => {
       res.json({ createdauthenticated: false });
     }
 
-    sql.close();
+      
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -419,7 +419,7 @@ appSql.delete('/api/deleteuser', async (req, res) => {
       res.json({ deleted: false });
     }
 
-    sql.close();
+      
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -449,7 +449,7 @@ appSql.post('/api/updateuser', async (req, res) => {
       res.json({ createdauthenticated: false });
     }
 
-    sql.close();
+      
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -467,7 +467,7 @@ appSql.post('/api/insertnewline', async (req, res) => {
       res.json({ createdauthenticated: false });
     }
 
-    sql.close();
+      
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -590,7 +590,7 @@ appSql.post('/api/insertnewpart', async (req, res) => {
       res.json({ createdauthenticated: false });
     }
 
-    sql.close();
+      
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -616,7 +616,7 @@ appSql.post('/api/insertnewpartpartpdf', async (req, res) => {
       res.json({ addedpartpdf: false });
     }
 
-    sql.close();
+      
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -636,7 +636,7 @@ appSql.post('/api/deletetable', async (req, res) => {
 
     const result = await sql.query(query);
 
-    sql.close();
+      
 
     if (result.rowsAffected[0] === 1) {
       res.json({ tableDropped: true });
@@ -687,7 +687,7 @@ appSql.post('/api/addnewtable', async (req, res) => {
       res.json({ createdauthenticated: false });
     }
 
-    sql.close();
+      
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -705,7 +705,7 @@ appSql.post('/api/updateline', async (req, res) => {
       res.json({ createdauthenticated: false });
     }
 
-    sql.close();
+      
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -745,7 +745,7 @@ appSql.post('/api/updatepartnumber', async (req, res) => {
       res.json({ createdauthenticated: false });
     }
 
-    sql.close();
+      
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -768,7 +768,7 @@ appSql.post('/api/updatepartpdfpartnumber', async (req, res) => {
       res.json({ success: false });
     }
 
-    sql.close();
+      
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -787,7 +787,7 @@ appSql.delete('/api/deleteline/:lineid', async (req, res) => {
       res.json({ deleted: false });
     }
 
-    sql.close();
+      
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -809,7 +809,7 @@ appSql.delete('/api/deletepartnumber', async (req, res) => {
           res.json({ deleted: false });
       }
 
-      sql.close();
+        
   } catch (err) {
       console.error(err);
       res.status(500).json({ error: 'Server error' });
@@ -831,7 +831,7 @@ appSql.delete('/api/deletepartpdf', async (req, res) => {
           res.json({ deleted: false });
       }
 
-      sql.close();
+        
   } catch (err) {
       console.error(err);
       res.status(500).json({ error: 'Server error' });
@@ -855,7 +855,7 @@ appSql.get('/api/getlinepart/:tableName', async (req, res) => {
       res.json({ authenticated: false });
     }
 
-    sql.close();
+      
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -876,7 +876,7 @@ appSql.post('/api/updatetablename', async (req, res) => {
     } else {
       res.json({ authenticated: false });
     }
-    sql.close();
+      
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -894,7 +894,7 @@ appSql.get('/api/getlines', async (req, res) => {
       res.json({ authenticated: false });
     }
 
-    sql.close();
+      
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -912,7 +912,7 @@ appSql.get('/api/getusers', async (req, res) => {
       res.json({ authenticated: false });
     }
 
-    sql.close();
+      
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -931,7 +931,7 @@ appSql.post('/api/checkusername', async (req, res) => {
       res.json({ result, checked: false });
     }
 
-    sql.close();
+      
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -975,7 +975,7 @@ appSql.get('/api/getalllinepartnumbers', async (req, res) => {
       res.json({ result });
     }
 
-    sql.close();
+      
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -1035,6 +1035,7 @@ appSql.get('/api/gethistoryruns', async (req, res) => {
 
   } catch (err) {
     console.error(err);
+    console.log('gethistoryruns')
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -1052,6 +1053,7 @@ appSql.get('/api/getfutureevents', async (req, res) => {
 
   } catch (err) {
     console.error(err);
+    console.log('getfutureevents')
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -1070,6 +1072,7 @@ appSql.delete('/api/deletefutureevent', async (req, res) => {
 
   } catch (err) {
     console.error(err);
+    console.log('deletefutureevent')
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -1103,7 +1106,7 @@ appSql.post('/api/getpastnotesdata', async (req, res) => {
       } else {
           res.json({ result: result.recordset, checked: false });
       }
-      await sql.close();
+       
   } catch (err) {
       console.error(err);
       res.status(500).json({ error: 'Server error' });
@@ -1131,7 +1134,7 @@ appSql.post('/api/updatepastnotesdata', async (req, res) => {
       } else {
           res.json({ result: result.recordset, checked: false });
       }
-      await sql.close();
+       
   } catch (err) {
       console.error(err);
       res.status(500).json({ error: 'Server error' });
@@ -1177,7 +1180,7 @@ appSql.post('/api/insertpastnotesdata', async (req, res) => {
       } else {
           res.json({ result: result.recordset, checked: false });
       }
-      await sql.close();
+       
   } catch (err) {
       console.error(err);
       res.status(500).json({ error: 'Server error' });
@@ -1197,6 +1200,7 @@ appSql.post('/api/insertevent', async (req, res) => {
     }
   } catch (err) {
     console.error(err);
+    console.log('insertevent')
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -1221,7 +1225,7 @@ appSql.post('/api/inserteventidentity', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   } finally {
     // Make sure to close the SQL connection
-    await sql.close();
+     
   }
 });
 
@@ -1242,7 +1246,7 @@ appSql.get('/api/getMaxIdentity', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   } finally {
     try {
-      await sql.close();
+       
     } catch (err) {
       console.error('Error closing connection:', err.message);
     }
@@ -1347,7 +1351,7 @@ appSql.post('/api/insertpdf', async (req, res) => {
       res.json({ pdfadded: false });
     }
 
-    sql.close();
+      
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -1374,7 +1378,7 @@ appSql.delete('/api/delete-pdf/:pdfName', async (req, res) => {
       res.json({ deleted: false });
     }
 
-    sql.close();
+      
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -1393,7 +1397,7 @@ appSql.post('/api/changelinkedpdfAll', async (req, res) => {
       res.json({ pdfupdated: false });
     }
 
-    sql.close();
+      
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -1412,7 +1416,7 @@ appSql.post('/api/changelinkedpdfOne', async (req, res) => {
       res.json({ pdfupdated: false });
     }
 
-    sql.close();
+      
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
